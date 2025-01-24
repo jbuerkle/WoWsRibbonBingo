@@ -1,5 +1,6 @@
 package bingo;
 
+import ribbons.Ribbon;
 import ribbons.RibbonResult;
 
 import java.util.Comparator;
@@ -14,8 +15,9 @@ public class RibbonBingoResult {
         this.ribbonResultSet = new HashSet<>();
     }
 
-    public void addRibbonResult(RibbonResult ribbonResult) {
-        if (ribbonResult.amount() > 0) {
+    public void addRibbonResult(Ribbon ribbon, int amount) {
+        RibbonResult ribbonResult = new RibbonResult(ribbon, amount);
+        if (amount > 0) {
             ribbonResultSet.add(ribbonResult);
         } else {
             ribbonResultSet.remove(ribbonResult);
