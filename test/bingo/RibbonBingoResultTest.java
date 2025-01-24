@@ -9,6 +9,46 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class RibbonBingoResultTest {
 
     @Test
+    void getPointResultShouldReturnTenPoints() {
+        RibbonBingoResult result = new RibbonBingoResult();
+        RibbonResult resultA = new RibbonResult(Ribbon.SPOTTED, 2);
+        result.addRibbonResult(resultA);
+        assertEquals(10, result.getPointResult());
+    }
+
+    @Test
+    void getPointResultShouldReturnFiftyPoints() {
+        RibbonBingoResult result = new RibbonBingoResult();
+        RibbonResult resultA = new RibbonResult(Ribbon.INCAPACITATION, 0);
+        RibbonResult resultB = new RibbonResult(Ribbon.INCAPACITATION, 5);
+        result.addRibbonResult(resultA);
+        result.addRibbonResult(resultB);
+        assertEquals(50, result.getPointResult());
+    }
+
+    @Test
+    void getPointResultShouldReturnZeroPoints() {
+        RibbonBingoResult result = new RibbonBingoResult();
+        RibbonResult resultA = new RibbonResult(Ribbon.INCAPACITATION, 5);
+        RibbonResult resultB = new RibbonResult(Ribbon.INCAPACITATION, 0);
+        result.addRibbonResult(resultA);
+        result.addRibbonResult(resultB);
+        assertEquals(0, result.getPointResult());
+    }
+
+    @Test
+    void getPointResultShouldReturnOneHundredAndFiftyPoints() {
+        RibbonBingoResult result = new RibbonBingoResult();
+        RibbonResult resultA = new RibbonResult(Ribbon.SPOTTED, 6);
+        RibbonResult resultB = new RibbonResult(Ribbon.TORPEDO_HIT, 4);
+        RibbonResult resultC = new RibbonResult(Ribbon.CAUSED_FLOODING, 1);
+        result.addRibbonResult(resultA);
+        result.addRibbonResult(resultB);
+        result.addRibbonResult(resultC);
+        assertEquals(150, result.getPointResult());
+    }
+
+    @Test
     void toStringMethodShouldReturnCorrectDisplayTextForZeroRibbonResults() {
         RibbonBingoResult result = new RibbonBingoResult();
         assertEquals("Ribbon Bingo result: 0 points", result.toString());
