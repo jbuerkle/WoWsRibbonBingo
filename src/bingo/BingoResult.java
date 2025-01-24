@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RibbonBingoResult {
+public class BingoResult {
     private final Set<RibbonResult> ribbonResultSet;
 
-    public RibbonBingoResult() {
+    public BingoResult() {
         this.ribbonResultSet = new HashSet<>();
     }
 
