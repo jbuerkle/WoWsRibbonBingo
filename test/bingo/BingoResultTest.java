@@ -5,7 +5,7 @@ import ribbons.Ribbon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RibbonBingoResultTest {
+class BingoResultTest {
 
     @Test
     void getPointResultShouldReturnTenPoints() {
