@@ -35,4 +35,13 @@ public enum Ribbon {
     public int getPointValue() {
         return pointValue;
     }
+
+    private String getPointValueAsString() {
+        return pointValue + (pointValue == 1 ? " point" : " points");
+    }
+
+    @Override
+    public String toString() {
+        return displayText + ": " + getPointValueAsString();
+    }
 }
