@@ -1,7 +1,7 @@
 package ribbons;
 
 public enum Ribbon {
-    DESTROYED("Destroyed", 100),
+    DESTROYED("Destroyed", 120),
     SHELL_HIT("Shell hit", 1),
     SECONDARY_HIT("Secondary hit", 1),
     BOMB_HIT("Bomb hit", 2),
@@ -16,7 +16,7 @@ public enum Ribbon {
     CAUSED_FLOODING("Caused flooding", 40),
     AIRCRAFT_SHOT_DOWN("Aircraft shot down", 5),
     SHOT_DOWN_BY_FIGHTER("Shot down by fighter", 5),
-    CAPTURED("Captured", 50),
+    CAPTURED("Captured", 60),
     ASSISTED_IN_CAPTURE("Assisted in capture", 30),
     DEFENDED("Defended", 10);
 
