@@ -14,8 +14,6 @@ public class ResultBar {
     private int getPointRequirement(int currentLevel) {
         final int pointRequirementForCurrentLevel;
         if (currentLevel > 6) {
-            pointRequirementForCurrentLevel = 50;
-        } else if (currentLevel > 4) {
             pointRequirementForCurrentLevel = 100;
         } else if (currentLevel > 2) {
             pointRequirementForCurrentLevel = 150;
