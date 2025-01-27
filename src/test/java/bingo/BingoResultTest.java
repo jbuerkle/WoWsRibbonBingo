@@ -48,34 +48,34 @@ class BingoResultTest {
     @Test
     void toStringMethodShouldReturnCorrectDisplayTextForOneRibbonResult() {
         BingoResult result = new BingoResult();
-        result.addRibbonResult(Ribbon.SHELL_HIT, 110);
-        assertEquals("Ribbon Bingo result: Shell hit: 110 * 1 points = 110 points", result.toString());
+        result.addRibbonResult(Ribbon.MAIN_GUN_HIT, 110);
+        assertEquals("Ribbon Bingo result: Main gun hit: 110 * 1 points = 110 points", result.toString());
     }
 
     @Test
     void toStringMethodShouldReturnCorrectDisplayTextForTwoRibbonResults() {
         BingoResult result = new BingoResult();
-        result.addRibbonResult(Ribbon.SHELL_HIT, 110);
+        result.addRibbonResult(Ribbon.MAIN_GUN_HIT, 110);
         result.addRibbonResult(Ribbon.SECONDARY_HIT, 30);
-        assertEquals("Ribbon Bingo result: Shell hit: 110 * 1 points + Secondary hit: 30 * 1 points = 140 points", result.toString());
+        assertEquals("Ribbon Bingo result: Main gun hit: 110 * 1 points + Secondary hit: 30 * 1 points = 140 points", result.toString());
     }
 
     @Test
     void toStringMethodShouldReturnCorrectDisplayTextForThreeRibbonResults() {
         BingoResult result = new BingoResult();
-        result.addRibbonResult(Ribbon.SHELL_HIT, 110);
+        result.addRibbonResult(Ribbon.MAIN_GUN_HIT, 110);
         result.addRibbonResult(Ribbon.SECONDARY_HIT, 30);
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
-        assertEquals("Ribbon Bingo result: Shell hit: 110 * 1 points + Bomb hit: 40 * 2 points + Secondary hit: 30 * 1 points = 220 points", result.toString());
+        assertEquals("Ribbon Bingo result: Main gun hit: 110 * 1 points + Bomb hit: 40 * 2 points + Secondary hit: 30 * 1 points = 220 points", result.toString());
     }
 
     @Test
     void toStringMethodShouldReturnCorrectDisplayTextForFourRibbonResults() {
         BingoResult result = new BingoResult();
-        result.addRibbonResult(Ribbon.SHELL_HIT, 110);
+        result.addRibbonResult(Ribbon.MAIN_GUN_HIT, 110);
         result.addRibbonResult(Ribbon.SECONDARY_HIT, 30);
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
-        assertEquals("Ribbon Bingo result: Set on fire: 11 * 20 points + Shell hit: 110 * 1 points + Bomb hit: 40 * 2 points + Secondary hit: 30 * 1 points = 440 points", result.toString());
+        assertEquals("Ribbon Bingo result: Set on fire: 11 * 20 points + Main gun hit: 110 * 1 points + Bomb hit: 40 * 2 points + Secondary hit: 30 * 1 points = 440 points", result.toString());
     }
 }

@@ -2,7 +2,7 @@ package ribbons;
 
 public enum Ribbon {
     DESTROYED("Destroyed", 120),
-    SHELL_HIT("Shell hit", 1),
+    MAIN_GUN_HIT("Main gun hit", 1),
     SECONDARY_HIT("Secondary hit", 1),
     BOMB_HIT("Bomb hit", 2),
     ROCKET_HIT("Rocket hit", 2),

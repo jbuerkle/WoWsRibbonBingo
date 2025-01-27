@@ -11,7 +11,7 @@ class RibbonResultTest {
     void getPointValueShouldReturnCorrectValue() {
         RibbonResult resultA = new RibbonResult(Ribbon.SET_ON_FIRE, 11);
         RibbonResult resultB = new RibbonResult(Ribbon.CAUSED_FLOODING, 3);
-        RibbonResult resultC = new RibbonResult(Ribbon.SHELL_HIT, 30);
+        RibbonResult resultC = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
         RibbonResult resultD = new RibbonResult(Ribbon.SECONDARY_HIT, 110);
         assertEquals(220, resultA.getPointValue());
         assertEquals(120, resultB.getPointValue());
@@ -29,15 +29,15 @@ class RibbonResultTest {
 
     @Test
     void resultShouldBeEqualWithSameRibbon() {
-        RibbonResult resultA = new RibbonResult(Ribbon.SHELL_HIT, 30);
-        RibbonResult resultB = new RibbonResult(Ribbon.SHELL_HIT, 110);
+        RibbonResult resultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
+        RibbonResult resultB = new RibbonResult(Ribbon.MAIN_GUN_HIT, 110);
         assertEquals(resultA, resultB);
         assertEquals(resultA.hashCode(), resultB.hashCode());
     }
 
     @Test
     void resultShouldNotBeEqualWithDifferentRibbon() {
-        RibbonResult resultA = new RibbonResult(Ribbon.SHELL_HIT, 50);
+        RibbonResult resultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 50);
         RibbonResult resultB = new RibbonResult(Ribbon.SECONDARY_HIT, 50);
         assertNotEquals(resultA, resultB);
         assertNotEquals(resultA.hashCode(), resultB.hashCode());

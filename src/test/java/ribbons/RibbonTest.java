@@ -10,14 +10,14 @@ class RibbonTest {
     void toStringMethodShouldReturnCorrectDisplayText() {
         assertEquals("Citadel hit: 30 points", Ribbon.CITADEL_HIT.toString());
         assertEquals("Rocket hit: 2 points", Ribbon.ROCKET_HIT.toString());
-        assertEquals("Shell hit: 1 point", Ribbon.SHELL_HIT.toString());
+        assertEquals("Main gun hit: 1 point", Ribbon.MAIN_GUN_HIT.toString());
     }
 
     @Test
     void allRibbonsListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Destroyed: 120 points
-                - Shell hit: 1 point
+                - Main gun hit: 1 point
                 - Secondary hit: 1 point
                 - Bomb hit: 2 points
                 - Rocket hit: 2 points
