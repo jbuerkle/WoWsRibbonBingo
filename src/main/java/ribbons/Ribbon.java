@@ -44,4 +44,12 @@ public enum Ribbon {
     public String toString() {
         return displayText + ": " + getPointValueAsString();
     }
+
+    public static String allRibbonsListedAsString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Ribbon ribbon : Ribbon.values()) {
+            stringBuilder.append("- ").append(ribbon.toString()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
 }
