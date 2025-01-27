@@ -22,14 +22,14 @@ public class BingoUserInterface extends Application {
         textFieldsByRibbon = new HashMap<>();
         mainGrid = new GridPane();
         mainGridRow = 0;
-        setUpGridWithFourInputFieldsPerRow();
+        setUpGridWithFiveInputFieldsPerRow();
     }
 
-    private void setUpGridWithFourInputFieldsPerRow() {
+    private void setUpGridWithFiveInputFieldsPerRow() {
         GridPane gridPane = createNewGridPane();
         int column = 0;
         for (Ribbon ribbon : Ribbon.values()) {
-            if (column > 3) {
+            if (column > 4) {
                 mainGridRow++;
                 gridPane = createNewGridPane();
                 column = 0;
