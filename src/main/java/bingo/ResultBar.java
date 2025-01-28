@@ -1,11 +1,6 @@
 package bingo;
 
-public class ResultBar {
-    private final int level;
-
-    public ResultBar(int level) {
-        this.level = level;
-    }
+public record ResultBar(int level) {
 
     public int getPointRequirement() {
         return getPointRequirement(this.level);
@@ -27,5 +22,10 @@ public class ResultBar {
 
     public int getNumberOfSubsAsReward() {
         return (int) Math.pow(2, this.level - 1);
+    }
+
+    public String getNumberOfSubsAsString() {
+        int numberOfSubs = getNumberOfSubsAsReward();
+        return numberOfSubs + (numberOfSubs == 1 ? " sub" : " subs");
     }
 }
