@@ -4,7 +4,17 @@ A tool for calculating points in a Twitch streamer challenge for World of Warshi
 
 ## Rules for the challenge
 
-**TODO**
+1. You have to start the challenge on level 1.
+2. You cannot skip any levels, but you can choose to end the challenge early.
+3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice.
+4. Once you start the challenge, every match counts. There are no second chances. If you need an exception, you have to
+   announce this **before starting the match**.
+5. After each match played, your point result is calculated and compared to the result bar of the current level:
+    - If your result meets the point requirement, you unlock the reward for the current level.
+    - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
+6. The challenge is "double or nothing" style. After every successful match, you can choose to either:
+    - Go to the next level and attempt to double your current reward, or:
+    - End the challenge and immediately receive your current reward.
 
 ## Point values per ribbon
 
