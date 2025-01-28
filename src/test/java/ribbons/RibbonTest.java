@@ -14,7 +14,7 @@ class RibbonTest {
     }
 
     @Test
-    void allRibbonsListedAsStringShouldReturnLongString() {
+    void getAllRibbonsListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Destroyed: 120 points
                 - Main gun hit: 1 point
@@ -35,6 +35,6 @@ class RibbonTest {
                 - Assisted in capture: 30 points
                 - Defended: 10 points
                 """;
-        assertEquals(expectedString, Ribbon.allRibbonsListedAsString());
+        assertEquals(expectedString, Ribbon.getAllRibbonsListedAsString());
     }
 }

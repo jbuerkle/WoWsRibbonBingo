@@ -45,7 +45,7 @@ public enum Ribbon {
         return displayText + ": " + getPointValueAsString();
     }
 
-    public static String allRibbonsListedAsString() {
+    public static String getAllRibbonsListedAsString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Ribbon ribbon : Ribbon.values()) {
             stringBuilder.append("- ").append(ribbon.toString()).append("\n");
