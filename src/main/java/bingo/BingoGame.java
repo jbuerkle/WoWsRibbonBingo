@@ -2,13 +2,14 @@ package bingo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class BingoGame {
     private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 8;
 
     private final List<ResultBar> resultBars;
-    private BingoResult bingoResult;
+    private Optional<BingoResult> bingoResult;
     private int currentLevel;
 
     public BingoGame() {
@@ -16,17 +17,17 @@ public class BingoGame {
         for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
             resultBars.add(new ResultBar(level));
         }
-        this.bingoResult = new BingoResult(false);
+        this.bingoResult = Optional.empty();
         this.currentLevel = START_LEVEL;
     }
 
     public void submitBingoResult(BingoResult bingoResult) {
-        this.bingoResult = bingoResult;
+        this.bingoResult = Optional.ofNullable(bingoResult);
     }
 
     public void goToNextLevel() {
         if (playerCanGoToNextLevel()) {
-            bingoResult = new BingoResult(false);
+            bingoResult = Optional.empty();
             currentLevel++;
         }
     }
@@ -36,7 +37,11 @@ public class BingoGame {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResult.getPointResult() >= resultBars.get(currentLevel).getPointRequirement();
+        return bingoResult.isPresent() && bingoResult.get().getPointResult() >= getPointRequirementOfLevel(currentLevel);
+    }
+
+    private int getPointRequirementOfLevel(int level) {
+        return resultBars.get(level).getPointRequirement();
     }
 
     private boolean hasNextLevel() {
