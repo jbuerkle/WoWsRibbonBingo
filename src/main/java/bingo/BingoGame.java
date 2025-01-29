@@ -44,6 +44,14 @@ public class BingoGame {
         return resultBars.get(level - 1).getPointRequirement();
     }
 
+    private String getPointRequirementOfLevelAsString(int level) {
+        return "Requirement of level %s: %s points".formatted(level, getPointRequirementOfLevel(level));
+    }
+
+    private String getNumberOfSubsAsStringForLevel(int level) {
+        return resultBars.get(level - 1).getNumberOfSubsAsString();
+    }
+
     private boolean hasNextLevel() {
         return currentLevel < MAX_LEVEL;
     }
@@ -59,6 +67,26 @@ public class BingoGame {
                             resultBar.getPointRequirement(),
                             resultBar.level() - 1,
                             resultBar.getNumberOfSubsAsString()));
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        bingoResult.ifPresent(result -> stringBuilder.append(result).append(". "));
+        stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
+        if (requirementOfCurrentResultBarIsMet()) {
+            stringBuilder.append(", which means your result meets the point requirement, and you unlocked the reward for the current level: ");
+            stringBuilder.append(getNumberOfSubsAsStringForLevel(currentLevel));
+            if (hasNextLevel()) {
+                stringBuilder.append(". You can now choose to end the challenge and receive your reward, or continue to the next level. ");
+                stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
+            } else {
+                stringBuilder.append(". This is the highest reward you can get. Congratulations!");
+            }
+        } else if (bingoResult.isPresent()) {
+            stringBuilder.append(", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards. Unlucky...");
         }
         return stringBuilder.toString();
     }
