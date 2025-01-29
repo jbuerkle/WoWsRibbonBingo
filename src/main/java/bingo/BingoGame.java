@@ -1,6 +1,5 @@
 package bingo;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,41 +8,39 @@ public class BingoGame {
     private static final int MAX_LEVEL = 8;
 
     private final List<ResultBar> resultBars;
-    private final Iterator<ResultBar> resultBarIterator;
-    private ResultBar currentResultBar;
     private BingoResult bingoResult;
+    private int currentLevel;
 
     public BingoGame() {
         this.resultBars = new LinkedList<>();
         for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
             resultBars.add(new ResultBar(level));
         }
-        this.resultBarIterator = resultBars.iterator();
-        this.currentResultBar = resultBarIterator.next();
         this.bingoResult = new BingoResult(false);
-    }
-
-    public ResultBar getCurrentResultBar() {
-        return currentResultBar;
+        this.currentLevel = START_LEVEL;
     }
 
     public void submitBingoResult(BingoResult bingoResult) {
         this.bingoResult = bingoResult;
     }
 
-    public boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResult.getPointResult() >= currentResultBar.getPointRequirement();
-    }
-
-    public boolean hasNextLevel() {
-        return resultBarIterator.hasNext();
-    }
-
     public void goToNextLevel() {
-        if (requirementOfCurrentResultBarIsMet() && hasNextLevel()) {
-            currentResultBar = resultBarIterator.next();
+        if (playerCanGoToNextLevel()) {
             bingoResult = new BingoResult(false);
+            currentLevel++;
         }
+    }
+
+    public boolean playerCanGoToNextLevel() {
+        return requirementOfCurrentResultBarIsMet() && hasNextLevel();
+    }
+
+    private boolean requirementOfCurrentResultBarIsMet() {
+        return bingoResult.getPointResult() >= resultBars.get(currentLevel).getPointRequirement();
+    }
+
+    private boolean hasNextLevel() {
+        return currentLevel < MAX_LEVEL;
     }
 
     public String getAllResultBarsAndRewardsInTableFormat() {
