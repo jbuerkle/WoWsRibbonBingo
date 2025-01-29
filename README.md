@@ -19,7 +19,7 @@ A tool for calculating points in a Twitch streamer challenge for World of Warshi
 ## Point values per ribbon
 
 - Destroyed: 120 points
-- Main gun hit: 1 point
+- Main gun hit: 1 point (3x modifier for BB guns)
 - Secondary hit: 1 point
 - Bomb hit: 2 points
 - Rocket hit: 2 points
