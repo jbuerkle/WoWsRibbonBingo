@@ -4,13 +4,12 @@ import java.util.Objects;
 
 public record RibbonResult(Ribbon ribbon, int amount) {
 
-    public int getPointValue() {
-        return ribbon.getPointValue() * amount;
+    public int getPointValue(boolean battleshipModifierEnabled) {
+        return ribbon.getPointValue(battleshipModifierEnabled) * amount;
     }
 
-    @Override
-    public String toString() {
-        return ribbon.getDisplayText() + ": " + amount + " * " + ribbon.getPointValue() + " points";
+    public String getAsString(boolean battleshipModifierEnabled) {
+        return ribbon.getDisplayText() + ": " + amount + " * " + ribbon.getPointValue(battleshipModifierEnabled) + " points";
     }
 
     @Override

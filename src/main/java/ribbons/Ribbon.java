@@ -2,7 +2,7 @@ package ribbons;
 
 public enum Ribbon {
     DESTROYED("Destroyed", 120),
-    MAIN_GUN_HIT("Main gun hit", 1),
+    MAIN_GUN_HIT("Main gun hit", 1, 3),
     SECONDARY_HIT("Secondary hit", 1),
     BOMB_HIT("Bomb hit", 2),
     ROCKET_HIT("Rocket hit", 2),
@@ -22,33 +22,49 @@ public enum Ribbon {
 
     private final String displayText;
     private final int pointValue;
+    private final int battleshipModifier;
+
+    Ribbon(String displayText, int pointValue, int battleshipModifier) {
+        this.displayText = displayText;
+        this.pointValue = pointValue;
+        this.battleshipModifier = battleshipModifier;
+    }
 
     Ribbon(String displayText, int pointValue) {
         this.displayText = displayText;
         this.pointValue = pointValue;
+        this.battleshipModifier = 1;
     }
 
     public String getDisplayText() {
         return displayText;
     }
 
-    public int getPointValue() {
-        return pointValue;
+    public int getPointValue(boolean battleshipModifierEnabled) {
+        if (battleshipModifierEnabled) {
+            return pointValue * battleshipModifier;
+        } else {
+            return pointValue;
+        }
     }
 
-    private String getPointValueAsString() {
-        return pointValue + (pointValue == 1 ? " point" : " points");
+    private String getPointValueAsString(boolean battleshipModifierEnabled) {
+        int actualPointValue = getPointValue(battleshipModifierEnabled);
+        return actualPointValue + (actualPointValue == 1 ? " point" : " points");
     }
 
-    @Override
-    public String toString() {
-        return displayText + ": " + getPointValueAsString();
+    public String getAsString(boolean battleshipModifierEnabled) {
+        return displayText + ": " + getPointValueAsString(battleshipModifierEnabled);
     }
 
     public static String getAllRibbonsListedAsString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Ribbon ribbon : Ribbon.values()) {
-            stringBuilder.append("- ").append(ribbon.toString()).append("\n");
+            stringBuilder.append("- ").append(ribbon.getAsString(false));
+            if (ribbon.battleshipModifier != 1) {
+                stringBuilder.append(" (%sx modifier for BB guns)".formatted(ribbon.battleshipModifier));
+            }
+            stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }

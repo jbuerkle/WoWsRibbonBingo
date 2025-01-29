@@ -6,40 +6,56 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class RibbonResultTest {
+    private final RibbonResult resultA = new RibbonResult(Ribbon.SET_ON_FIRE, 11);
+    private final RibbonResult resultB = new RibbonResult(Ribbon.CAUSED_FLOODING, 3);
+    private final RibbonResult resultC = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
+    private final RibbonResult resultD = new RibbonResult(Ribbon.SECONDARY_HIT, 110);
 
     @Test
-    void getPointValueShouldReturnCorrectValue() {
-        RibbonResult resultA = new RibbonResult(Ribbon.SET_ON_FIRE, 11);
-        RibbonResult resultB = new RibbonResult(Ribbon.CAUSED_FLOODING, 3);
-        RibbonResult resultC = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
-        RibbonResult resultD = new RibbonResult(Ribbon.SECONDARY_HIT, 110);
-        assertEquals(220, resultA.getPointValue());
-        assertEquals(120, resultB.getPointValue());
-        assertEquals(30, resultC.getPointValue());
-        assertEquals(110, resultD.getPointValue());
+    void getPointValueShouldReturnCorrectValueWithModifierDisabled() {
+        assertEquals(220, resultA.getPointValue(false));
+        assertEquals(120, resultB.getPointValue(false));
+        assertEquals(30, resultC.getPointValue(false));
+        assertEquals(110, resultD.getPointValue(false));
     }
 
     @Test
-    void toStringMethodShouldReturnCorrectDisplayText() {
-        RibbonResult resultA = new RibbonResult(Ribbon.SET_ON_FIRE, 11);
-        RibbonResult resultB = new RibbonResult(Ribbon.CAUSED_FLOODING, 3);
-        assertEquals("Set on fire: 11 * 20 points", resultA.toString());
-        assertEquals("Caused flooding: 3 * 40 points", resultB.toString());
+    void getPointValueShouldReturnCorrectValueWithModifierEnabled() {
+        assertEquals(220, resultA.getPointValue(true));
+        assertEquals(120, resultB.getPointValue(true));
+        assertEquals(90, resultC.getPointValue(true));
+        assertEquals(110, resultD.getPointValue(true));
+    }
+
+    @Test
+    void getAsStringShouldReturnCorrectDisplayTextWithModifierDisabled() {
+        assertEquals("Set on fire: 11 * 20 points", resultA.getAsString(false));
+        assertEquals("Caused flooding: 3 * 40 points", resultB.getAsString(false));
+        assertEquals("Main gun hit: 30 * 1 points", resultC.getAsString(false));
+        assertEquals("Secondary hit: 110 * 1 points", resultD.getAsString(false));
+    }
+
+    @Test
+    void getAsStringShouldReturnCorrectDisplayTextWithModifierEnabled() {
+        assertEquals("Set on fire: 11 * 20 points", resultA.getAsString(true));
+        assertEquals("Caused flooding: 3 * 40 points", resultB.getAsString(true));
+        assertEquals("Main gun hit: 30 * 3 points", resultC.getAsString(true));
+        assertEquals("Secondary hit: 110 * 1 points", resultD.getAsString(true));
     }
 
     @Test
     void resultShouldBeEqualWithSameRibbon() {
-        RibbonResult resultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
-        RibbonResult resultB = new RibbonResult(Ribbon.MAIN_GUN_HIT, 110);
-        assertEquals(resultA, resultB);
-        assertEquals(resultA.hashCode(), resultB.hashCode());
+        RibbonResult mainGunResultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
+        RibbonResult mainGunResultB = new RibbonResult(Ribbon.MAIN_GUN_HIT, 110);
+        assertEquals(mainGunResultA, mainGunResultB);
+        assertEquals(mainGunResultA.hashCode(), mainGunResultB.hashCode());
     }
 
     @Test
     void resultShouldNotBeEqualWithDifferentRibbon() {
-        RibbonResult resultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 50);
-        RibbonResult resultB = new RibbonResult(Ribbon.SECONDARY_HIT, 50);
-        assertNotEquals(resultA, resultB);
-        assertNotEquals(resultA.hashCode(), resultB.hashCode());
+        RibbonResult mainGunResult = new RibbonResult(Ribbon.MAIN_GUN_HIT, 50);
+        RibbonResult secondaryResult = new RibbonResult(Ribbon.SECONDARY_HIT, 50);
+        assertNotEquals(mainGunResult, secondaryResult);
+        assertNotEquals(mainGunResult.hashCode(), secondaryResult.hashCode());
     }
 }
