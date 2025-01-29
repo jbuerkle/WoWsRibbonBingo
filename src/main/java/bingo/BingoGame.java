@@ -41,7 +41,7 @@ public class BingoGame {
     }
 
     private int getPointRequirementOfLevel(int level) {
-        return resultBars.get(level).getPointRequirement();
+        return resultBars.get(level - 1).getPointRequirement();
     }
 
     private boolean hasNextLevel() {
