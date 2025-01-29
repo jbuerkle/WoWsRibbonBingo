@@ -1,7 +1,6 @@
 package bingo;
 
 import org.junit.jupiter.api.Test;
-import ribbons.Ribbon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
