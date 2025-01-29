@@ -2,6 +2,8 @@
 
 A tool for calculating points in a Twitch streamer challenge for World of Warships
 
+[![Java CI with Maven](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml/badge.svg?branch=main&event=push)](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml)
+
 ## Rules for the challenge
 
 1. You have to start the challenge on level 1.
