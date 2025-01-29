@@ -1,10 +1,52 @@
 package bingo;
 
 import org.junit.jupiter.api.Test;
+import ribbons.Ribbon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BingoGameTest {
+
+    @Test
+    void playerCanGoToNextLevelShouldReturnFalseWhenNoResultWasSubmitted() {
+        BingoGame bingoGame = new BingoGame();
+        assertFalse(bingoGame.playerCanGoToNextLevel());
+    }
+
+    @Test
+    void playerCanGoToNextLevelShouldReturnFalseWhenSubmittedResultIsInsufficient() {
+        BingoGame bingoGame = new BingoGame();
+        BingoResult bingoResult = new BingoResult(false);
+        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
+        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
+        bingoGame.submitBingoResult(bingoResult);
+        assertFalse(bingoGame.playerCanGoToNextLevel());
+    }
+
+    @Test
+    void playerCanGoToNextLevelShouldReturnTrueWhenSubmittedResultIsSufficient() {
+        BingoGame bingoGame = new BingoGame();
+        BingoResult bingoResult = new BingoResult(false);
+        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
+        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
+        bingoGame.submitBingoResult(bingoResult);
+        assertTrue(bingoGame.playerCanGoToNextLevel());
+    }
+
+    @Test
+    void playerCanGoToNextLevelShouldReturnFalseWhenMaxLevelIsReached() {
+        BingoGame bingoGame = new BingoGame();
+        BingoResult bingoResult = new BingoResult(false);
+        bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
+        for (int level = 1; level < 8; level++) {
+            bingoGame.submitBingoResult(bingoResult);
+            assertTrue(bingoGame.playerCanGoToNextLevel());
+            bingoGame.goToNextLevel();
+        }
+        bingoGame.submitBingoResult(bingoResult);
+        assertFalse(bingoGame.playerCanGoToNextLevel());
+        bingoGame.goToNextLevel();
+    }
 
     @Test
     void getAllResultBarsAndRewardsInTableFormatShouldReturnLongString() {
