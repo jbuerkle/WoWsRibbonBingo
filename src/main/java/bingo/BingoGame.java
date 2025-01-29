@@ -20,7 +20,7 @@ public class BingoGame {
         }
         this.resultBarIterator = resultBars.iterator();
         this.currentResultBar = resultBarIterator.next();
-        this.bingoResult = new BingoResult();
+        this.bingoResult = new BingoResult(false);
     }
 
     public ResultBar getCurrentResultBar() {
@@ -42,7 +42,7 @@ public class BingoGame {
     public void goToNextLevel() {
         if (requirementOfCurrentResultBarIsMet() && hasNextLevel()) {
             currentResultBar = resultBarIterator.next();
-            bingoResult = new BingoResult();
+            bingoResult = new BingoResult(false);
         }
     }
 

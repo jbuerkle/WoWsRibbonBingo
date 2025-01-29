@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 public class BingoResult {
+    private final boolean battleshipModifierEnabled;
     private final Set<RibbonResult> ribbonResultSet;
 
-    public BingoResult() {
+    public BingoResult(boolean battleshipModifierEnabled) {
+        this.battleshipModifierEnabled = battleshipModifierEnabled;
         this.ribbonResultSet = new HashSet<>();
     }
 
@@ -25,7 +27,7 @@ public class BingoResult {
     }
 
     public int getPointResult() {
-        return ribbonResultSet.stream().map(RibbonResult::getPointValue).reduce(Integer::sum).orElse(0);
+        return ribbonResultSet.stream().map(this::getPointValue).reduce(Integer::sum).orElse(0);
     }
 
     @Override
@@ -36,7 +38,7 @@ public class BingoResult {
             if (resultsAdded > 0) {
                 stringBuilder.append(" + ");
             }
-            stringBuilder.append(ribbonResult.toString());
+            stringBuilder.append(ribbonResult.getAsString(battleshipModifierEnabled));
             resultsAdded++;
         }
         if (resultsAdded > 0) {
@@ -47,6 +49,10 @@ public class BingoResult {
     }
 
     private List<RibbonResult> getSortedRibbonResultSet() {
-        return ribbonResultSet.stream().sorted(Comparator.comparingInt(RibbonResult::getPointValue)).toList().reversed();
+        return ribbonResultSet.stream().sorted(Comparator.comparingInt(this::getPointValue)).toList().reversed();
+    }
+
+    private int getPointValue(RibbonResult ribbonResult) {
+        return ribbonResult.getPointValue(battleshipModifierEnabled);
     }
 }
