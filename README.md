@@ -4,6 +4,12 @@ A tool for calculating points in a Twitch streamer challenge for World of Warshi
 
 [![Java CI with Maven](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml/badge.svg?branch=main&event=push)](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml)
 
+In case you want to run the tool for yourself, please check
+the [release page](https://github.com/jbuerkle/WoWsRibbonBingo/releases), where you will find a downloadable `.zip`
+file. It contains a fully-tested build, packaged as a `.jar` file with all necessary dependencies. Java 23 is required
+to run the application, which can be downloaded for free
+from [Oracle's official website.](https://www.oracle.com/java/technologies/downloads/)
+
 ## Rules for the challenge
 
 1. You have to start the challenge on level 1.
