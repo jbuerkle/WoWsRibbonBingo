@@ -86,7 +86,7 @@ public class BingoGame {
                 stringBuilder.append(". This is the highest reward you can get. Congratulations!");
             }
         } else if (bingoResult.isPresent()) {
-            stringBuilder.append(", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards. Unlucky...");
+            stringBuilder.append(", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.");
         }
         return stringBuilder.toString();
     }

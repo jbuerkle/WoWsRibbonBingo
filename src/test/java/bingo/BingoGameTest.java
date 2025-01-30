@@ -79,7 +79,7 @@ class BingoGameTest {
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
         bingoGame.submitBingoResult(bingoResult);
-        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards. Unlucky...", bingoGame.toString());
+        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.", bingoGame.toString());
     }
 
     @Test
