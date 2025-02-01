@@ -45,6 +45,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Captured: 60 points
 - Assisted in capture: 30 points
 - Defended: 10 points
+- Buff picked up: 40 points
 
 ## Result bars and their respective rewards
 

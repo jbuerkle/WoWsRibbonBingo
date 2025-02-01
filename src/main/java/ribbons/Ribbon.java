@@ -18,7 +18,8 @@ public enum Ribbon {
     SHOT_DOWN_BY_FIGHTER("Shot down by fighter", 5),
     CAPTURED("Captured", 60),
     ASSISTED_IN_CAPTURE("Assisted in capture", 30),
-    DEFENDED("Defended", 10);
+    DEFENDED("Defended", 10),
+    BUFF_PICKED_UP("Buff picked up", 40);
 
     private final String displayText;
     private final int pointValue;

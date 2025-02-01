@@ -41,6 +41,7 @@ class RibbonTest {
                 - Captured: 60 points
                 - Assisted in capture: 30 points
                 - Defended: 10 points
+                - Buff picked up: 40 points
                 """;
         assertEquals(expectedString, Ribbon.getAllRibbonsListedAsString());
     }
