@@ -3,20 +3,31 @@ package application.gui;
 import bingo.BingoGame;
 import bingo.BingoResult;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import ribbons.Ribbon;
+import ships.Ship;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class BingoUserInterface extends Application {
     private final Map<Ribbon, TextField> textFieldsByRibbon;
+    private final ObservableList<Ship> shipsUsed;
+    private final TableView<Ship> tableView;
+    private final TableColumn<Ship, String> shipNameColumn;
+    private final TextField shipInputField;
     private final CheckBox battleshipCheckBox;
     private final BingoGame bingoGame;
     private final TextArea textArea;
@@ -25,6 +36,10 @@ public class BingoUserInterface extends Application {
 
     public BingoUserInterface() {
         this.textFieldsByRibbon = new HashMap<>();
+        this.shipsUsed = FXCollections.observableList(new LinkedList<>());
+        this.tableView = new TableView<>(shipsUsed);
+        this.shipNameColumn = new TableColumn<>("Ships used");
+        this.shipInputField = new TextField();
         this.battleshipCheckBox = new CheckBox("Use battleship modifier");
         this.bingoGame = new BingoGame();
         this.textArea = new TextArea();
@@ -32,7 +47,7 @@ public class BingoUserInterface extends Application {
         this.mainGridRow = 0;
         setUpGridWithFiveInputFieldsPerRow();
         setUpGridWithCheckBoxAndButtons();
-        setUpGridWithLargeTextArea();
+        setUpGridWithLargeTextAreaAndTableView();
         resetInputFields();
     }
 
@@ -55,9 +70,9 @@ public class BingoUserInterface extends Application {
         Button submitButton = new Button("Submit result");
         Button goNextButton = new Button("Go to next level");
         Button resetButton = new Button("Reset input fields");
-        submitButton.setOnMouseClicked(this::submitResult);
-        goNextButton.setOnMouseClicked(this::goToNextLevel);
-        resetButton.setOnMouseClicked(this::resetInputFields);
+        setEventHandlers(submitButton, this::submitResult);
+        setEventHandlers(goNextButton, this::goToNextLevel);
+        setEventHandlers(resetButton, this::resetInputFields);
         GridPane gridPane = createNewGridPane();
         gridPane.add(battleshipCheckBox, 0, 0);
         gridPane.add(submitButton, 1, 0);
@@ -66,13 +81,34 @@ public class BingoUserInterface extends Application {
         mainGridRow++;
     }
 
-    private void setUpGridWithLargeTextArea() {
+    private void setUpGridWithLargeTextAreaAndTableView() {
         textArea.setEditable(false);
         textArea.setWrapText(true);
+        shipNameColumn.setCellValueFactory(ship -> ship.getValue().nameProperty());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        tableView.getColumns().add(shipNameColumn);
         setTextInTextArea();
+        GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
         GridPane gridPane = createNewGridPane();
         gridPane.add(textArea, 0, 0);
+        gridPane.add(tableView, 1, 0);
+        gridPane.add(tableInputGrid, 2, 0);
         mainGridRow++;
+    }
+
+    private GridPane createGridPaneForTableInputFieldAndButtons() {
+        Label shipInputFieldLabel = new Label("Name of ship used");
+        Button addShipButton = new Button("Add ship from input field");
+        Button removeShipButton = new Button("Remove ship selected in table");
+        setEventHandlers(addShipButton, this::addShip);
+        setEventHandlers(removeShipButton, this::removeShip);
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.add(shipInputFieldLabel, 0, 0);
+        gridPane.add(shipInputField, 0, 1);
+        gridPane.add(addShipButton, 0, 2);
+        gridPane.add(removeShipButton, 0, 3);
+        return gridPane;
     }
 
     private void setTextInTextArea() {
@@ -97,7 +133,7 @@ public class BingoUserInterface extends Application {
         textFieldsByRibbon.put(ribbon, textField);
     }
 
-    private void submitResult(MouseEvent event) {
+    private void submitResult(InputEvent event) {
         BingoResult bingoResult = new BingoResult(battleshipCheckBox.isSelected());
         for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
             Ribbon ribbon = entry.getKey();
@@ -117,7 +153,7 @@ public class BingoUserInterface extends Application {
         setTextInTextArea();
     }
 
-    private void goToNextLevel(MouseEvent event) {
+    private void goToNextLevel(InputEvent event) {
         if (bingoGame.playerCanGoToNextLevel()) {
             bingoGame.goToNextLevel();
             resetInputFields();
@@ -125,13 +161,51 @@ public class BingoUserInterface extends Application {
         }
     }
 
-    private void resetInputFields(MouseEvent event) {
+    private void resetInputFields(InputEvent event) {
         resetInputFields();
     }
 
     private void resetInputFields() {
-        textFieldsByRibbon.values().forEach(textField -> textField.setText(""));
+        textFieldsByRibbon.values().forEach(this::clearInput);
         battleshipCheckBox.setSelected(false);
+    }
+
+    private void clearInput(TextField textField) {
+        textField.setText("");
+    }
+
+    private void addShip(InputEvent event) {
+        String userInput = shipInputField.getText();
+        if (!userInput.isBlank()) {
+            String trimmedUserInput = userInput.trim();
+            for (Ship ship : shipsUsed) {
+                if (trimmedUserInput.equalsIgnoreCase(ship.name())) {
+                    shipInputField.setText("This ship was already used!");
+                    return;
+                }
+            }
+            shipsUsed.add(new Ship(trimmedUserInput));
+            clearInput(shipInputField);
+        }
+    }
+
+    private void removeShip(InputEvent event) {
+        Ship ship = tableView.getSelectionModel().getSelectedItem();
+        shipsUsed.remove(ship);
+    }
+
+    private void setEventHandlers(Button button, EventHandler<InputEvent> eventHandler) {
+        button.setOnMouseClicked(eventHandler);
+        button.setOnKeyPressed(onPressEnterOrSpacePerform(eventHandler));
+    }
+
+    private EventHandler<KeyEvent> onPressEnterOrSpacePerform(EventHandler<InputEvent> eventHandler) {
+        return event -> {
+            KeyCode keyCode = event.getCode();
+            if (keyCode.equals(KeyCode.ENTER) || keyCode.equals(KeyCode.SPACE)) {
+                eventHandler.handle(event);
+            }
+        };
     }
 
     @Override
