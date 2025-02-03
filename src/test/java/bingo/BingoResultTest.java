@@ -36,7 +36,7 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.SPOTTED, 6);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
         result.addRibbonResult(Ribbon.CAUSED_FLOODING, 1);
-        assertEquals(150, result.getPointResult());
+        assertEquals(190, result.getPointResult());
     }
 
     @Test

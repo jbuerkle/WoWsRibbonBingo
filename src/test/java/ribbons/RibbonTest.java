@@ -29,7 +29,7 @@ class RibbonTest {
                 - Bomb hit: 2 points
                 - Rocket hit: 2 points
                 - Citadel hit: 30 points
-                - Torpedo hit: 20 points
+                - Torpedo hit: 30 points
                 - Depth charge hit: 10 points
                 - Sonar ping: 1 point
                 - Spotted: 5 points

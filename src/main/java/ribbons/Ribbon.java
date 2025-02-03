@@ -7,7 +7,7 @@ public enum Ribbon {
     BOMB_HIT("Bomb hit", 2),
     ROCKET_HIT("Rocket hit", 2),
     CITADEL_HIT("Citadel hit", 30),
-    TORPEDO_HIT("Torpedo hit", 20),
+    TORPEDO_HIT("Torpedo hit", 30),
     DEPTH_CHARGE_HIT("Depth charge hit", 10),
     SONAR_PING("Sonar ping", 1),
     SPOTTED("Spotted", 5),
