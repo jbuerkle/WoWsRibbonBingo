@@ -1,41 +1,38 @@
 package bingo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ribbons.Ribbon;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BingoGameTest {
+    private BingoGame bingoGame;
+
+    @BeforeEach
+    void setup() {
+        bingoGame = new BingoGame();
+    }
 
     @Test
     void playerCanGoToNextLevelShouldReturnFalseWhenNoResultWasSubmitted() {
-        BingoGame bingoGame = new BingoGame();
         assertFalse(bingoGame.playerCanGoToNextLevel());
     }
 
     @Test
     void playerCanGoToNextLevelShouldReturnFalseWhenSubmittedResultIsInsufficient() {
-        BingoGame bingoGame = new BingoGame();
-        BingoResult bingoResult = new BingoResult(false);
-        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
-        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
-        bingoGame.submitBingoResult(bingoResult);
+        submitInsufficientBingoResultForLevelOne();
         assertFalse(bingoGame.playerCanGoToNextLevel());
     }
 
     @Test
     void playerCanGoToNextLevelShouldReturnTrueWhenSubmittedResultIsSufficient() {
-        BingoGame bingoGame = new BingoGame();
-        BingoResult bingoResult = new BingoResult(false);
-        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
-        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
-        bingoGame.submitBingoResult(bingoResult);
+        submitSufficientBingoResultForLevelOne();
         assertTrue(bingoGame.playerCanGoToNextLevel());
     }
 
     @Test
     void playerCanGoToNextLevelShouldReturnFalseWhenMaxLevelIsReached() {
-        BingoGame bingoGame = new BingoGame();
         BingoResult bingoResult = new BingoResult(false);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
         for (int level = 1; level < 8; level++) {
@@ -50,7 +47,6 @@ class BingoGameTest {
 
     @Test
     void getAllResultBarsAndRewardsInTableFormatShouldReturnLongString() {
-        BingoGame bingoGame = new BingoGame();
         String expectedString = """
                 | Level | Points required | Number of subs as reward: 2^(Level-1) |
                 |---|---:|---:|
@@ -68,44 +64,30 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnFirstResultBarWhenNoResultWasSubmitted() {
-        BingoGame bingoGame = new BingoGame();
         assertEquals("Requirement of level 1: 200 points", bingoGame.toString());
     }
 
     @Test
     void toStringMethodShouldReturnGameOverWhenSubmittedResultIsInsufficient() {
-        BingoGame bingoGame = new BingoGame();
-        BingoResult bingoResult = new BingoResult(false);
-        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
-        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
-        bingoGame.submitBingoResult(bingoResult);
-        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.", bingoGame.toString());
+        BingoResult bingoResult = submitInsufficientBingoResultForLevelOne();
+        assertToStringMethodReturnsGameOverForLevelOne(bingoResult);
     }
 
     @Test
     void toStringMethodShouldReturnLevelTwoNextWhenSubmittedResultIsSufficient() {
-        BingoGame bingoGame = new BingoGame();
-        BingoResult bingoResult = new BingoResult(false);
-        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
-        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
-        bingoGame.submitBingoResult(bingoResult);
+        BingoResult bingoResult = submitSufficientBingoResultForLevelOne();
         assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 1 sub. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 400 points", bingoGame.toString());
     }
 
     @Test
     void toStringMethodShouldReturnSecondResultBarWhenNoResultWasSubmitted() {
-        BingoGame bingoGame = new BingoGame();
-        BingoResult bingoResult = new BingoResult(false);
-        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
-        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
-        bingoGame.submitBingoResult(bingoResult);
+        submitSufficientBingoResultForLevelOne();
         bingoGame.goToNextLevel();
-        assertEquals("Requirement of level 2: 400 points", bingoGame.toString());
+        assertToStringMethodReturnsSecondResultBar();
     }
 
     @Test
     void toStringMethodShouldReturnLevelThreeNextWhenSubmittedResultIsSufficient() {
-        BingoGame bingoGame = new BingoGame();
         BingoResult bingoResult = new BingoResult(false);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
@@ -118,7 +100,6 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnCongratulationsForLevelEightWhenSubmittedResultIsSufficient() {
-        BingoGame bingoGame = new BingoGame();
         BingoResult bingoResult = new BingoResult(false);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
         for (int level = 1; level < 9; level++) {
@@ -126,5 +107,59 @@ class BingoGameTest {
             bingoGame.goToNextLevel();
         }
         assertEquals(bingoResult + ". Requirement of level 8: 1200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations!", bingoGame.toString());
+    }
+
+    @Test
+    void endChallengeShouldNotAffectToStringMethodWhenSubmittedResultIsInsufficient() {
+        BingoResult bingoResult = submitInsufficientBingoResultForLevelOne();
+        bingoGame.endChallenge();
+        assertToStringMethodReturnsGameOverForLevelOne(bingoResult);
+    }
+
+    @Test
+    void endChallengeShouldAffectToStringMethodWhenSubmittedResultIsSufficient() {
+        submitSufficientBingoResultForLevelOne();
+        bingoGame.endChallenge();
+        assertEquals("Challenge ended voluntarily on level 1. Your reward: 1 sub", bingoGame.toString());
+    }
+
+    @Test
+    void submitBingoResultShouldResetChallengeEndedFlag() {
+        submitSufficientBingoResultForLevelOne();
+        bingoGame.endChallenge();
+        BingoResult bingoResult = submitInsufficientBingoResultForLevelOne();
+        assertToStringMethodReturnsGameOverForLevelOne(bingoResult);
+    }
+
+    @Test
+    void goToNextLevelShouldResetChallengeEndedFlag() {
+        submitSufficientBingoResultForLevelOne();
+        bingoGame.endChallenge();
+        bingoGame.goToNextLevel();
+        assertToStringMethodReturnsSecondResultBar();
+    }
+
+    private BingoResult submitInsufficientBingoResultForLevelOne() {
+        BingoResult bingoResult = new BingoResult(false);
+        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
+        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
+        bingoGame.submitBingoResult(bingoResult);
+        return bingoResult;
+    }
+
+    private BingoResult submitSufficientBingoResultForLevelOne() {
+        BingoResult bingoResult = new BingoResult(false);
+        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
+        bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
+        bingoGame.submitBingoResult(bingoResult);
+        return bingoResult;
+    }
+
+    private void assertToStringMethodReturnsGameOverForLevelOne(BingoResult bingoResult) {
+        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.", bingoGame.toString());
+    }
+
+    private void assertToStringMethodReturnsSecondResultBar() {
+        assertEquals("Requirement of level 2: 400 points", bingoGame.toString());
     }
 }

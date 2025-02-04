@@ -71,14 +71,17 @@ public class BingoUserInterface extends Application {
         Button submitButton = new Button("Submit result");
         Button goNextButton = new Button("Go to next level");
         Button resetButton = new Button("Reset input fields");
+        Button endChallengeButton = new Button("End challenge");
         setEventHandlers(submitButton, this::submitResult);
         setEventHandlers(goNextButton, this::goToNextLevel);
         setEventHandlers(resetButton, this::resetInputFields);
+        setEventHandlers(endChallengeButton, this::endChallenge);
         GridPane gridPane = createNewGridPane();
         gridPane.add(battleshipCheckBox, 0, 0);
         gridPane.add(submitButton, 1, 0);
         gridPane.add(goNextButton, 2, 0);
         gridPane.add(resetButton, 3, 0);
+        gridPane.add(endChallengeButton, 4, 0);
         mainGridRow++;
     }
 
@@ -173,6 +176,11 @@ public class BingoUserInterface extends Application {
 
     private void clearInput(TextField textField) {
         textField.setText("");
+    }
+
+    private void endChallenge(InputEvent event) {
+        bingoGame.endChallenge();
+        setTextInTextArea();
     }
 
     private void addShip(InputEvent event) {

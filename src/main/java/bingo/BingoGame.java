@@ -10,6 +10,7 @@ public class BingoGame {
 
     private final List<ResultBar> resultBars;
     private Optional<BingoResult> bingoResult;
+    private boolean challengeEnded;
     private int currentLevel;
 
     public BingoGame() {
@@ -19,16 +20,29 @@ public class BingoGame {
         }
         this.bingoResult = Optional.empty();
         this.currentLevel = START_LEVEL;
+        resetChallengeEndedFlag();
+    }
+
+    private void resetChallengeEndedFlag() {
+        challengeEnded = false;
     }
 
     public void submitBingoResult(BingoResult bingoResult) {
         this.bingoResult = Optional.ofNullable(bingoResult);
+        resetChallengeEndedFlag();
     }
 
     public void goToNextLevel() {
         if (playerCanGoToNextLevel()) {
             bingoResult = Optional.empty();
+            resetChallengeEndedFlag();
             currentLevel++;
+        }
+    }
+
+    public void endChallenge() {
+        if (requirementOfCurrentResultBarIsMet()) {
+            challengeEnded = true;
         }
     }
 
@@ -73,6 +87,10 @@ public class BingoGame {
 
     @Override
     public String toString() {
+        if (challengeEnded) {
+            return "Challenge ended voluntarily on level %s. Your reward: %s".formatted(
+                    currentLevel, getNumberOfSubsAsStringForLevel(currentLevel));
+        }
         StringBuilder stringBuilder = new StringBuilder();
         bingoResult.ifPresent(result -> stringBuilder.append(result).append(". "));
         stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
