@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class BingoUserInterface extends Application {
+    private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
@@ -175,18 +176,21 @@ public class BingoUserInterface extends Application {
     }
 
     private void addShip(InputEvent event) {
-        String userInput = shipInputField.getText();
-        if (!userInput.isBlank()) {
-            String trimmedUserInput = userInput.trim();
+        String trimmedUserInput = shipInputField.getText().trim();
+        if (containsUsableInput(trimmedUserInput)) {
             for (Ship ship : shipsUsed) {
                 if (trimmedUserInput.equalsIgnoreCase(ship.name())) {
-                    shipInputField.setText("This ship was already used!");
+                    shipInputField.setText(SHIP_ALREADY_USED);
                     return;
                 }
             }
             shipsUsed.add(new Ship(trimmedUserInput));
             clearInput(shipInputField);
         }
+    }
+
+    private boolean containsUsableInput(String userInput) {
+        return !userInput.isBlank() && !userInput.equals(SHIP_ALREADY_USED);
     }
 
     private void removeShip(InputEvent event) {
