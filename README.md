@@ -18,8 +18,11 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 4. You may invite **one** player into your division, but no more than that.
 5. You may use any selected ship only **once** per challenge. If you play together with another player in a division,
    their ships are also included in this rule.
-6. Once you start the challenge, every match counts. There are no second chances. If you need an exception, you have to
-   announce this **before starting the match**.
+6. Once you start the challenge, every match counts. If you need an exception, you have to
+   announce this **before starting the match**. However, you may be granted a chance to retry a level if:
+    - The match was less than 12 minutes long, **and** you were alive at the end of the match, or:
+    - The player difference at the end of the match is 6 or more players, **and** you were one of the last 6 players
+      alive on your team.
 7. After each match played, your point result is calculated and compared to the result bar of the current level:
     - If your result meets the point requirement, you unlock the reward for the current level.
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
