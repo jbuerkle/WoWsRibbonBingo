@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import ribbons.Ribbon;
 import ships.Ship;
+import util.BingoGameOutputSplitter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
+    private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
@@ -36,6 +38,7 @@ public class BingoUserInterface extends Application {
     private int mainGridRow;
 
     public BingoUserInterface() {
+        this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.textFieldsByRibbon = new HashMap<>();
         this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.tableView = new TableView<>(shipsUsed);
@@ -116,7 +119,9 @@ public class BingoUserInterface extends Application {
     }
 
     private void setTextInTextArea() {
-        textArea.setText(bingoGame.toString());
+        String bingoGameOutput = bingoGame.toString();
+        String splitOutput = bingoGameOutputSplitter.process(bingoGameOutput);
+        textArea.setText(splitOutput);
     }
 
     private GridPane createNewGridPane() {
