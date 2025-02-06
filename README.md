@@ -35,8 +35,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Destroyed: 120 points
 - Main gun hit: 1 point (3x modifier for BB guns)
 - Secondary hit: 1 point
-- Bomb hit: 2 points
-- Rocket hit: 2 points
+- Bomb hit: 3 points
+- Rocket hit: 3 points
 - Citadel hit: 30 points
 - Torpedo hit: 30 points
 - Depth charge hit: 10 points

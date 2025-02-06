@@ -9,14 +9,14 @@ class RibbonTest {
     @Test
     void getAsStringShouldReturnCorrectDisplayTextWithModifierDisabled() {
         assertEquals("Citadel hit: 30 points", Ribbon.CITADEL_HIT.getAsString(false));
-        assertEquals("Rocket hit: 2 points", Ribbon.ROCKET_HIT.getAsString(false));
+        assertEquals("Rocket hit: 3 points", Ribbon.ROCKET_HIT.getAsString(false));
         assertEquals("Main gun hit: 1 point", Ribbon.MAIN_GUN_HIT.getAsString(false));
     }
 
     @Test
     void getAsStringShouldReturnCorrectDisplayTextWithModifierEnabled() {
         assertEquals("Citadel hit: 30 points", Ribbon.CITADEL_HIT.getAsString(true));
-        assertEquals("Rocket hit: 2 points", Ribbon.ROCKET_HIT.getAsString(true));
+        assertEquals("Rocket hit: 3 points", Ribbon.ROCKET_HIT.getAsString(true));
         assertEquals("Main gun hit: 3 points", Ribbon.MAIN_GUN_HIT.getAsString(true));
     }
 
@@ -26,8 +26,8 @@ class RibbonTest {
                 - Destroyed: 120 points
                 - Main gun hit: 1 point (3x modifier for BB guns)
                 - Secondary hit: 1 point
-                - Bomb hit: 2 points
-                - Rocket hit: 2 points
+                - Bomb hit: 3 points
+                - Rocket hit: 3 points
                 - Citadel hit: 30 points
                 - Torpedo hit: 30 points
                 - Depth charge hit: 10 points
