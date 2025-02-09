@@ -2,6 +2,7 @@ package bingo;
 
 import ribbons.Ribbon;
 import ribbons.RibbonResult;
+import ships.MainArmamentType;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -9,11 +10,11 @@ import java.util.List;
 import java.util.Set;
 
 public class BingoResult {
-    private final boolean battleshipModifierEnabled;
+    private final MainArmamentType mainArmamentType;
     private final Set<RibbonResult> ribbonResultSet;
 
-    public BingoResult(boolean battleshipModifierEnabled) {
-        this.battleshipModifierEnabled = battleshipModifierEnabled;
+    public BingoResult(MainArmamentType mainArmamentType) {
+        this.mainArmamentType = mainArmamentType;
         this.ribbonResultSet = new HashSet<>();
     }
 
@@ -38,7 +39,7 @@ public class BingoResult {
             if (resultsAdded > 0) {
                 stringBuilder.append(" + ");
             }
-            stringBuilder.append(ribbonResult.getAsString(battleshipModifierEnabled));
+            stringBuilder.append(ribbonResult.getAsString(mainArmamentType));
             resultsAdded++;
         }
         if (resultsAdded > 0) {
@@ -53,6 +54,6 @@ public class BingoResult {
     }
 
     private int getPointValue(RibbonResult ribbonResult) {
-        return ribbonResult.getPointValue(battleshipModifierEnabled);
+        return ribbonResult.getPointValue(mainArmamentType);
     }
 }

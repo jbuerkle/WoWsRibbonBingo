@@ -15,7 +15,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ribbons.Ribbon;
+import ships.MainArmamentType;
 import ships.Ship;
 import util.BingoGameOutputSplitter;
 
@@ -25,32 +27,32 @@ import java.util.Map;
 
 public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
+    private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
     private final TextField shipInputField;
-    private final CheckBox battleshipCheckBox;
     private final BingoGame bingoGame;
     private final TextArea textArea;
     private final GridPane mainGrid;
     private int mainGridRow;
 
     public BingoUserInterface() {
+        this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.textFieldsByRibbon = new HashMap<>();
         this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.tableView = new TableView<>(shipsUsed);
         this.shipNameColumn = new TableColumn<>("Ships used");
         this.shipInputField = new TextField();
-        this.battleshipCheckBox = new CheckBox("Use battleship modifier");
         this.bingoGame = new BingoGame();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
         this.mainGridRow = 0;
         setUpGridWithFiveInputFieldsPerRow();
-        setUpGridWithCheckBoxAndButtons();
+        setUpGridWithComboBoxAndButtons();
         setUpGridWithLargeTextAreaAndTableView();
         resetInputFields();
     }
@@ -70,7 +72,8 @@ public class BingoUserInterface extends Application {
         mainGridRow++;
     }
 
-    private void setUpGridWithCheckBoxAndButtons() {
+    private void setUpGridWithComboBoxAndButtons() {
+        Label mainArmamentTypeLabel = new Label("Main armament of ship used");
         Button submitButton = new Button("Submit result");
         Button goNextButton = new Button("Go to next level");
         Button resetButton = new Button("Reset input fields");
@@ -79,12 +82,14 @@ public class BingoUserInterface extends Application {
         setEventHandlers(goNextButton, this::goToNextLevel);
         setEventHandlers(resetButton, this::resetInputFields);
         setEventHandlers(endChallengeButton, this::endChallenge);
+        setUpMainArmamentTypeComboBox();
         GridPane gridPane = createNewGridPane();
-        gridPane.add(battleshipCheckBox, 0, 0);
-        gridPane.add(submitButton, 1, 0);
-        gridPane.add(goNextButton, 2, 0);
-        gridPane.add(resetButton, 3, 0);
-        gridPane.add(endChallengeButton, 4, 0);
+        gridPane.add(mainArmamentTypeLabel, 0, 0);
+        gridPane.add(mainArmamentTypeComboBox, 0, 1);
+        gridPane.add(submitButton, 1, 1);
+        gridPane.add(goNextButton, 2, 1);
+        gridPane.add(resetButton, 3, 1);
+        gridPane.add(endChallengeButton, 4, 1);
         mainGridRow++;
     }
 
@@ -101,6 +106,27 @@ public class BingoUserInterface extends Application {
         gridPane.add(tableView, 1, 0);
         gridPane.add(tableInputGrid, 2, 0);
         mainGridRow++;
+    }
+
+    private void setUpMainArmamentTypeComboBox() {
+        mainArmamentTypeComboBox.getItems().addAll(MainArmamentType.values());
+        mainArmamentTypeComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(MainArmamentType mainArmamentType) {
+                return mainArmamentType.getDisplayText();
+            }
+
+            @Override
+            public MainArmamentType fromString(String string) {
+                for (MainArmamentType mainArmamentType : MainArmamentType.values()) {
+                    if (mainArmamentType.getDisplayText().equals(string)) {
+                        return mainArmamentType;
+                    }
+                }
+                return MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS;
+            }
+        });
+        resetMainArmamentTypeToDefault();
     }
 
     private GridPane createGridPaneForTableInputFieldAndButtons() {
@@ -143,7 +169,7 @@ public class BingoUserInterface extends Application {
     }
 
     private void submitResult(InputEvent event) {
-        BingoResult bingoResult = new BingoResult(battleshipCheckBox.isSelected());
+        BingoResult bingoResult = new BingoResult(mainArmamentTypeComboBox.getValue());
         for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
             Ribbon ribbon = entry.getKey();
             String userInput = entry.getValue().getText();
@@ -176,7 +202,11 @@ public class BingoUserInterface extends Application {
 
     private void resetInputFields() {
         textFieldsByRibbon.values().forEach(this::clearInput);
-        battleshipCheckBox.setSelected(false);
+        resetMainArmamentTypeToDefault();
+    }
+
+    private void resetMainArmamentTypeToDefault() {
+        mainArmamentTypeComboBox.setValue(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
     }
 
     private void clearInput(TextField textField) {

@@ -33,12 +33,12 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 ## Point values per ribbon
 
 - Destroyed: 120 points
-- Main gun hit: 1 point (3x modifier for BB guns)
+- Main gun hit: 1 point (3 points for ships with gun caliber of 305mm+ as main armament)
 - Secondary hit: 1 point
 - Bomb hit: 3 points
 - Rocket hit: 3 points
 - Citadel hit: 30 points
-- Torpedo hit: 30 points
+- Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
 - Sonar ping: 1 point
 - Spotted: 5 points

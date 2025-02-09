@@ -3,6 +3,7 @@ package bingo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ribbons.Ribbon;
+import ships.MainArmamentType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +34,7 @@ class BingoGameTest {
 
     @Test
     void playerCanGoToNextLevelShouldReturnFalseWhenMaxLevelIsReached() {
-        BingoResult bingoResult = new BingoResult(false);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
         for (int level = 1; level < 8; level++) {
             bingoGame.submitBingoResult(bingoResult);
@@ -88,7 +89,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnLevelThreeNextWhenSubmittedResultIsSufficient() {
-        BingoResult bingoResult = new BingoResult(false);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 2);
@@ -100,7 +101,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnCongratulationsForLevelEightWhenSubmittedResultIsSufficient() {
-        BingoResult bingoResult = new BingoResult(false);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
         for (int level = 1; level < 9; level++) {
             bingoGame.submitBingoResult(bingoResult);
@@ -140,7 +141,7 @@ class BingoGameTest {
     }
 
     private BingoResult submitInsufficientBingoResultForLevelOne() {
-        BingoResult bingoResult = new BingoResult(false);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
         bingoGame.submitBingoResult(bingoResult);
@@ -148,7 +149,7 @@ class BingoGameTest {
     }
 
     private BingoResult submitSufficientBingoResultForLevelOne() {
-        BingoResult bingoResult = new BingoResult(false);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
         bingoGame.submitBingoResult(bingoResult);
