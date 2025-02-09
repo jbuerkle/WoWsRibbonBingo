@@ -41,7 +41,7 @@ public class BingoGame {
     }
 
     public void endChallenge() {
-        if (requirementOfCurrentResultBarIsMet()) {
+        if (playerCanGoToNextLevel()) {
             challengeEnded = true;
         }
     }
