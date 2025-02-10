@@ -21,8 +21,9 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 6. Once you start the challenge, every match counts. If you need an exception, you have to
    announce this **before starting the match**. However, you may be granted a chance to retry a level if:
     - The match was less than 12 minutes long, **and** you were alive at the end of the match, or:
-    - The player difference at the end of the match was 6 or more players, **and** you were one of the last 6 players
-      alive on your team.
+    - The player difference at the end of the match was 5 or more players, **and:**
+        - In case of a loss, you were one of the last 7 players alive on your team.
+        - In case of a win, you were alive at the end of the match.
 7. After each match played, your point result is calculated and compared to the result bar of the current level:
     - If your result meets the point requirement, you unlock the reward for the current level.
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
