@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public enum Ribbon {
     DESTROYED("Destroyed", 120),
@@ -48,15 +49,11 @@ public enum Ribbon {
     }
 
     private Optional<Integer> getPointValueOverride(MainArmamentType mainArmamentType) {
-        if (pointValueOverrideExistsForRibbon(this)) {
-            return POINT_VALUE_OVERRIDES.get(this)
-                    .stream()
-                    .filter(pointValueOverride -> pointValueOverride.mainArmamentType().equals(mainArmamentType))
-                    .map(PointValueOverride::pointValue)
-                    .findAny();
-        } else {
-            return Optional.empty();
-        }
+        return POINT_VALUE_OVERRIDES.get(this)
+                .stream()
+                .filter(pointValueOverride -> pointValueOverride.mainArmamentType().equals(mainArmamentType))
+                .map(PointValueOverride::pointValue)
+                .findAny();
     }
 
     @Override
@@ -68,21 +65,18 @@ public enum Ribbon {
         StringBuilder stringBuilder = new StringBuilder();
         for (Ribbon ribbon : Ribbon.values()) {
             stringBuilder.append("- ").append(ribbon.toString());
-            if (pointValueOverrideExistsForRibbon(ribbon)) {
-                String allPointValueOverridesForRibbon = POINT_VALUE_OVERRIDES.get(ribbon)
-                        .stream()
-                        .map(Ribbon::getPointValueOverrideAsString)
-                        .reduce((string1, string2) -> string1.concat(", ").concat(string2))
-                        .orElse("");
-                stringBuilder.append(" (").append(allPointValueOverridesForRibbon).append(")");
-            }
+            POINT_VALUE_OVERRIDES.get(ribbon)
+                    .stream()
+                    .map(Ribbon::getPointValueOverrideAsString)
+                    .reduce((overrideA, overrideB) -> overrideA.concat(", ").concat(overrideB))
+                    .ifPresent(appendInParenthesisTo(stringBuilder));
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }
 
-    private static boolean pointValueOverrideExistsForRibbon(Ribbon ribbon) {
-        return POINT_VALUE_OVERRIDES.containsKey(ribbon);
+    private static Consumer<String> appendInParenthesisTo(StringBuilder stringBuilder) {
+        return allOverridesForRibbon -> stringBuilder.append(" (").append(allOverridesForRibbon).append(")");
     }
 
     private static String getPointValueOverrideAsString(PointValueOverride pointValueOverride) {
@@ -97,6 +91,9 @@ public enum Ribbon {
 
     private static Map<Ribbon, Set<PointValueOverride>> setUpOverrides() {
         Map<Ribbon, Set<PointValueOverride>> pointValueOverrides = new HashMap<>();
+        for (Ribbon ribbon : Ribbon.values()) {
+            pointValueOverrides.put(ribbon, Set.of());
+        }
         pointValueOverrides.put(MAIN_GUN_HIT, Set.of(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3)));
         pointValueOverrides.put(TORPEDO_HIT, Set.of(new PointValueOverride(MainArmamentType.AIRCRAFT, 15)));
         return pointValueOverrides;
