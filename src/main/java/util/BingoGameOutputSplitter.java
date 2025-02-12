@@ -15,7 +15,8 @@ public class BingoGameOutputSplitter {
         while (lastIndexOfPlusSign > CHAT_MESSAGE_MAX_LENGTH) {
             lastIndexOfPlusSign = bingoGameOutput.lastIndexOf('+', lastIndexOfPlusSign - 1);
         }
-        return splitFirstPart(lastIndexOfPlusSign, bingoGameOutput) + process(splitRest(lastIndexOfPlusSign, bingoGameOutput));
+        return splitFirstPart(lastIndexOfPlusSign, bingoGameOutput) +
+                process(splitRest(lastIndexOfPlusSign, bingoGameOutput));
     }
 
     private String splitAt(int index, String bingoGameOutput) {

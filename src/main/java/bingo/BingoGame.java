@@ -51,7 +51,8 @@ public class BingoGame {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResult.isPresent() && bingoResult.get().getPointResult() >= getPointRequirementOfLevel(currentLevel);
+        return bingoResult.isPresent() &&
+                bingoResult.get().getPointResult() >= getPointRequirementOfLevel(currentLevel);
     }
 
     private int getPointRequirementOfLevel(int level) {
@@ -75,12 +76,11 @@ public class BingoGame {
         stringBuilder.append("| Level | Points required | Number of subs as reward: 2^(Level-1) |\n");
         stringBuilder.append("|---|---:|---:|\n");
         for (ResultBar resultBar : resultBars) {
-            stringBuilder.append("| %s | %s | 2^%s = %s |\n"
-                    .formatted(
-                            resultBar.level(),
-                            resultBar.getPointRequirement(),
-                            resultBar.level() - 1,
-                            resultBar.getNumberOfSubsAsString()));
+            stringBuilder.append("| %s | %s | 2^%s = %s |\n".formatted(
+                    resultBar.level(),
+                    resultBar.getPointRequirement(),
+                    resultBar.level() - 1,
+                    resultBar.getNumberOfSubsAsString()));
         }
         return stringBuilder.toString();
     }
@@ -89,22 +89,27 @@ public class BingoGame {
     public String toString() {
         if (challengeEnded) {
             return "Challenge ended voluntarily on level %s. Your reward: %s".formatted(
-                    currentLevel, getNumberOfSubsAsStringForLevel(currentLevel));
+                    currentLevel,
+                    getNumberOfSubsAsStringForLevel(
+                            currentLevel));
         }
         StringBuilder stringBuilder = new StringBuilder();
         bingoResult.ifPresent(result -> stringBuilder.append(result).append(". "));
         stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
         if (requirementOfCurrentResultBarIsMet()) {
-            stringBuilder.append(", which means your result meets the point requirement, and you unlocked the reward for the current level: ");
+            stringBuilder.append(
+                    ", which means your result meets the point requirement, and you unlocked the reward for the current level: ");
             stringBuilder.append(getNumberOfSubsAsStringForLevel(currentLevel));
             if (hasNextLevel()) {
-                stringBuilder.append(". You can now choose to end the challenge and receive your reward, or continue to the next level. ");
+                stringBuilder.append(
+                        ". You can now choose to end the challenge and receive your reward, or continue to the next level. ");
                 stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
             } else {
                 stringBuilder.append(". This is the highest reward you can get. Congratulations!");
             }
         } else if (bingoResult.isPresent()) {
-            stringBuilder.append(", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.");
+            stringBuilder.append(
+                    ", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.");
         }
         return stringBuilder.toString();
     }

@@ -179,7 +179,8 @@ public class BingoUserInterface extends Application {
                     bingoResult.addRibbonResult(ribbon, amount);
                 } catch (NumberFormatException e) {
                     textArea.setText("Input field for ribbon '%s' does not contain an integer: %s".formatted(
-                            ribbon.getDisplayText(), userInput));
+                            ribbon.getDisplayText(),
+                            userInput));
                     return;
                 }
             }

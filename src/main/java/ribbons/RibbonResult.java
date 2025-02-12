@@ -16,7 +16,9 @@ public record RibbonResult(Ribbon ribbon, int amount) {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
         RibbonResult that = (RibbonResult) object;
         return ribbon == that.ribbon;
     }
