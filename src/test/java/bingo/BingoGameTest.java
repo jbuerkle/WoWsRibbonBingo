@@ -77,7 +77,10 @@ class BingoGameTest {
     @Test
     void toStringMethodShouldReturnLevelTwoNextWhenSubmittedResultIsSufficient() {
         BingoResult bingoResult = submitSufficientBingoResultForLevelOne();
-        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 1 sub. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 400 points", bingoGame.toString());
+        assertEquals(
+                bingoResult +
+                        ". Requirement of level 1: 200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 1 sub. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 400 points",
+                bingoGame.toString());
     }
 
     @Test
@@ -96,7 +99,10 @@ class BingoGameTest {
         bingoGame.submitBingoResult(bingoResult);
         bingoGame.goToNextLevel();
         bingoGame.submitBingoResult(bingoResult);
-        assertEquals(bingoResult + ". Requirement of level 2: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 550 points", bingoGame.toString());
+        assertEquals(
+                bingoResult +
+                        ". Requirement of level 2: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 550 points",
+                bingoGame.toString());
     }
 
     @Test
@@ -107,7 +113,10 @@ class BingoGameTest {
             bingoGame.submitBingoResult(bingoResult);
             bingoGame.goToNextLevel();
         }
-        assertEquals(bingoResult + ". Requirement of level 8: 1200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations!", bingoGame.toString());
+        assertEquals(
+                bingoResult +
+                        ". Requirement of level 8: 1200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations!",
+                bingoGame.toString());
     }
 
     @Test
@@ -157,7 +166,10 @@ class BingoGameTest {
     }
 
     private void assertToStringMethodReturnsGameOverForLevelOne(BingoResult bingoResult) {
-        assertEquals(bingoResult + ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.", bingoGame.toString());
+        assertEquals(
+                bingoResult +
+                        ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.",
+                bingoGame.toString());
     }
 
     private void assertToStringMethodReturnsSecondResultBar() {
