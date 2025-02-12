@@ -3,10 +3,7 @@ package ribbons;
 import ribbons.overrides.PointValueOverride;
 import ships.MainArmamentType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public enum Ribbon {
@@ -92,10 +89,10 @@ public enum Ribbon {
     private static Map<Ribbon, Set<PointValueOverride>> setUpOverrides() {
         Map<Ribbon, Set<PointValueOverride>> pointValueOverrides = new HashMap<>();
         for (Ribbon ribbon : Ribbon.values()) {
-            pointValueOverrides.put(ribbon, Set.of());
+            pointValueOverrides.put(ribbon, new LinkedHashSet<>());
         }
-        pointValueOverrides.put(MAIN_GUN_HIT, Set.of(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3)));
-        pointValueOverrides.put(TORPEDO_HIT, Set.of(new PointValueOverride(MainArmamentType.AIRCRAFT, 15)));
+        pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3));
+        pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
         return pointValueOverrides;
     }
 }
