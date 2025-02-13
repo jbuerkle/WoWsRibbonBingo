@@ -54,7 +54,7 @@ public class BingoUserInterface extends Application {
         setUpGridWithFiveInputFieldsPerRow();
         setUpGridWithComboBoxAndButtons();
         setUpGridWithLargeTextAreaAndTableView();
-        resetInputFields();
+        resetInputFieldsAndBingoGame();
     }
 
     private void setUpGridWithFiveInputFieldsPerRow() {
@@ -80,7 +80,7 @@ public class BingoUserInterface extends Application {
         Button endChallengeButton = new Button("End challenge");
         setEventHandlers(submitButton, this::submitResult);
         setEventHandlers(goNextButton, this::goToNextLevel);
-        setEventHandlers(resetButton, this::resetInputFields);
+        setEventHandlers(resetButton, this::resetInputFieldsAndBingoGame);
         setEventHandlers(endChallengeButton, this::endChallenge);
         setUpMainArmamentTypeComboBox();
         GridPane gridPane = createNewGridPane();
@@ -99,7 +99,6 @@ public class BingoUserInterface extends Application {
         shipNameColumn.setCellValueFactory(ship -> ship.getValue().nameProperty());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tableView.getColumns().add(shipNameColumn);
-        setTextInTextArea();
         GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
         GridPane gridPane = createNewGridPane();
         gridPane.add(textArea, 0, 0);
@@ -192,18 +191,19 @@ public class BingoUserInterface extends Application {
     private void goToNextLevel(InputEvent event) {
         if (bingoGame.playerCanGoToNextLevel()) {
             bingoGame.goToNextLevel();
-            resetInputFields();
-            setTextInTextArea();
+            resetInputFieldsAndBingoGame();
         }
     }
 
-    private void resetInputFields(InputEvent event) {
-        resetInputFields();
+    private void resetInputFieldsAndBingoGame(InputEvent event) {
+        resetInputFieldsAndBingoGame();
     }
 
-    private void resetInputFields() {
+    private void resetInputFieldsAndBingoGame() {
         textFieldsByRibbon.values().forEach(this::clearInput);
         resetMainArmamentTypeToDefault();
+        bingoGame.doResetForCurrentLevel();
+        setTextInTextArea();
     }
 
     private void resetMainArmamentTypeToDefault() {

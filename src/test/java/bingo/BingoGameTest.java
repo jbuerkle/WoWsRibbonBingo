@@ -65,7 +65,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnFirstResultBarWhenNoResultWasSubmitted() {
-        assertEquals("Requirement of level 1: 200 points", bingoGame.toString());
+        assertToStringMethodReturnsFirstResultBar();
     }
 
     @Test
@@ -149,6 +149,21 @@ class BingoGameTest {
         assertToStringMethodReturnsSecondResultBar();
     }
 
+    @Test
+    void doResetForCurrentLevelShouldResetChallengeEndedFlag() {
+        submitSufficientBingoResultForLevelOne();
+        bingoGame.endChallenge();
+        bingoGame.doResetForCurrentLevel();
+        assertToStringMethodReturnsFirstResultBar();
+    }
+
+    @Test
+    void doResetForCurrentLevelShouldRemovePreviouslySubmittedResult() {
+        submitSufficientBingoResultForLevelOne();
+        bingoGame.doResetForCurrentLevel();
+        assertToStringMethodReturnsFirstResultBar();
+    }
+
     private BingoResult submitInsufficientBingoResultForLevelOne() {
         BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
@@ -170,6 +185,10 @@ class BingoGameTest {
                 bingoResult +
                         ". Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.",
                 bingoGame.toString());
+    }
+
+    private void assertToStringMethodReturnsFirstResultBar() {
+        assertEquals("Requirement of level 1: 200 points", bingoGame.toString());
     }
 
     private void assertToStringMethodReturnsSecondResultBar() {

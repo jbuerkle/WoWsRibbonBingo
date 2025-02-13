@@ -18,13 +18,21 @@ public class BingoGame {
         for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
             resultBars.add(new ResultBar(level));
         }
-        this.bingoResult = Optional.empty();
         this.currentLevel = START_LEVEL;
-        resetChallengeEndedFlag();
+        doResetForCurrentLevel();
     }
 
     private void resetChallengeEndedFlag() {
         challengeEnded = false;
+    }
+
+    private void resetBingoResult() {
+        bingoResult = Optional.empty();
+    }
+
+    public void doResetForCurrentLevel() {
+        resetChallengeEndedFlag();
+        resetBingoResult();
     }
 
     public void submitBingoResult(BingoResult bingoResult) {
@@ -34,8 +42,7 @@ public class BingoGame {
 
     public void goToNextLevel() {
         if (playerCanGoToNextLevel()) {
-            bingoResult = Optional.empty();
-            resetChallengeEndedFlag();
+            doResetForCurrentLevel();
             currentLevel++;
         }
     }
