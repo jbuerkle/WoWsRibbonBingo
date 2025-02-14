@@ -53,12 +53,12 @@ class BingoGameTest {
                 |---|---:|---:|
                 | 1 | 200 | 2^0 = 1 sub |
                 | 2 | 400 | 2^1 = 2 subs |
-                | 3 | 550 | 2^2 = 4 subs |
-                | 4 | 700 | 2^3 = 8 subs |
-                | 5 | 850 | 2^4 = 16 subs |
-                | 6 | 1000 | 2^5 = 32 subs |
-                | 7 | 1100 | 2^6 = 64 subs |
-                | 8 | 1200 | 2^7 = 128 subs |
+                | 3 | 600 | 2^2 = 4 subs |
+                | 4 | 800 | 2^3 = 8 subs |
+                | 5 | 950 | 2^4 = 16 subs |
+                | 6 | 1100 | 2^5 = 32 subs |
+                | 7 | 1250 | 2^6 = 64 subs |
+                | 8 | 1400 | 2^7 = 128 subs |
                 """;
         assertEquals(expectedString, bingoGame.getAllResultBarsAndRewardsInTableFormat());
     }
@@ -101,7 +101,7 @@ class BingoGameTest {
         bingoGame.submitBingoResult(bingoResult);
         assertEquals(
                 bingoResult +
-                        ". Requirement of level 2: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 550 points",
+                        ". Requirement of level 2: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 600 points",
                 bingoGame.toString());
     }
 
@@ -115,7 +115,7 @@ class BingoGameTest {
         }
         assertEquals(
                 bingoResult +
-                        ". Requirement of level 8: 1200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations!",
+                        ". Requirement of level 8: 1400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations!",
                 bingoGame.toString());
     }
 

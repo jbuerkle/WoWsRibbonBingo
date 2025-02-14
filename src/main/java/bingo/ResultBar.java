@@ -8,9 +8,7 @@ public record ResultBar(int level) {
 
     private int getPointRequirement(int currentLevel) {
         final int pointRequirementForCurrentLevel;
-        if (currentLevel > 6) {
-            pointRequirementForCurrentLevel = 100;
-        } else if (currentLevel > 2) {
+        if (currentLevel > 4) {
             pointRequirementForCurrentLevel = 150;
         } else if (currentLevel > 0) {
             pointRequirementForCurrentLevel = 200;

@@ -10,20 +10,16 @@ class ResultBarTest {
     void getPointRequirementShouldReturnTwoHundredPointsForEachLevel() {
         assertEquals(200, new ResultBar(1).getPointRequirement());
         assertEquals(400, new ResultBar(2).getPointRequirement());
+        assertEquals(600, new ResultBar(3).getPointRequirement());
+        assertEquals(800, new ResultBar(4).getPointRequirement());
     }
 
     @Test
     void getPointRequirementShouldReturnOneHundredAndFiftyPointsForEachLevel() {
-        assertEquals(550, new ResultBar(3).getPointRequirement());
-        assertEquals(700, new ResultBar(4).getPointRequirement());
-        assertEquals(850, new ResultBar(5).getPointRequirement());
-        assertEquals(1000, new ResultBar(6).getPointRequirement());
-    }
-
-    @Test
-    void getPointRequirementShouldReturnOneHundredPointsForEachLevel() {
-        assertEquals(1100, new ResultBar(7).getPointRequirement());
-        assertEquals(1200, new ResultBar(8).getPointRequirement());
+        assertEquals(950, new ResultBar(5).getPointRequirement());
+        assertEquals(1100, new ResultBar(6).getPointRequirement());
+        assertEquals(1250, new ResultBar(7).getPointRequirement());
+        assertEquals(1400, new ResultBar(8).getPointRequirement());
     }
 
     @Test
