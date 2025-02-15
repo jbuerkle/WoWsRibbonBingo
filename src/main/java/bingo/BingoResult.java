@@ -1,7 +1,12 @@
 package bingo;
 
+import achievements.Achievement;
+import achievements.AchievementResult;
+import achievements.WeightedAchievementResult;
+import bingo.points.WeightedPointResult;
 import ribbons.Ribbon;
 import ribbons.RibbonResult;
+import ribbons.WeightedRibbonResult;
 import ships.MainArmamentType;
 
 import java.util.Comparator;
@@ -12,34 +17,45 @@ import java.util.Set;
 public class BingoResult {
     private final MainArmamentType mainArmamentType;
     private final Set<RibbonResult> ribbonResultSet;
+    private final Set<AchievementResult> achievementResultSet;
 
     public BingoResult(MainArmamentType mainArmamentType) {
         this.mainArmamentType = mainArmamentType;
         this.ribbonResultSet = new HashSet<>();
+        this.achievementResultSet = new HashSet<>();
     }
 
     public void addRibbonResult(Ribbon ribbon, int amount) {
         RibbonResult ribbonResult = new RibbonResult(ribbon, amount);
+        addResult(ribbonResult, amount, ribbonResultSet);
+    }
+
+    public void addAchievementResult(Achievement achievement, int amount) {
+        AchievementResult achievementResult = new AchievementResult(achievement, amount);
+        addResult(achievementResult, amount, achievementResultSet);
+    }
+
+    private <T> void addResult(T result, int amount, Set<T> resultSet) {
         if (amount > 0) {
-            ribbonResultSet.add(ribbonResult);
+            resultSet.add(result);
         } else {
-            ribbonResultSet.remove(ribbonResult);
+            resultSet.remove(result);
         }
     }
 
     public int getPointResult() {
-        return ribbonResultSet.stream().map(this::getPointValue).reduce(Integer::sum).orElse(0);
+        return getCombinedResultSet().stream().map(WeightedPointResult::getPointValue).reduce(Integer::sum).orElse(0);
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("Ribbon Bingo result: ");
         int resultsAdded = 0;
-        for (RibbonResult ribbonResult : getSortedRibbonResultSet()) {
+        for (WeightedPointResult weightedPointResult : getWeightedResultListSortedByPoints()) {
             if (resultsAdded > 0) {
                 stringBuilder.append(" + ");
             }
-            stringBuilder.append(ribbonResult.getAsString(mainArmamentType));
+            stringBuilder.append(weightedPointResult.getAsString());
             resultsAdded++;
         }
         if (resultsAdded > 0) {
@@ -49,11 +65,24 @@ public class BingoResult {
         return stringBuilder.toString();
     }
 
-    private List<RibbonResult> getSortedRibbonResultSet() {
-        return ribbonResultSet.stream().sorted(Comparator.comparingInt(this::getPointValue)).toList().reversed();
+    private List<WeightedPointResult> getWeightedResultListSortedByPoints() {
+        return getCombinedResultSet().stream()
+                .sorted(Comparator.comparingInt(WeightedPointResult::getPointValue))
+                .toList()
+                .reversed();
     }
 
-    private int getPointValue(RibbonResult ribbonResult) {
-        return ribbonResult.getPointValue(mainArmamentType);
+    private Set<WeightedPointResult> getCombinedResultSet() {
+        Set<WeightedPointResult> combinedResultSet = new HashSet<>();
+        ribbonResultSet.stream()
+                .map(ribbonResult -> new WeightedRibbonResult(ribbonResult, mainArmamentType))
+                .forEach(combinedResultSet::add);
+        achievementResultSet.stream()
+                .map(achievementResult -> new WeightedAchievementResult(
+                        achievementResult,
+                        mainArmamentType,
+                        ribbonResultSet))
+                .forEach(combinedResultSet::add);
+        return combinedResultSet;
     }
 }

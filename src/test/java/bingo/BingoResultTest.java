@@ -1,5 +1,6 @@
 package bingo;
 
+import achievements.Achievement;
 import org.junit.jupiter.api.Test;
 import ribbons.Ribbon;
 import ships.MainArmamentType;
@@ -38,6 +39,15 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
         result.addRibbonResult(Ribbon.CAUSED_FLOODING, 1);
         assertEquals(190, result.getPointResult());
+    }
+
+    @Test
+    void getPointResultShouldReturnEightHundredPoints() {
+        BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        result.addRibbonResult(Ribbon.DESTROYED, 5);
+        result.addAchievementResult(Achievement.KRAKEN_UNLEASHED, 1);
+        result.addAchievementResult(Achievement.DEVASTATING_STRIKE, 2);
+        assertEquals(800, result.getPointResult());
     }
 
     @Test
@@ -83,6 +93,20 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
         assertEquals(
                 "Ribbon Bingo result: Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points + Main gun hit: 110 * 1 points + Secondary hit: 30 * 1 points = 480 points",
+                result.toString());
+    }
+
+    @Test
+    void toStringMethodShouldReturnCorrectDisplayTextForFourRibbonResultsAndTwoAchievementResults() {
+        BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 1);
+        result.addAchievementResult(Achievement.FIRST_BLOOD, 1);
+        result.addRibbonResult(Ribbon.MAIN_GUN_HIT, 110);
+        result.addRibbonResult(Ribbon.SECONDARY_HIT, 30);
+        result.addRibbonResult(Ribbon.BOMB_HIT, 40);
+        result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
+        assertEquals(
+                "Ribbon Bingo result: Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points + Main gun hit: 110 * 1 points + First Blood: 50 points + Secondary hit: 30 * 1 points + Close Quarters Expert: 25 points = 555 points",
                 result.toString());
     }
 
