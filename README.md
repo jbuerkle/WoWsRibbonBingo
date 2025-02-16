@@ -53,6 +53,30 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Defended: 10 points
 - Buff picked up: 40 points
 
+## Point values per achievement
+
+- Arsonist: 20 points + 10% bonus points for all 'Set on fire' ribbons
+- AA Defense Expert: 5 points + 40% bonus points for all 'Aircraft shot down' ribbons + 40% bonus points for all 'Shot
+  down by fighter' ribbons
+- Close Quarters Expert: 25 points
+- Devastating Strike: 50 points
+- Double Strike: 75 points
+- Die-Hard: 50 points
+- First Blood: 50 points
+- It's Just a Flesh Wound: 50 points
+- Fireproof: 50 points
+- Unsinkable: 50 points
+- Dreadnought: 50 points
+- Combat Scout: 90 points + 40% bonus points for all 'Spotted' ribbons
+- Confederate: 100 points
+- High Caliber: 100 points
+- Kraken Unleashed: 100 points
+- Solo Warrior: 300 points
+- Witherer: 40 points + 20% bonus points for all 'Set on fire' ribbons + 10% bonus points for all 'Caused flooding'
+  ribbons
+
+Note: Bonus points for the same ribbon stack additively, **not** multiplicatively.
+
 ## Result bars and their respective rewards
 
 | Level | Points required | Number of subs as reward: 2^(Level-1) |
