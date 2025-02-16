@@ -15,9 +15,9 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 1. You have to start the challenge on level 1.
 2. You cannot skip any levels, but you can choose to end the challenge early.
 3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice.
-4. You may invite **one** player into your division, but no more than that.
-5. You may use any selected ship only **once** per challenge. If you play together with another player in a division,
-   their ships are also included in this rule.
+4. You may invite any number of players into your division.
+5. If you play in a division, you and the players in your division may use every ship only **once** per challenge. Your
+   ship pool will be shared between players, rather than each player having their own ship pool.
 6. Once you start the challenge, every match counts. If you need an exception, you have to
    announce this **before starting the match**. However, you may be granted a chance to retry a level if:
     - The match was less than 12 minutes long, **and** you were alive at the end of the match, or:
