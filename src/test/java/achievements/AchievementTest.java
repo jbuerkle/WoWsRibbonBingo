@@ -60,10 +60,10 @@ class AchievementTest {
         Iterator<PointValueModifier> iterator = antiAirDefenseExpertModifiers.iterator();
         PointValueModifier aircraftShotDownModifier = iterator.next();
         assertEquals(Ribbon.AIRCRAFT_SHOT_DOWN, aircraftShotDownModifier.ribbon());
-        assertEquals(0.4, aircraftShotDownModifier.bonusModifier());
+        assertEquals(0.2, aircraftShotDownModifier.bonusModifier());
         PointValueModifier shotDownByFighterModifier = iterator.next();
         assertEquals(Ribbon.SHOT_DOWN_BY_FIGHTER, shotDownByFighterModifier.ribbon());
-        assertEquals(0.4, shotDownByFighterModifier.bonusModifier());
+        assertEquals(0.2, shotDownByFighterModifier.bonusModifier());
     }
 
     @Test
@@ -83,7 +83,7 @@ class AchievementTest {
     void getAllAchievementsListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Arsonist: 20 points + 10% bonus points for all 'Set on fire' ribbons
-                - AA Defense Expert: 5 points + 40% bonus points for all 'Aircraft shot down' ribbons + 40% bonus points for all 'Shot down by fighter' ribbons
+                - AA Defense Expert: 5 points + 20% bonus points for all 'Aircraft shot down' ribbons + 20% bonus points for all 'Shot down by fighter' ribbons
                 - Close Quarters Expert: 25 points
                 - Devastating Strike: 50 points
                 - Double Strike: 75 points

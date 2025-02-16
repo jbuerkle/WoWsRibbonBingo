@@ -47,8 +47,8 @@ class RibbonTest {
                 - Incapacitation: 10 points
                 - Set on fire: 20 points
                 - Caused flooding: 40 points
-                - Aircraft shot down: 5 points
-                - Shot down by fighter: 5 points
+                - Aircraft shot down: 10 points
+                - Shot down by fighter: 10 points
                 - Captured: 60 points
                 - Assisted in capture: 30 points
                 - Defended: 10 points

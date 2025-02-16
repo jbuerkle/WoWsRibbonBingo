@@ -78,8 +78,8 @@ public enum Achievement {
             pointValueModifiers.put(achievement, new LinkedHashSet<>());
         }
         pointValueModifiers.get(ARSONIST).add(new PointValueModifier(Ribbon.SET_ON_FIRE, 0.1));
-        pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.AIRCRAFT_SHOT_DOWN, 0.4));
-        pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.SHOT_DOWN_BY_FIGHTER, 0.4));
+        pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.AIRCRAFT_SHOT_DOWN, 0.2));
+        pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.SHOT_DOWN_BY_FIGHTER, 0.2));
         pointValueModifiers.get(COMBAT_SCOUT).add(new PointValueModifier(Ribbon.SPOTTED, 0.4));
         pointValueModifiers.get(WITHERER).add(new PointValueModifier(Ribbon.SET_ON_FIRE, 0.2));
         pointValueModifiers.get(WITHERER).add(new PointValueModifier(Ribbon.CAUSED_FLOODING, 0.1));
