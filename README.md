@@ -46,8 +46,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Incapacitation: 10 points
 - Set on fire: 20 points
 - Caused flooding: 40 points
-- Aircraft shot down: 5 points
-- Shot down by fighter: 5 points
+- Aircraft shot down: 10 points
+- Shot down by fighter: 10 points
 - Captured: 60 points
 - Assisted in capture: 30 points
 - Defended: 10 points
@@ -56,7 +56,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 ## Point values per achievement
 
 - Arsonist: 20 points + 10% bonus points for all 'Set on fire' ribbons
-- AA Defense Expert: 5 points + 40% bonus points for all 'Aircraft shot down' ribbons + 40% bonus points for all 'Shot
+- AA Defense Expert: 5 points + 20% bonus points for all 'Aircraft shot down' ribbons + 20% bonus points for all 'Shot
   down by fighter' ribbons
 - Close Quarters Expert: 25 points
 - Devastating Strike: 50 points
