@@ -1,5 +1,7 @@
 package application.gui;
 
+import achievements.Achievement;
+import application.gui.input.UserInputException;
 import bingo.BingoGame;
 import bingo.BingoResult;
 import javafx.application.Application;
@@ -24,12 +26,14 @@ import util.BingoGameOutputSplitter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
+    private final Map<Achievement, TextField> textFieldsByAchievement;
     private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
@@ -43,6 +47,7 @@ public class BingoUserInterface extends Application {
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.textFieldsByRibbon = new HashMap<>();
+        this.textFieldsByAchievement = new HashMap<>();
         this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.tableView = new TableView<>(shipsUsed);
         this.shipNameColumn = new TableColumn<>("Ships used");
@@ -50,23 +55,31 @@ public class BingoUserInterface extends Application {
         this.bingoGame = new BingoGame();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
+        this.mainGrid.setPadding(new Insets(5));
         this.mainGridRow = 0;
-        setUpGridWithFiveInputFieldsPerRow();
+        setUpGridWithSevenInputFieldsPerRow();
         setUpGridWithComboBoxAndButtons();
         setUpGridWithLargeTextAreaAndTableView();
         resetInputFieldsAndBingoGame();
     }
 
-    private void setUpGridWithFiveInputFieldsPerRow() {
+    private void setUpGridWithSevenInputFieldsPerRow() {
+        setUpGridWithSevenInputFieldsPerRow(Ribbon.values(), Ribbon::getDisplayText, textFieldsByRibbon);
+        setUpGridWithSevenInputFieldsPerRow(Achievement.values(), Achievement::getDisplayText, textFieldsByAchievement);
+    }
+
+    private <T> void setUpGridWithSevenInputFieldsPerRow(
+            T[] obtainableValues, Function<T, String> displayTextGetter, Map<T, TextField> textFieldsByObtainable) {
         GridPane gridPane = createNewGridPane();
         int column = 0;
-        for (Ribbon ribbon : Ribbon.values()) {
-            if (column > 4) {
+        for (T obtainable : obtainableValues) {
+            if (column > 6) {
                 mainGridRow++;
                 gridPane = createNewGridPane();
                 column = 0;
             }
-            createInputFieldForRibbon(ribbon, gridPane, column);
+            TextField textField = createInputFieldWithLabel(displayTextGetter.apply(obtainable), gridPane, column);
+            textFieldsByObtainable.put(obtainable, textField);
             column++;
         }
         mainGridRow++;
@@ -153,39 +166,53 @@ public class BingoUserInterface extends Application {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.setHgap(40);
-        gridPane.setPadding(new Insets(15));
+        gridPane.setPadding(new Insets(10));
         mainGrid.add(gridPane, 0, mainGridRow);
         return gridPane;
     }
 
-    private void createInputFieldForRibbon(Ribbon ribbon, GridPane gridPane, int column) {
-        Label label = new Label(ribbon.getDisplayText());
+    private TextField createInputFieldWithLabel(String displayText, GridPane gridPane, int column) {
+        Label label = new Label(displayText);
         TextField textField = new TextField();
         gridPane.add(label, column, 0);
         gridPane.add(textField, column, 1);
         gridPane.getColumnConstraints().add(new ColumnConstraints());
-        textFieldsByRibbon.put(ribbon, textField);
+        return textField;
     }
 
     private void submitResult(InputEvent event) {
         BingoResult bingoResult = new BingoResult(mainArmamentTypeComboBox.getValue());
-        for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
-            Ribbon ribbon = entry.getKey();
-            String userInput = entry.getValue().getText();
-            if (!userInput.isBlank()) {
-                try {
-                    int amount = Integer.parseInt(userInput);
-                    bingoResult.addRibbonResult(ribbon, amount);
-                } catch (NumberFormatException e) {
-                    textArea.setText("Input field for ribbon '%s' does not contain an integer: %s".formatted(
-                            ribbon.getDisplayText(),
-                            userInput));
-                    return;
-                }
+        try {
+            for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
+                Ribbon ribbon = entry.getKey();
+                int amount = getAmountFromUserInput(entry.getValue(), ribbon.getDisplayText());
+                bingoResult.addRibbonResult(ribbon, amount);
+            }
+            for (Map.Entry<Achievement, TextField> entry : textFieldsByAchievement.entrySet()) {
+                Achievement achievement = entry.getKey();
+                int amount = getAmountFromUserInput(entry.getValue(), achievement.getDisplayText());
+                bingoResult.addAchievementResult(achievement, amount);
+            }
+            bingoGame.submitBingoResult(bingoResult);
+            setTextInTextArea();
+        } catch (UserInputException exception) {
+            textArea.setText(exception.getMessage());
+        }
+    }
+
+    private int getAmountFromUserInput(TextField textField, String displayText) throws UserInputException {
+        String trimmedUserInput = textField.getText().trim();
+        if (trimmedUserInput.isBlank()) {
+            return 0;
+        } else {
+            try {
+                return Integer.parseInt(trimmedUserInput);
+            } catch (NumberFormatException exception) {
+                String message =
+                        "Input field for '%s' does not contain an integer: %s".formatted(displayText, trimmedUserInput);
+                throw new UserInputException(message, exception);
             }
         }
-        bingoGame.submitBingoResult(bingoResult);
-        setTextInTextArea();
     }
 
     private void goToNextLevel(InputEvent event) {
@@ -201,6 +228,7 @@ public class BingoUserInterface extends Application {
 
     private void resetInputFieldsAndBingoGame() {
         textFieldsByRibbon.values().forEach(this::clearInput);
+        textFieldsByAchievement.values().forEach(this::clearInput);
         resetMainArmamentTypeToDefault();
         bingoGame.doResetForCurrentLevel();
         setTextInTextArea();
