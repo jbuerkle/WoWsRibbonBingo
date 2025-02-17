@@ -20,7 +20,7 @@ public enum Achievement {
     FIREPROOF("Fireproof", 50),
     UNSINKABLE("Unsinkable", 50),
     DREADNOUGHT("Dreadnought", 50),
-    COMBAT_SCOUT("Combat Scout", 90),
+    COMBAT_SCOUT("Combat Scout", 70),
     CONFEDERATE("Confederate", 100),
     HIGH_CALIBER("High Caliber", 100),
     KRAKEN_UNLEASHED("Kraken Unleashed", 100),
@@ -80,7 +80,7 @@ public enum Achievement {
         pointValueModifiers.get(ARSONIST).add(new PointValueModifier(Ribbon.SET_ON_FIRE, 0.1));
         pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.AIRCRAFT_SHOT_DOWN, 0.2));
         pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.SHOT_DOWN_BY_FIGHTER, 0.2));
-        pointValueModifiers.get(COMBAT_SCOUT).add(new PointValueModifier(Ribbon.SPOTTED, 0.4));
+        pointValueModifiers.get(COMBAT_SCOUT).add(new PointValueModifier(Ribbon.SPOTTED, 0.6));
         pointValueModifiers.get(WITHERER).add(new PointValueModifier(Ribbon.SET_ON_FIRE, 0.2));
         pointValueModifiers.get(WITHERER).add(new PointValueModifier(Ribbon.CAUSED_FLOODING, 0.1));
         return pointValueModifiers;

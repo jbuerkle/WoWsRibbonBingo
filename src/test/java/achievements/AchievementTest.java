@@ -50,7 +50,7 @@ class AchievementTest {
         assertEquals(1, combatScoutModifiers.size());
         PointValueModifier spottedModifier = combatScoutModifiers.iterator().next();
         assertEquals(Ribbon.SPOTTED, spottedModifier.ribbon());
-        assertEquals(0.4, spottedModifier.bonusModifier());
+        assertEquals(0.6, spottedModifier.bonusModifier());
     }
 
     @Test
@@ -93,7 +93,7 @@ class AchievementTest {
                 - Fireproof: 50 points
                 - Unsinkable: 50 points
                 - Dreadnought: 50 points
-                - Combat Scout: 90 points + 40% bonus points for all 'Spotted' ribbons
+                - Combat Scout: 70 points + 60% bonus points for all 'Spotted' ribbons
                 - Confederate: 100 points
                 - High Caliber: 100 points
                 - Kraken Unleashed: 100 points

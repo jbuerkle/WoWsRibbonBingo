@@ -16,7 +16,7 @@ public enum Ribbon {
     TORPEDO_HIT("Torpedo hit", 30),
     DEPTH_CHARGE_HIT("Depth charge hit", 10),
     SONAR_PING("Sonar ping", 1),
-    SPOTTED("Spotted", 5),
+    SPOTTED("Spotted", 10),
     INCAPACITATION("Incapacitation", 10),
     SET_ON_FIRE("Set on fire", 20),
     CAUSED_FLOODING("Caused flooding", 40),
@@ -93,6 +93,7 @@ public enum Ribbon {
         }
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3));
         pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
+        pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 5));
         return pointValueOverrides;
     }
 }

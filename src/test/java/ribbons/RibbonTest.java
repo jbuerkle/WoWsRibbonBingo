@@ -43,7 +43,7 @@ class RibbonTest {
                 - Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
                 - Depth charge hit: 10 points
                 - Sonar ping: 1 point
-                - Spotted: 5 points
+                - Spotted: 10 points (5 points for ships with aircraft as main armament)
                 - Incapacitation: 10 points
                 - Set on fire: 20 points
                 - Caused flooding: 40 points

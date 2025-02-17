@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BingoResultTest {
 
     @Test
-    void getPointResultShouldReturnTenPoints() {
+    void getPointResultShouldReturnTwentyPoints() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.SPOTTED, 2);
-        assertEquals(10, result.getPointResult());
+        assertEquals(20, result.getPointResult());
     }
 
     @Test
@@ -33,12 +33,12 @@ class BingoResultTest {
     }
 
     @Test
-    void getPointResultShouldReturnOneHundredAndFiftyPoints() {
+    void getPointResultShouldReturnTwoHundredAndTwentyPoints() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.SPOTTED, 6);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
         result.addRibbonResult(Ribbon.CAUSED_FLOODING, 1);
-        assertEquals(190, result.getPointResult());
+        assertEquals(220, result.getPointResult());
     }
 
     @Test
@@ -126,11 +126,11 @@ class BingoResultTest {
     void toStringMethodShouldReturnCorrectDisplayTextForFourRibbonResultsWithAircraftAsMainArmamentType() {
         BingoResult result = new BingoResult(MainArmamentType.AIRCRAFT);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 10);
-        result.addRibbonResult(Ribbon.SECONDARY_HIT, 30);
+        result.addRibbonResult(Ribbon.SPOTTED, 10);
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
         assertEquals(
-                "Ribbon Bingo result: Set on fire: 11 * 20 points + Torpedo hit: 10 * 15 points + Bomb hit: 40 * 3 points + Secondary hit: 30 * 1 points = 520 points",
+                "Ribbon Bingo result: Set on fire: 11 * 20 points + Torpedo hit: 10 * 15 points + Bomb hit: 40 * 3 points + Spotted: 10 * 5 points = 540 points",
                 result.toString());
     }
 }
