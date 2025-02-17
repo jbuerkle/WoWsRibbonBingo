@@ -42,7 +42,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
 - Sonar ping: 1 point
-- Spotted: 5 points
+- Spotted: 10 points (5 points for ships with aircraft as main armament)
 - Incapacitation: 10 points
 - Set on fire: 20 points
 - Caused flooding: 40 points
@@ -67,7 +67,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Fireproof: 50 points
 - Unsinkable: 50 points
 - Dreadnought: 50 points
-- Combat Scout: 90 points + 40% bonus points for all 'Spotted' ribbons
+- Combat Scout: 70 points + 60% bonus points for all 'Spotted' ribbons
 - Confederate: 100 points
 - High Caliber: 100 points
 - Kraken Unleashed: 100 points
