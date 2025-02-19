@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class BingoGame {
     private static final int START_LEVEL = 1;
-    private static final int MAX_LEVEL = 8;
+    private static final int MAX_LEVEL = 7;
 
     private final List<ResultBar> resultBars;
     private Optional<BingoResult> bingoResult;
@@ -15,7 +15,7 @@ public class BingoGame {
 
     public BingoGame() {
         this.resultBars = new LinkedList<>();
-        for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
+        for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
             resultBars.add(new ResultBar(level));
         }
         this.currentLevel = START_LEVEL;
@@ -63,7 +63,7 @@ public class BingoGame {
     }
 
     private int getPointRequirementOfLevel(int level) {
-        return resultBars.get(level - 1).getPointRequirement();
+        return resultBars.get(level).getPointRequirement();
     }
 
     private String getPointRequirementOfLevelAsString(int level) {
@@ -71,7 +71,7 @@ public class BingoGame {
     }
 
     private String getNumberOfSubsAsStringForLevel(int level) {
-        return resultBars.get(level - 1).getNumberOfSubsAsString();
+        return resultBars.get(level).getNumberOfSubsAsString();
     }
 
     private boolean hasNextLevel() {
@@ -80,13 +80,13 @@ public class BingoGame {
 
     public String getAllResultBarsAndRewardsInTableFormat() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("| Level | Points required | Number of subs as reward: 2^(Level-1) |\n");
+        stringBuilder.append("| Level | Points required | Number of subs as reward: 2^(Level) |\n");
         stringBuilder.append("|---|---:|---:|\n");
         for (ResultBar resultBar : resultBars) {
             stringBuilder.append("| %s | %s | 2^%s = %s |\n".formatted(
                     resultBar.level(),
                     resultBar.getPointRequirement(),
-                    resultBar.level() - 1,
+                    resultBar.level(),
                     resultBar.getNumberOfSubsAsString()));
         }
         return stringBuilder.toString();
@@ -116,7 +116,8 @@ public class BingoGame {
             }
         } else if (bingoResult.isPresent()) {
             stringBuilder.append(
-                    ", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.");
+                    ", which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards. Your reward for participating: ");
+            stringBuilder.append(getNumberOfSubsAsStringForLevel(0));
         }
         return stringBuilder.toString();
     }

@@ -8,10 +8,12 @@ public record ResultBar(int level) {
 
     private int getPointRequirement(int currentLevel) {
         final int pointRequirementForCurrentLevel;
-        if (currentLevel > 4) {
+        if (currentLevel > 3) {
             pointRequirementForCurrentLevel = 150;
-        } else if (currentLevel > 0) {
+        } else if (currentLevel > 1) {
             pointRequirementForCurrentLevel = 200;
+        } else if (currentLevel > 0) {
+            pointRequirementForCurrentLevel = 400;
         } else {
             return 0;
         }
@@ -19,7 +21,7 @@ public record ResultBar(int level) {
     }
 
     public int getNumberOfSubsAsReward() {
-        return (int) Math.pow(2, this.level - 1);
+        return (int) Math.pow(2, this.level);
     }
 
     public String getNumberOfSubsAsString() {
