@@ -33,11 +33,11 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
       ultimately at the discretion of the challenge's host.
     - 8d: You have an extra life.
 9. How to gain extra lives:
-    - You gain 2 tokens for every blowout match (rule 8a and 8b).
-    - You gain 1 token for every successful match (rule 7).
-    - 6 tokens are automatically converted to 1 extra life.
-    - Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it is
-      automatically consumed, and you keep any unlocked rewards (rule 8d).
+    - 9a: You gain 2 tokens for every match which applies to rule 8a or 8b.
+    - 9b: You gain 1 token for every successful match (rule 7). This rule stacks with rule 9a.
+    - 9c: 6 tokens are automatically converted to 1 extra life.
+    - 9d: Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it
+      is automatically consumed, and you keep any unlocked rewards (rule 8d).
 10. The challenge is "double or nothing" style. After every successful match, you can choose to either:
     - Go to the next level and attempt to double your current reward, or:
     - End the challenge and immediately receive your current reward.
