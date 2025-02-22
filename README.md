@@ -38,7 +38,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
     - 9c: 6 tokens are automatically converted to 1 extra life.
     - 9d: Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it
       is automatically consumed, and you keep any unlocked rewards (rule 8d).
-    - 9e: Unused extra lives are converted to 6 subs each at the end of the challenge. Unused tokens are not converted.
+    - 9e: You do not gain any tokens for completing the final level of the challenge.
+    - 9f: Unused extra lives are converted to 6 subs each at the end of the challenge. Unused tokens are not converted.
 10. The challenge is "double or nothing" style. After every successful match, you can choose to either:
     - Go to the next level and attempt to double your current reward, or:
     - End the challenge and immediately receive your current reward.
