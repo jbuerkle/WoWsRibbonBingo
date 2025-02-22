@@ -105,3 +105,9 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 
 The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
 higher reward.
+
+## Hall of Fame
+
+| Twitch streamer | Date played (dd.mm.yyyy) | Supporters     | Total reward |
+|-----------------|--------------------------|----------------|-------------:|
+| OverLordBou     | 21.02.2025               | Your_SAT_Score |     140 subs |
