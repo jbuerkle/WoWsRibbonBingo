@@ -51,7 +51,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>application.Launcher</mainClass>
+                                <mainClass>bingo.application.Launcher</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

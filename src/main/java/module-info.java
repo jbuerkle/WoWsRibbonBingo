@@ -2,5 +2,5 @@ module WoWsRibbonBingo {
     requires javafx.controls;
     requires javafx.graphics;
 
-    exports application.gui;
+    exports bingo.application.gui;
 }
