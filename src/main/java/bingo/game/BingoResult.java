@@ -9,10 +9,8 @@ import bingo.ribbons.RibbonResult;
 import bingo.ribbons.WeightedRibbonResult;
 import bingo.ships.MainArmamentType;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
 public class BingoResult {
     private final MainArmamentType mainArmamentType;
@@ -27,20 +25,26 @@ public class BingoResult {
 
     public void addRibbonResult(Ribbon ribbon, int amount) {
         RibbonResult ribbonResult = new RibbonResult(ribbon, amount);
-        addResult(ribbonResult, amount, ribbonResultSet);
+        addResult(ribbonResult, amount, ribbonResultSet, RibbonResult::ribbon);
     }
 
     public void addAchievementResult(Achievement achievement, int amount) {
         AchievementResult achievementResult = new AchievementResult(achievement, amount);
-        addResult(achievementResult, amount, achievementResultSet);
+        addResult(achievementResult, amount, achievementResultSet, AchievementResult::achievement);
     }
 
-    private <T> void addResult(T result, int amount, Set<T> resultSet) {
+    private <T, R> void addResult(T result, int amount, Set<T> resultSet, Function<T, R> keyGetter) {
+        removeExistingResultIfPresent(result, resultSet, keyGetter);
         if (amount > 0) {
             resultSet.add(result);
-        } else {
-            resultSet.remove(result);
         }
+    }
+
+    private <T, R> void removeExistingResultIfPresent(T result, Set<T> resultSet, Function<T, R> keyGetter) {
+        R key = keyGetter.apply(result);
+        Optional<T> matchingResult =
+                resultSet.stream().filter(existingResult -> keyGetter.apply(existingResult).equals(key)).findAny();
+        matchingResult.ifPresent(resultSet::remove);
     }
 
     public int getPointResult() {

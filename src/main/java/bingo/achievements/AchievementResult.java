@@ -4,7 +4,6 @@ import bingo.achievements.modifiers.PointValueModifier;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -66,19 +65,5 @@ public record AchievementResult(Achievement achievement, int amount) {
         return ribbonResultSet.stream()
                 .filter(ribbonResult -> pointValueModifier.ribbon().equals(ribbonResult.ribbon()))
                 .findAny();
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        AchievementResult that = (AchievementResult) object;
-        return achievement == that.achievement;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(achievement);
     }
 }

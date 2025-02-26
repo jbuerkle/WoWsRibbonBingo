@@ -4,7 +4,6 @@ import bingo.ships.MainArmamentType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class RibbonResultTest {
     private final RibbonResult resultA = new RibbonResult(Ribbon.SET_ON_FIRE, 11);
@@ -47,21 +46,5 @@ class RibbonResultTest {
         assertEquals("Main gun hit: 30 * 1 points", resultC.getAsString(MainArmamentType.AIRCRAFT));
         assertEquals("Secondary hit: 110 * 1 points", resultD.getAsString(MainArmamentType.AIRCRAFT));
         assertEquals("Torpedo hit: 5 * 15 points", resultE.getAsString(MainArmamentType.AIRCRAFT));
-    }
-
-    @Test
-    void resultShouldBeEqualWithSameRibbon() {
-        RibbonResult mainGunResultA = new RibbonResult(Ribbon.MAIN_GUN_HIT, 30);
-        RibbonResult mainGunResultB = new RibbonResult(Ribbon.MAIN_GUN_HIT, 110);
-        assertEquals(mainGunResultA, mainGunResultB);
-        assertEquals(mainGunResultA.hashCode(), mainGunResultB.hashCode());
-    }
-
-    @Test
-    void resultShouldNotBeEqualWithDifferentRibbon() {
-        RibbonResult mainGunResult = new RibbonResult(Ribbon.MAIN_GUN_HIT, 50);
-        RibbonResult secondaryResult = new RibbonResult(Ribbon.SECONDARY_HIT, 50);
-        assertNotEquals(mainGunResult, secondaryResult);
-        assertNotEquals(mainGunResult.hashCode(), secondaryResult.hashCode());
     }
 }

@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class AchievementResultTest {
     private final AchievementResult oneArsonistAchievement = new AchievementResult(Achievement.ARSONIST, 1);
@@ -107,17 +106,5 @@ class AchievementResultTest {
         ribbonResultSet.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 5));
         String resultString = oneWithererAchievement.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
         assertEquals("Witherer: 40 + 300 * 0.2 + 200 * 0.1 points", resultString);
-    }
-
-    @Test
-    void resultShouldBeEqualWithSameAchievement() {
-        assertEquals(oneArsonistAchievement, twoArsonistAchievements);
-        assertEquals(oneArsonistAchievement.hashCode(), twoArsonistAchievements.hashCode());
-    }
-
-    @Test
-    void resultShouldNotBeEqualWithDifferentAchievement() {
-        assertNotEquals(oneArsonistAchievement, oneWithererAchievement);
-        assertNotEquals(oneArsonistAchievement.hashCode(), oneWithererAchievement.hashCode());
     }
 }

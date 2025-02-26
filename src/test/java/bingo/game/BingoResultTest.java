@@ -17,19 +17,19 @@ class BingoResultTest {
     }
 
     @Test
-    void getPointResultShouldReturnFiftyPoints() {
+    void getPointResultShouldReturnTwentyFivePoints() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
-        result.addRibbonResult(Ribbon.INCAPACITATION, 0);
-        result.addRibbonResult(Ribbon.INCAPACITATION, 5);
-        assertEquals(50, result.getPointResult());
+        result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 2);
+        result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 1);
+        assertEquals(25, result.getPointResult());
     }
 
     @Test
-    void getPointResultShouldReturnZeroPoints() {
+    void getPointResultShouldReturnFiftyPoints() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        result.addRibbonResult(Ribbon.INCAPACITATION, 3);
         result.addRibbonResult(Ribbon.INCAPACITATION, 5);
-        result.addRibbonResult(Ribbon.INCAPACITATION, 0);
-        assertEquals(0, result.getPointResult());
+        assertEquals(50, result.getPointResult());
     }
 
     @Test
@@ -48,6 +48,14 @@ class BingoResultTest {
         result.addAchievementResult(Achievement.KRAKEN_UNLEASHED, 1);
         result.addAchievementResult(Achievement.DEVASTATING_STRIKE, 2);
         assertEquals(800, result.getPointResult());
+    }
+
+    @Test
+    void toStringMethodShouldReturnCorrectDisplayTextWhenAddingResultsWithAmountZero() {
+        BingoResult result = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        result.addRibbonResult(Ribbon.TORPEDO_HIT, 0);
+        result.addAchievementResult(Achievement.DEVASTATING_STRIKE, 0);
+        assertEquals("Ribbon Bingo result: 0 points", result.toString());
     }
 
     @Test
