@@ -1,5 +1,8 @@
 package bingo.ribbons;
 
+import bingo.math.impl.LabeledTerm;
+import bingo.math.impl.Literal;
+import bingo.math.impl.TermWithPoints;
 import bingo.ribbons.overrides.PointValueOverride;
 import bingo.ships.MainArmamentType;
 
@@ -55,7 +58,7 @@ public enum Ribbon {
 
     @Override
     public String toString() {
-        return displayText + ": " + getPointValueAsString(pointValue);
+        return new LabeledTerm(displayText, new TermWithPoints(new Literal(pointValue))).getAsString();
     }
 
     public static String getAllRibbonsListedAsString() {
@@ -64,7 +67,7 @@ public enum Ribbon {
             stringBuilder.append("- ").append(ribbon.toString());
             POINT_VALUE_OVERRIDES.get(ribbon)
                     .stream()
-                    .map(Ribbon::getPointValueOverrideAsString)
+                    .map(PointValueOverride::toString)
                     .reduce((overrideA, overrideB) -> overrideA.concat(", ").concat(overrideB))
                     .ifPresent(appendInParenthesisTo(stringBuilder));
             stringBuilder.append("\n");
@@ -74,16 +77,6 @@ public enum Ribbon {
 
     private static Consumer<String> appendInParenthesisTo(StringBuilder stringBuilder) {
         return allOverridesForRibbon -> stringBuilder.append(" (").append(allOverridesForRibbon).append(")");
-    }
-
-    private static String getPointValueOverrideAsString(PointValueOverride pointValueOverride) {
-        return "%s for ships with %s as main armament".formatted(
-                getPointValueAsString(pointValueOverride.pointValue()),
-                pointValueOverride.mainArmamentType().getDisplayText().toLowerCase());
-    }
-
-    private static String getPointValueAsString(int pointValue) {
-        return pointValue + (pointValue == 1 ? " point" : " points");
     }
 
     private static Map<Ribbon, Set<PointValueOverride>> setUpOverrides() {

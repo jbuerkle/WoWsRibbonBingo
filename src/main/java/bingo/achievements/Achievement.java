@@ -1,6 +1,9 @@
 package bingo.achievements;
 
 import bingo.achievements.modifiers.PointValueModifier;
+import bingo.math.impl.LabeledTerm;
+import bingo.math.impl.Literal;
+import bingo.math.impl.TermWithPoints;
 import bingo.ribbons.Ribbon;
 
 import java.util.HashMap;
@@ -49,27 +52,22 @@ public enum Achievement {
         return POINT_VALUE_MODIFIERS.get(this);
     }
 
+    @Override
+    public String toString() {
+        return new LabeledTerm(displayText, new TermWithPoints(new Literal(flatPointValue))).getAsString();
+    }
+
     public static String getAllAchievementsListedAsString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Achievement achievement : Achievement.values()) {
-            stringBuilder.append("- ").append(achievement.getDisplayText()).append(": ");
-            stringBuilder.append(getPointValueAsString(achievement.getFlatPointValue()));
-            for (PointValueModifier pointValueModifier : POINT_VALUE_MODIFIERS.get(achievement)) {
-                stringBuilder.append(getPointValueModifierAsString(pointValueModifier));
-            }
+            stringBuilder.append("- ").append(achievement.toString());
+            POINT_VALUE_MODIFIERS.get(achievement)
+                    .stream()
+                    .map(PointValueModifier::toString)
+                    .forEach(stringBuilder::append);
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
-    }
-
-    private static String getPointValueAsString(int pointValue) {
-        return pointValue + (pointValue == 1 ? " point" : " points");
-    }
-
-    private static String getPointValueModifierAsString(PointValueModifier pointValueModifier) {
-        return " + %s bonus points for all '%s' ribbons".formatted(
-                pointValueModifier.getBonusModifierAsPercentage(),
-                pointValueModifier.ribbon().getDisplayText());
     }
 
     private static Map<Achievement, Set<PointValueModifier>> setUpModifiers() {
