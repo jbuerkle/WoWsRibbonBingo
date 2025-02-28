@@ -2,7 +2,7 @@ package bingo.math.impl;
 
 import bingo.math.Term;
 
-public final class TermWithPoints extends ValueDelegateTerm {
+public final class TermWithPoints extends DelegateTerm {
 
     public TermWithPoints(Term term) {
         super(term);

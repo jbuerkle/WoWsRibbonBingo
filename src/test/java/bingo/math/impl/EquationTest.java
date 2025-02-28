@@ -1,23 +1,23 @@
 package bingo.math.impl;
 
-import bingo.math.Term;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EquationTest {
-    private static final Term fifty = new Equation(new Literal(50.0));
-    private static final Term fiveTimesThree = new Equation(new Multiplication(new Literal(5), new Literal(3)));
+    private static final Equation fifty = new Equation(new Literal(50.0));
+    private static final Equation fiveTimesThree = new Equation(new Multiplication(new Literal(5), new Literal(3)));
 
     @Test
-    void getValueShouldReturnCorrectValue() {
-        assertEquals(50.0, fifty.getValue());
+    void getValueShouldDelegate() {
+        assertEquals(50, fifty.getValue());
+        assertEquals(15, fiveTimesThree.getValue());
     }
 
     @Test
-    void isLiteralShouldReturnFalse() {
-        assertFalse(fifty.isLiteral());
+    void isLiteralShouldDelegate() {
+        assertTrue(fifty.isLiteral());
+        assertFalse(fiveTimesThree.isLiteral());
     }
 
     @Test

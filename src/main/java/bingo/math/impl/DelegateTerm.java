@@ -2,10 +2,10 @@ package bingo.math.impl;
 
 import bingo.math.Term;
 
-public abstract class ValueDelegateTerm implements Term {
+public abstract class DelegateTerm implements Term {
     protected final Term term;
 
-    protected ValueDelegateTerm(Term term) {
+    protected DelegateTerm(Term term) {
         this.term = term;
     }
 
@@ -16,6 +16,6 @@ public abstract class ValueDelegateTerm implements Term {
 
     @Override
     public boolean isLiteral() {
-        return false;
+        return term.isLiteral();
     }
 }

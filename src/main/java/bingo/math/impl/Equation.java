@@ -2,7 +2,7 @@ package bingo.math.impl;
 
 import bingo.math.Term;
 
-public final class Equation extends ValueDelegateTerm {
+public final class Equation extends DelegateTerm {
 
     public Equation(Term term) {
         super(term);
