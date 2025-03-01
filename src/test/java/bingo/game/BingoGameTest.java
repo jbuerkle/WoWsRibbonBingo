@@ -98,7 +98,7 @@ class BingoGameTest {
         BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
-        bingoResult.addRibbonResult(Ribbon.DESTROYED, 2);
+        bingoResult.addRibbonResult(Ribbon.DESTROYED, 3);
         bingoGame.submitBingoResult(bingoResult);
         bingoGame.goToNextLevel();
         bingoGame.submitBingoResult(bingoResult);

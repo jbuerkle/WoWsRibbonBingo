@@ -1,6 +1,8 @@
 package bingo.achievements;
 
 import bingo.achievements.modifiers.PointValueModifier;
+import bingo.math.Term;
+import bingo.math.impl.*;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 
@@ -10,54 +12,24 @@ import java.util.function.Function;
 
 public record AchievementResult(Achievement achievement, int amount) {
 
-    public int getPointValue(Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
-        int singleAchievementValue = achievement.getFlatPointValue() + achievement.getPointValueModifiers()
+    public Term getAsTerm(Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
+        Term flatPointValueTerm = new TermWithPoints(new Literal(achievement.getFlatPointValue()));
+        Term singleAchievementValueTerm = achievement.getPointValueModifiers()
                 .stream()
-                .map(calculatePointsFromPointValueModifier(ribbonResultSet, mainArmamentType))
-                .reduce(Integer::sum)
-                .orElse(0);
-        return singleAchievementValue * amount;
+                .map(pointValueModifierToTerm(ribbonResultSet, mainArmamentType))
+                .reduce(Addition::new)
+                .map(modifiersTermToFullTerm(flatPointValueTerm))
+                .orElse(flatPointValueTerm);
+        Term fullAchievementValueTerm = new Multiplication(new Literal(amount), singleAchievementValueTerm);
+        return new LabeledTerm(achievement.getDisplayText(), fullAchievementValueTerm);
     }
 
-    private Function<PointValueModifier, Integer> calculatePointsFromPointValueModifier(
+    private Function<PointValueModifier, Term> pointValueModifierToTerm(
             Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
         return pointValueModifier -> findMatchingRibbonResult(ribbonResultSet, pointValueModifier).map(
-                        calculatePointsFromRibbonResult(mainArmamentType, pointValueModifier))
-                .map(Math::round)
-                .map(Long::intValue)
-                .orElse(0);
-    }
-
-    private Function<RibbonResult, Double> calculatePointsFromRibbonResult(
-            MainArmamentType mainArmamentType, PointValueModifier pointValueModifier) {
-        return ribbonResult -> ribbonResult.getPointValue(mainArmamentType) * pointValueModifier.bonusModifier();
-    }
-
-    public String getAsString(Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(achievement.getFlatPointValue());
-        boolean modifierAdded = false;
-        for (PointValueModifier pointValueModifier : achievement.getPointValueModifiers()) {
-            Optional<RibbonResult> matchingRibbonResult = findMatchingRibbonResult(ribbonResultSet, pointValueModifier);
-            if (matchingRibbonResult.isPresent()) {
-                RibbonResult ribbonResult = matchingRibbonResult.get();
-                stringBuilder.append(" + ")
-                        .append(ribbonResult.getPointValue(mainArmamentType))
-                        .append(" * ")
-                        .append(pointValueModifier.bonusModifier());
-                modifierAdded = true;
-            }
-        }
-        String fullAchievementValueAsString = getFullAchievementValueAsString(stringBuilder.toString(), modifierAdded);
-        return achievement.getDisplayText() + ": " + fullAchievementValueAsString + " points";
-    }
-
-    private String getFullAchievementValueAsString(String singleAchievementValueAsString, boolean modifierAdded) {
-        return amount == 1 ?
-                singleAchievementValueAsString :
-                modifierAdded ?
-                        "%s * (%s)".formatted(amount, singleAchievementValueAsString) :
-                        "%s * %s".formatted(amount, singleAchievementValueAsString);
+                        ribbonResultToTerm(mainArmamentType))
+                .map(ribbonResultTermToMultiplicationTerm(pointValueModifier))
+                .orElse(new Literal(0));
     }
 
     private Optional<RibbonResult> findMatchingRibbonResult(
@@ -65,5 +37,20 @@ public record AchievementResult(Achievement achievement, int amount) {
         return ribbonResultSet.stream()
                 .filter(ribbonResult -> pointValueModifier.ribbon().equals(ribbonResult.ribbon()))
                 .findAny();
+    }
+
+    private Function<RibbonResult, Term> ribbonResultToTerm(MainArmamentType mainArmamentType) {
+        return ribbonResult -> ribbonResult.getAsTerm(mainArmamentType);
+    }
+
+    private Function<Term, Term> ribbonResultTermToMultiplicationTerm(PointValueModifier pointValueModifier) {
+        return ribbonResultTerm -> {
+            Term bonusModifierTerm = new Literal(pointValueModifier.bonusModifier());
+            return new Multiplication(ribbonResultTerm, bonusModifierTerm);
+        };
+    }
+
+    private Function<Term, Term> modifiersTermToFullTerm(Term flatPointValueTerm) {
+        return modifiersTerm -> (Term) new Addition(flatPointValueTerm, modifiersTerm);
     }
 }

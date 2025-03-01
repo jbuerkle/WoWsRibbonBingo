@@ -23,72 +23,82 @@ class AchievementResultTest {
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForOneArsonistAchievement() {
-        int pointValue = oneArsonistAchievement.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+    void getValueShouldReturnCorrectValueForOneArsonistAchievement() {
+        double pointValue =
+                oneArsonistAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(20, pointValue);
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForOneArsonistAchievementWithSetOnFireRibbons() {
+    void getValueShouldReturnCorrectValueForOneArsonistAchievementWithSetOnFireRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 10));
-        int pointValue = oneArsonistAchievement.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        double pointValue =
+                oneArsonistAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(40, pointValue);
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForTwoArsonistAchievements() {
-        int pointValue = twoArsonistAchievements.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+    void getValueShouldReturnCorrectValueForTwoArsonistAchievements() {
+        double pointValue =
+                twoArsonistAchievements.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(40, pointValue);
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForTwoArsonistAchievementsWithSetOnFireRibbons() {
+    void getValueShouldReturnCorrectValueForTwoArsonistAchievementsWithSetOnFireRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 20));
-        int pointValue = twoArsonistAchievements.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        double pointValue =
+                twoArsonistAchievements.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(120, pointValue);
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForOneWithererAchievement() {
+    void getValueShouldReturnCorrectValueForOneWithererAchievement() {
         ribbonResultSet.add(new RibbonResult(Ribbon.AIRCRAFT_SHOT_DOWN, 30));
         ribbonResultSet.add(new RibbonResult(Ribbon.MAIN_GUN_HIT, 300));
         ribbonResultSet.add(new RibbonResult(Ribbon.TORPEDO_HIT, 10));
-        int pointValue = oneWithererAchievement.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        double pointValue =
+                oneWithererAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(40, pointValue);
     }
 
     @Test
-    void getPointValueShouldReturnCorrectValueForOneWithererAchievementWithSetOnFireAndCausedFloodingRibbons() {
+    void getValueShouldReturnCorrectValueForOneWithererAchievementWithSetOnFireAndCausedFloodingRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 15));
         ribbonResultSet.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 5));
-        int pointValue = oneWithererAchievement.getPointValue(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        double pointValue =
+                oneWithererAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getValue();
         assertEquals(120, pointValue);
     }
 
     @Test
     void getAsStringShouldReturnCorrectDisplayTextForOneArsonistAchievement() {
-        String resultString = oneArsonistAchievement.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        String resultString =
+                oneArsonistAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
         assertEquals("Arsonist: 20 points", resultString);
     }
 
     @Test
     void getAsStringShouldReturnCorrectDisplayTextForOneArsonistAchievementWithSetOnFireRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 10));
-        String resultString = oneArsonistAchievement.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals("Arsonist: 20 + 200 * 0.1 points", resultString);
+        String resultString =
+                oneArsonistAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
+        assertEquals("Arsonist: 20 points + (Set on fire: 10 * 20 points) * 0.1", resultString);
     }
 
     @Test
     void getAsStringShouldReturnCorrectDisplayTextForTwoArsonistAchievements() {
-        String resultString = twoArsonistAchievements.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        String resultString =
+                twoArsonistAchievements.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
         assertEquals("Arsonist: 2 * 20 points", resultString);
     }
 
     @Test
     void getAsStringShouldReturnCorrectDisplayTextForTwoArsonistAchievementsWithSetOnFireRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 20));
-        String resultString = twoArsonistAchievements.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals("Arsonist: 2 * (20 + 400 * 0.1) points", resultString);
+        String resultString =
+                twoArsonistAchievements.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
+        assertEquals("Arsonist: 2 * (20 points + (Set on fire: 20 * 20 points) * 0.1)", resultString);
     }
 
     @Test
@@ -96,7 +106,8 @@ class AchievementResultTest {
         ribbonResultSet.add(new RibbonResult(Ribbon.AIRCRAFT_SHOT_DOWN, 30));
         ribbonResultSet.add(new RibbonResult(Ribbon.MAIN_GUN_HIT, 300));
         ribbonResultSet.add(new RibbonResult(Ribbon.TORPEDO_HIT, 10));
-        String resultString = oneWithererAchievement.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
+        String resultString =
+                oneWithererAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
         assertEquals("Witherer: 40 points", resultString);
     }
 
@@ -104,7 +115,10 @@ class AchievementResultTest {
     void getAsStringShouldReturnCorrectDisplayTextForOneWithererAchievementWithSetOnFireAndCausedFloodingRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SET_ON_FIRE, 15));
         ribbonResultSet.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 5));
-        String resultString = oneWithererAchievement.getAsString(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals("Witherer: 40 + 300 * 0.2 + 200 * 0.1 points", resultString);
+        String resultString =
+                oneWithererAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS).getAsString();
+        assertEquals(
+                "Witherer: 40 points + (Set on fire: 15 * 20 points) * 0.2 + (Caused flooding: 5 * 40 points) * 0.1",
+                resultString);
     }
 }

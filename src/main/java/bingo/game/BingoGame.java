@@ -58,8 +58,7 @@ public class BingoGame {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResult.isPresent() &&
-                bingoResult.get().getPointResult() >= getPointRequirementOfLevel(currentLevel);
+        return bingoResult.isPresent() && bingoResult.get().getPointValue() >= getPointRequirementOfLevel(currentLevel);
     }
 
     private int getPointRequirementOfLevel(int level) {

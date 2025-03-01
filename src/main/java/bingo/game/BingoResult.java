@@ -2,14 +2,16 @@ package bingo.game;
 
 import bingo.achievements.Achievement;
 import bingo.achievements.AchievementResult;
-import bingo.achievements.WeightedAchievementResult;
-import bingo.points.WeightedPointResult;
+import bingo.math.Term;
+import bingo.math.impl.*;
 import bingo.ribbons.Ribbon;
 import bingo.ribbons.RibbonResult;
-import bingo.ribbons.WeightedRibbonResult;
 import bingo.ships.MainArmamentType;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 public class BingoResult {
@@ -47,46 +49,35 @@ public class BingoResult {
         matchingResult.ifPresent(resultSet::remove);
     }
 
-    public int getPointResult() {
-        return getCombinedResultSet().stream().map(WeightedPointResult::getPointValue).reduce(Integer::sum).orElse(0);
+    public long getPointValue() {
+        return Math.round(getAsTerm().getValue());
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("Ribbon Bingo result: ");
-        int resultsAdded = 0;
-        for (WeightedPointResult weightedPointResult : getWeightedResultListSortedByPoints()) {
-            if (resultsAdded > 0) {
-                stringBuilder.append(" + ");
-            }
-            stringBuilder.append(weightedPointResult.getAsString());
-            resultsAdded++;
-        }
-        if (resultsAdded > 0) {
-            stringBuilder.append(" = ");
-        }
-        stringBuilder.append(getPointResult()).append(" points");
-        return stringBuilder.toString();
+        return getAsTerm().getAsString();
     }
 
-    private List<WeightedPointResult> getWeightedResultListSortedByPoints() {
-        return getCombinedResultSet().stream()
-                .sorted(Comparator.comparingInt(WeightedPointResult::getPointValue))
+    private Term getAsTerm() {
+        Term calculationTerm = getAllResultsCombinedAsTerms().stream()
+                .sorted(Comparator.comparingDouble(Term::getValue))
                 .toList()
-                .reversed();
+                .reversed()
+                .stream()
+                .reduce(Addition::new)
+                .orElse(new Literal(0));
+        Term calculationAsEquation = new TermWithPoints(new Equation(calculationTerm));
+        return new LabeledTerm("Ribbon Bingo result", calculationAsEquation);
     }
 
-    private Set<WeightedPointResult> getCombinedResultSet() {
-        Set<WeightedPointResult> combinedResultSet = new HashSet<>();
+    private Set<Term> getAllResultsCombinedAsTerms() {
+        Set<Term> combinedResults = new HashSet<>();
         ribbonResultSet.stream()
-                .map(ribbonResult -> new WeightedRibbonResult(ribbonResult, mainArmamentType))
-                .forEach(combinedResultSet::add);
+                .map(ribbonResult -> ribbonResult.getAsTerm(mainArmamentType))
+                .forEach(combinedResults::add);
         achievementResultSet.stream()
-                .map(achievementResult -> new WeightedAchievementResult(
-                        achievementResult,
-                        mainArmamentType,
-                        ribbonResultSet))
-                .forEach(combinedResultSet::add);
-        return combinedResultSet;
+                .map(achievementResult -> achievementResult.getAsTerm(ribbonResultSet, mainArmamentType))
+                .forEach(combinedResults::add);
+        return combinedResults;
     }
 }
