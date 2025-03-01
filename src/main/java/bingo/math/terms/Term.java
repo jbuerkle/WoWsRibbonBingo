@@ -1,4 +1,4 @@
-package bingo.math;
+package bingo.math.terms;
 
 public interface Term {
 

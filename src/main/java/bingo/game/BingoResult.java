@@ -2,8 +2,8 @@ package bingo.game;
 
 import bingo.achievements.Achievement;
 import bingo.achievements.AchievementResult;
-import bingo.math.Term;
-import bingo.math.impl.*;
+import bingo.math.terms.Term;
+import bingo.math.terms.impl.*;
 import bingo.ribbons.Ribbon;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;

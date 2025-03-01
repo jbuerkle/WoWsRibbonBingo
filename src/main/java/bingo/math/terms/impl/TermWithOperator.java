@@ -1,7 +1,7 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
-import bingo.math.Term;
-import bingo.math.operator.Operator;
+import bingo.math.operators.Operator;
+import bingo.math.terms.Term;
 
 public abstract class TermWithOperator implements Term {
     private final Term left;

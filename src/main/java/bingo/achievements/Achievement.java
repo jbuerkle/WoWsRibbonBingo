@@ -1,9 +1,9 @@
 package bingo.achievements;
 
 import bingo.achievements.modifiers.PointValueModifier;
-import bingo.math.impl.LabeledTerm;
-import bingo.math.impl.Literal;
-import bingo.math.impl.TermWithPoints;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.TermWithPoints;
 import bingo.ribbons.Ribbon;
 
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
-import bingo.math.Term;
+import bingo.math.terms.Term;
 
 public final class LabeledTerm extends DelegateTerm {
     private final String label;

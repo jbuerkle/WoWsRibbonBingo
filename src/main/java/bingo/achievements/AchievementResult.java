@@ -1,8 +1,8 @@
 package bingo.achievements;
 
 import bingo.achievements.modifiers.PointValueModifier;
-import bingo.math.Term;
-import bingo.math.impl.*;
+import bingo.math.terms.Term;
+import bingo.math.terms.impl.*;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 

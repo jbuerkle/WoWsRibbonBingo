@@ -1,4 +1,4 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
 import org.junit.jupiter.api.Test;
 

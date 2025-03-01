@@ -1,10 +1,10 @@
 package bingo.ribbons;
 
-import bingo.math.Term;
-import bingo.math.impl.LabeledTerm;
-import bingo.math.impl.Literal;
-import bingo.math.impl.Multiplication;
-import bingo.math.impl.TermWithPoints;
+import bingo.math.terms.Term;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.Multiplication;
+import bingo.math.terms.impl.TermWithPoints;
 import bingo.ships.MainArmamentType;
 
 public record RibbonResult(Ribbon ribbon, int amount) {

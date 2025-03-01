@@ -1,7 +1,7 @@
 package bingo.ribbons.overrides;
 
-import bingo.math.impl.Literal;
-import bingo.math.impl.TermWithPoints;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.TermWithPoints;
 import bingo.ships.MainArmamentType;
 
 public record PointValueOverride(MainArmamentType mainArmamentType, int pointValue) {

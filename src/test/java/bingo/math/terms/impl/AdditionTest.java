@@ -1,6 +1,6 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
-import bingo.math.Term;
+import bingo.math.terms.Term;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

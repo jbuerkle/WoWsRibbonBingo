@@ -1,7 +1,7 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
-import bingo.math.Term;
-import bingo.math.operator.impl.Multiply;
+import bingo.math.operators.impl.Multiply;
+import bingo.math.terms.Term;
 
 public final class Multiplication extends TermWithOperator {
 

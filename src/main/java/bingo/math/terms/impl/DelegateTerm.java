@@ -1,6 +1,6 @@
-package bingo.math.impl;
+package bingo.math.terms.impl;
 
-import bingo.math.Term;
+import bingo.math.terms.Term;
 
 public abstract class DelegateTerm implements Term {
     protected final Term term;

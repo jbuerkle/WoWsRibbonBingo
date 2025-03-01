@@ -1,6 +1,6 @@
-package bingo.math.operator.impl;
+package bingo.math.operators.impl;
 
-import bingo.math.operator.Operator;
+import bingo.math.operators.Operator;
 
 public final class Multiply implements Operator {
     public static final Operator OPERATOR = new Multiply();

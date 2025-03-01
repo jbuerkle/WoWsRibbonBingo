@@ -1,4 +1,4 @@
-package bingo.math.operator;
+package bingo.math.operators;
 
 public interface Operator {
 
