@@ -18,7 +18,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice.
 4. You may invite any number of players into your division.
 5. If you play in a division, you and the players in your division may use every ship only **once** per challenge. Your
-   ship pool will be shared between players, rather than each player having their own ship pool.
+   ship pool will be shared between players, rather than each player having their own ship pool. However, only ships
+   used in successful matches as per rule 7 are counted.
 6. Once you start the challenge, every match counts. If you need an exception or want to pause the challenge, you have
    to announce this **before starting the match**.
 7. After every match played, your point result is calculated and compared to the result bar of the current level:
@@ -34,7 +35,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
     - 8d: You have an extra life.
 9. Rules for extra lives:
     - 9a: You gain 1 token for every match which applies to rule 8a or 8b.
-    - 9b: You gain 1 token for every successful match (as per rule 7). This rule stacks with rule 9a.
+    - 9b: You gain 1 token for every successful match as per rule 7. This rule stacks with rule 9a.
     - 9c: 6 tokens are automatically converted to 1 extra life.
     - 9d: Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it
       is automatically consumed, and you keep any unlocked rewards (rule 8d).
