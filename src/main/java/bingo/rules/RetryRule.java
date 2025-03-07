@@ -1,8 +1,8 @@
 package bingo.rules;
 
 public enum RetryRule {
-    IMBALANCED_MATCHMAKING("imbalanced matchmaking (rule 8a or 8b)"),
-    UNFAIR_DISADVANTAGE("an unfair disadvantage (rule 8c)");
+    IMBALANCED_MATCHMAKING("Imbalanced matchmaking (rule 8a or 8b)"),
+    UNFAIR_DISADVANTAGE("Unfair disadvantage (rule 8c)");
 
     private final String displayText;
 
