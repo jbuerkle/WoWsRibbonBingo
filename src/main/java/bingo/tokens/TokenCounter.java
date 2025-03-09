@@ -38,8 +38,7 @@ public class TokenCounter {
     }
 
     private boolean retryingIsNotAllowed(List<RetryRule> activeRetryRules) {
-        return !activeRetryRules.contains(RetryRule.IMBALANCED_MATCHMAKING) &&
-                !activeRetryRules.contains(RetryRule.UNFAIR_DISADVANTAGE);
+        return activeRetryRules.isEmpty();
     }
 
     public void confirmMatchResult() {
