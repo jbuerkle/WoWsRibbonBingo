@@ -14,6 +14,9 @@ class TokenCounterTest {
     private static final String YOU_NOW_HAVE_ONE_TOKEN = "You now have 1 token.";
     private static final String YOU_NOW_HAVE_TWO_TOKENS = "You now have 2 tokens.";
     private static final String YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_ZERO_TOKENS = "You now have 1 extra life and 0 tokens.";
+    private static final String YOU_GAIN = "You gain ";
+    private static final String ONE_TOKEN_FOR_RULE_9A = "1 token for a successful match as per rule 9a";
+    private static final String ONE_TOKEN_FOR_RULE_9B = "1 token due to imbalanced matchmaking as per rule 9b. ";
 
     private List<RetryRule> activeRetryRules;
     private TokenCounter tokenCounter;
@@ -38,16 +41,16 @@ class TokenCounterTest {
     @Test
     void counterShouldAddOneTokenForSuccessfulMatch() {
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation("You gain 1 token for a successful match. ", YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(
+                YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9A).concat(". "),
+                YOU_NOW_HAVE_ONE_TOKEN);
     }
 
     @Test
     void counterShouldAddOneTokenForImbalancedMatch() {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(
-                "You gain 1 token due to imbalanced matchmaking (rule 8a or 8b). ",
-                YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9B), YOU_NOW_HAVE_ONE_TOKEN);
     }
 
     @Test
@@ -61,7 +64,7 @@ class TokenCounterTest {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
         checkCounterBeforeAndAfterConfirmation(
-                "You gain 1 token for a successful match and 1 token due to imbalanced matchmaking (rule 8a or 8b). ",
+                YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9A).concat(" and ").concat(ONE_TOKEN_FOR_RULE_9B),
                 YOU_NOW_HAVE_TWO_TOKENS);
     }
 
@@ -69,9 +72,7 @@ class TokenCounterTest {
     void counterShouldAddOneTokenForFinalLevelIfNotSuccessful() {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(false, false, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(
-                "You gain 1 token due to imbalanced matchmaking (rule 8a or 8b). ",
-                YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9B), YOU_NOW_HAVE_ONE_TOKEN);
     }
 
     @Test

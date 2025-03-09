@@ -69,12 +69,12 @@ public class TokenCounter {
     }
 
     private String tokensGainedForSuccessfulMatchAsString() {
-        return YOU_GAIN.concat(getTokensAsString(tokensGainedForSuccessfulMatch)).concat(" for a successful match");
+        return YOU_GAIN.concat(getTokensAsString(tokensGainedForSuccessfulMatch))
+                .concat(" for a successful match as per rule 9a");
     }
 
     private String tokensGainedForImbalancedMatchAsString() {
-        return getTokensAsString(tokensGainedForImbalancedMatch).concat(" due to ")
-                .concat(RetryRule.IMBALANCED_MATCHMAKING.getDisplayText().toLowerCase())
+        return getTokensAsString(tokensGainedForImbalancedMatch).concat(" due to imbalanced matchmaking as per rule 9b")
                 .concat(SENTENCE_END);
     }
 
