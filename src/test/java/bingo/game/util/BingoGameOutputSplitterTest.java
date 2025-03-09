@@ -21,6 +21,8 @@ class BingoGameOutputSplitterTest {
             "0 points. Requirement of level 1: 200 points, which means your result does not meet the point requirement, and the challenge is over. You lose any unlocked rewards.";
     private static final String RESULT_LENGTH_290 =
             "5000 points. Requirement of level 1: 200 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 1 sub. You can now choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 400 points";
+    private static final String STRING_LENGTH_170_STARTING_WITH_LINE_BREAK =
+            "\n\nThis is a very long test string which should be ignored by the splitter, as it starts with a line break and therefore does not extend the actual length of the string.";
 
     private final BingoGameOutputSplitter bingoGameOutputSplitter = new BingoGameOutputSplitter();
 
@@ -77,6 +79,17 @@ class BingoGameOutputSplitterTest {
                 .concat(" = ")
                 .concat(RESULT_LENGTH_290);
         assertEquals(stringWithLength493, bingoGameOutputSplitter.process(stringWithLength493));
+    }
+
+    @Test
+    void shouldNotSplitLongerOutputIfNotNecessaryBecauseOfLineBreak() {
+        String stringWithLength663 = PREFIX_LENGTH_21.concat(CALCULATION_LENGTH_25)
+                .concat(" + ")
+                .concat(CALCULATION_LENGTH_151)
+                .concat(" = ")
+                .concat(RESULT_LENGTH_290)
+                .concat(STRING_LENGTH_170_STARTING_WITH_LINE_BREAK);
+        assertEquals(stringWithLength663, bingoGameOutputSplitter.process(stringWithLength663));
     }
 
     @Test
