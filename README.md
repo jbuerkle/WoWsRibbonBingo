@@ -34,8 +34,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
       ultimately at the discretion of the challenge's host.
     - 8d: You have an extra life.
 9. Rules for extra lives:
-    - 9a: You gain 1 token for every match which applies to rule 8a or 8b.
-    - 9b: You gain 1 token for every successful match as per rule 7. This rule stacks with rule 9a.
+    - 9a: You gain 1 token for every successful match as per rule 7.
+    - 9b: You gain 1 token for every match which applies to rule 8a or 8b. This rule stacks with rule 9a.
     - 9c: 6 tokens are automatically converted to 1 extra life.
     - 9d: Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it
       is automatically consumed, and you keep any unlocked rewards (rule 8d).
