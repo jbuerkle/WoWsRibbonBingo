@@ -3,9 +3,10 @@ package bingo.application.gui;
 import bingo.achievements.Achievement;
 import bingo.application.gui.input.UserInputException;
 import bingo.game.BingoGame;
-import bingo.game.BingoResult;
+import bingo.game.results.BingoResult;
 import bingo.game.util.BingoGameOutputSplitter;
 import bingo.ribbons.Ribbon;
+import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
 import bingo.ships.Ship;
 import javafx.application.Application;
@@ -25,6 +26,7 @@ import javafx.util.StringConverter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -34,6 +36,7 @@ public class BingoUserInterface extends Application {
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final Map<Achievement, TextField> textFieldsByAchievement;
+    private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
@@ -48,6 +51,7 @@ public class BingoUserInterface extends Application {
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.textFieldsByRibbon = new HashMap<>();
         this.textFieldsByAchievement = new HashMap<>();
+        this.checkBoxesByRetryRule = new HashMap<>();
         this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.tableView = new TableView<>(shipsUsed);
         this.shipNameColumn = new TableColumn<>("Ships used");
@@ -58,9 +62,10 @@ public class BingoUserInterface extends Application {
         this.mainGrid.setPadding(new Insets(5));
         this.mainGridRow = 0;
         setUpGridWithSevenInputFieldsPerRow();
-        setUpGridWithComboBoxAndButtons();
+        setUpGridWithComboBoxAndCheckBoxes();
+        setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
-        resetInputFieldsAndBingoGame();
+        resetInputFields();
     }
 
     private void setUpGridWithSevenInputFieldsPerRow() {
@@ -85,24 +90,30 @@ public class BingoUserInterface extends Application {
         mainGridRow++;
     }
 
-    private void setUpGridWithComboBoxAndButtons() {
+    private void setUpGridWithComboBoxAndCheckBoxes() {
         Label mainArmamentTypeLabel = new Label("Main armament of ship used");
-        Button submitButton = new Button("Submit result");
-        Button goNextButton = new Button("Go to next level");
-        Button resetButton = new Button("Reset input fields");
-        Button endChallengeButton = new Button("End challenge");
-        setEventHandlers(submitButton, this::submitResult);
-        setEventHandlers(goNextButton, this::goToNextLevel);
-        setEventHandlers(resetButton, this::resetInputFieldsAndBingoGame);
-        setEventHandlers(endChallengeButton, this::endChallenge);
         setUpMainArmamentTypeComboBox();
         GridPane gridPane = createNewGridPane();
         gridPane.add(mainArmamentTypeLabel, 0, 0);
         gridPane.add(mainArmamentTypeComboBox, 0, 1);
-        gridPane.add(submitButton, 1, 1);
-        gridPane.add(goNextButton, 2, 1);
-        gridPane.add(resetButton, 3, 1);
-        gridPane.add(endChallengeButton, 4, 1);
+        setUpCheckBoxesForRetryRules(gridPane);
+        mainGridRow++;
+    }
+
+    private void setUpGridWithButtons() {
+        Button submitButton = new Button("Submit result");
+        Button confirmButton = new Button("Confirm result");
+        Button endChallengeButton = new Button("End challenge");
+        Button resetButton = new Button("Reset input fields");
+        setEventHandlers(submitButton, this::submitResult);
+        setEventHandlers(confirmButton, this::confirmResult);
+        setEventHandlers(endChallengeButton, this::endChallenge);
+        setEventHandlers(resetButton, this::resetInputFieldsAndBingoGame);
+        GridPane gridPane = createNewGridPane();
+        gridPane.add(submitButton, 0, 0);
+        gridPane.add(confirmButton, 1, 0);
+        gridPane.add(endChallengeButton, 2, 0);
+        gridPane.add(resetButton, 3, 0);
         mainGridRow++;
     }
 
@@ -139,6 +150,16 @@ public class BingoUserInterface extends Application {
             }
         });
         resetMainArmamentTypeToDefault();
+    }
+
+    private void setUpCheckBoxesForRetryRules(GridPane gridPane) {
+        int column = 1;
+        for (RetryRule retryRule : RetryRule.values()) {
+            CheckBox checkBox = new CheckBox(retryRule.getDisplayText());
+            checkBoxesByRetryRule.put(retryRule, checkBox);
+            gridPane.add(checkBox, column, 1);
+            column++;
+        }
     }
 
     private GridPane createGridPaneForTableInputFieldAndButtons() {
@@ -193,8 +214,15 @@ public class BingoUserInterface extends Application {
                 int amount = getAmountFromUserInput(entry.getValue(), achievement.getDisplayText());
                 bingoResult.addAchievementResult(achievement, amount);
             }
-            bingoGame.submitBingoResult(bingoResult);
-            setTextInTextArea();
+            List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().isSelected())
+                    .map(Map.Entry::getKey)
+                    .toList();
+            boolean stateChangeSuccessful = bingoGame.submitBingoResult(bingoResult, activeRetryRules);
+            if (stateChangeSuccessful) {
+                setTextInTextArea();
+            }
         } catch (UserInputException exception) {
             textArea.setText(exception.getMessage());
         }
@@ -215,10 +243,10 @@ public class BingoUserInterface extends Application {
         }
     }
 
-    private void goToNextLevel(InputEvent event) {
-        if (bingoGame.playerCanGoToNextLevel()) {
-            bingoGame.goToNextLevel();
-            resetInputFieldsAndBingoGame();
+    private void confirmResult(InputEvent event) {
+        boolean stateChangeSuccessful = bingoGame.confirmCurrentResult();
+        if (stateChangeSuccessful) {
+            resetInputFields();
         }
     }
 
@@ -227,10 +255,17 @@ public class BingoUserInterface extends Application {
     }
 
     private void resetInputFieldsAndBingoGame() {
+        boolean stateChangeSuccessful = bingoGame.doResetForCurrentLevel();
+        if (stateChangeSuccessful) {
+            resetInputFields();
+        }
+    }
+
+    private void resetInputFields() {
         textFieldsByRibbon.values().forEach(this::clearInput);
         textFieldsByAchievement.values().forEach(this::clearInput);
+        checkBoxesByRetryRule.values().forEach(this::clearInput);
         resetMainArmamentTypeToDefault();
-        bingoGame.doResetForCurrentLevel();
         setTextInTextArea();
     }
 
@@ -242,9 +277,15 @@ public class BingoUserInterface extends Application {
         textField.setText("");
     }
 
+    private void clearInput(CheckBox checkBox) {
+        checkBox.setSelected(false);
+    }
+
     private void endChallenge(InputEvent event) {
-        bingoGame.endChallenge();
-        setTextInTextArea();
+        boolean stateChangeSuccessful = bingoGame.endChallenge();
+        if (stateChangeSuccessful) {
+            setTextInTextArea();
+        }
     }
 
     private void addShip(InputEvent event) {
