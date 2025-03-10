@@ -1,4 +1,4 @@
-package bingo.game;
+package bingo.game.results;
 
 import bingo.achievements.Achievement;
 import bingo.ribbons.Ribbon;

@@ -1,6 +1,6 @@
-package bingo.game;
+package bingo.game.results;
 
-public record ResultBar(int level) {
+public record BingoResultBar(int level) {
 
     public int getPointRequirement() {
         return getPointRequirement(this.level);
