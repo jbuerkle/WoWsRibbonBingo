@@ -30,9 +30,9 @@ class BingoGameTest {
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub. Your unused extra lives are converted to 6 subs each, for a total of 7 subs.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
-            ". Requirement of level 1: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You gain 1 token for a successful match as per rule 9a. You now have 1 token. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 600 points";
+            ". Requirement of level 1: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You gain 1 token for a successful match as per rule 9a. You now have 1 token. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 550 points";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
-            ". Requirement of level 2: 600 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. You gain 1 token for a successful match as per rule 9a. You now have 2 tokens. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 800 points";
+            ". Requirement of level 2: 550 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. You gain 1 token for a successful match as per rule 9a. You now have 2 tokens. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 700 points";
 
     private List<RetryRule> activeRetryRules;
     private BingoGame bingoGame;
@@ -50,11 +50,11 @@ class BingoGameTest {
                 |---|---:|---:|
                 | 0 | 0 | 2^0 = 1 sub |
                 | 1 | 400 | 2^1 = 2 subs |
-                | 2 | 600 | 2^2 = 4 subs |
-                | 3 | 800 | 2^3 = 8 subs |
-                | 4 | 950 | 2^4 = 16 subs |
-                | 5 | 1100 | 2^5 = 32 subs |
-                | 6 | 1250 | 2^6 = 64 subs |
+                | 2 | 550 | 2^2 = 4 subs |
+                | 3 | 700 | 2^3 = 8 subs |
+                | 4 | 850 | 2^4 = 16 subs |
+                | 5 | 1000 | 2^5 = 32 subs |
+                | 6 | 1200 | 2^6 = 64 subs |
                 | 7 | 1400 | 2^7 = 128 subs |
                 """;
         assertEquals(expectedString, bingoGame.getAllResultBarsAndRewardsInTableFormat());
@@ -298,6 +298,6 @@ class BingoGameTest {
     }
 
     private void assertToStringMethodReturnsSecondResultBar() {
-        assertEquals("Requirement of level 2: 600 points", bingoGame.toString());
+        assertEquals("Requirement of level 2: 550 points", bingoGame.toString());
     }
 }
