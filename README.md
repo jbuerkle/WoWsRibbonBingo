@@ -97,11 +97,11 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 |-------|----------------:|------------------------------------:|
 | 0     |               0 |                         2^0 = 1 sub |
 | 1     |             400 |                        2^1 = 2 subs |
-| 2     |             600 |                        2^2 = 4 subs |
-| 3     |             800 |                        2^3 = 8 subs |
-| 4     |             950 |                       2^4 = 16 subs |
-| 5     |            1100 |                       2^5 = 32 subs |
-| 6     |            1250 |                       2^6 = 64 subs |
+| 2     |             550 |                        2^2 = 4 subs |
+| 3     |             700 |                        2^3 = 8 subs |
+| 4     |             850 |                       2^4 = 16 subs |
+| 5     |            1000 |                       2^5 = 32 subs |
+| 6     |            1200 |                       2^6 = 64 subs |
 | 7     |            1400 |                      2^7 = 128 subs |
 
 The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
