@@ -14,6 +14,7 @@ class TokenCounterTest {
     private static final String YOU_NOW_HAVE_ONE_TOKEN = "You now have 1 token.";
     private static final String YOU_NOW_HAVE_TWO_TOKENS = "You now have 2 tokens.";
     private static final String YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_ZERO_TOKENS = "You now have 1 extra life and 0 tokens.";
+    private static final String YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS = "You now have 1 extra life and 5 tokens.";
     private static final String YOU_GAIN = "You gain ";
     private static final String ONE_TOKEN_FOR_RULE_9A = "1 token for a successful match as per rule 9a";
     private static final String ONE_TOKEN_FOR_RULE_9B = "1 token due to imbalanced matchmaking as per rule 9b. ";
@@ -100,7 +101,7 @@ class TokenCounterTest {
     @Test
     void counterShouldAddOneExtraLifeAndFiveTokens() {
         addTokensUntilCounterIsAt(11);
-        assertCounterShows("You now have 1 extra life and 5 tokens.");
+        assertCounterShows(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
         assertExtraLivesAre(1);
     }
 
@@ -131,6 +132,26 @@ class TokenCounterTest {
     void counterShouldNotDeductTokensWhenThereAreNone() {
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
         checkCounterBeforeAndAfterConfirmation(YOU_NOW_HAVE_ZERO_TOKENS);
+    }
+
+    @Test
+    void counterShouldNotDeductTokensWhenSwitchingFromInsufficientResultToSufficientResult() {
+        addTokensUntilCounterIsAt(10);
+        tokenCounter.calculateMatchResult(false, true, activeRetryRules);
+        tokenCounter.calculateMatchResult(true, true, activeRetryRules);
+        tokenCounter.confirmMatchResult();
+        assertCounterShows(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
+        assertExtraLivesAre(1);
+    }
+
+    @Test
+    void counterShouldNotAddTokensWhenSwitchingFromSufficientResultToInsufficientResult() {
+        addTokensUntilCounterIsAt(6);
+        tokenCounter.calculateMatchResult(true, true, activeRetryRules);
+        tokenCounter.calculateMatchResult(false, true, activeRetryRules);
+        tokenCounter.confirmMatchResult();
+        assertCounterShows(YOU_NOW_HAVE_ZERO_TOKENS);
+        assertExtraLivesAre(0);
     }
 
     private void addTokensUntilCounterIsAt(int numberOfTokens) {

@@ -23,6 +23,7 @@ public class TokenCounter {
 
     public void calculateMatchResult(
             boolean isSuccessfulMatch, boolean hasNextLevel, List<RetryRule> activeRetryRules) {
+        resetMatchTokenCounters();
         if (isSuccessfulMatch) {
             if (hasNextLevel) {
                 tokensGainedForSuccessfulMatch = 1;
