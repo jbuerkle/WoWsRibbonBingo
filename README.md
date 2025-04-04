@@ -112,4 +112,4 @@ higher reward.
 | Twitch streamer | Date played (dd.mm.yyyy) | Supporters     | Total reward |
 |-----------------|--------------------------|----------------|-------------:|
 | OverLordBou     | 21.02.2025               | Your_SAT_Score |     140 subs |
-| OverLordBou     | 05.04.2025               | Your_SAT_Score |     140 subs |
+| OverLordBou     | 04.04.2025               | Your_SAT_Score |     140 subs |
