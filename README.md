@@ -109,7 +109,8 @@ higher reward.
 
 ## Hall of Fame
 
-| Twitch streamer | Date played (dd.mm.yyyy) | Supporters     | Total reward |
-|-----------------|--------------------------|----------------|-------------:|
-| OverLordBou     | 21.02.2025               | Your_SAT_Score |     140 subs |
-| OverLordBou     | 04.04.2025               | Your_SAT_Score |     140 subs |
+| Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
+|-----------------|--------------------------|---------------------------|-------------:|
+| OverLordBou     | 21.02.2025               | Your_SAT_Score            |     140 subs |
+| OverLordBou     | 04.04.2025               | Your_SAT_Score            |     140 subs |
+| Hyf1re          | 10.04.2025               | ArmoredGuppy, OverLordBou |     140 subs |
