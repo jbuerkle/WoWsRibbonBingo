@@ -15,7 +15,7 @@ class RibbonResultTest {
     @Test
     void getValueShouldReturnCorrectValueWithLargeCaliberGunsAsMainArmamentType() {
         assertEquals(220, resultA.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
-        assertEquals(30, resultB.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
+        assertEquals(90, resultB.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
         assertEquals(90, resultC.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
         assertEquals(110, resultD.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
         assertEquals(150, resultE.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
@@ -24,7 +24,7 @@ class RibbonResultTest {
     @Test
     void getValueShouldReturnCorrectValueWithAircraftAsMainArmamentType() {
         assertEquals(220, resultA.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
-        assertEquals(15, resultB.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
+        assertEquals(30, resultB.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
         assertEquals(30, resultC.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
         assertEquals(110, resultD.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
         assertEquals(75, resultE.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
@@ -35,7 +35,7 @@ class RibbonResultTest {
         assertEquals(
                 "Set on fire: 11 * 20 points",
                 resultA.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
-        assertEquals("Spotted: 3 * 10 points", resultB.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
+        assertEquals("Spotted: 3 * 30 points", resultB.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
         assertEquals(
                 "Main gun hit: 30 * 3 points",
                 resultC.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
@@ -48,7 +48,7 @@ class RibbonResultTest {
     @Test
     void getAsStringShouldReturnCorrectDisplayTextWithAircraftAsMainArmamentType() {
         assertEquals("Set on fire: 11 * 20 points", resultA.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
-        assertEquals("Spotted: 3 * 5 points", resultB.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
+        assertEquals("Spotted: 3 * 10 points", resultB.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
         assertEquals("Main gun hit: 30 points", resultC.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
         assertEquals("Secondary hit: 110 points", resultD.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
         assertEquals("Torpedo hit: 5 * 15 points", resultE.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());

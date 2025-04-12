@@ -18,17 +18,17 @@ public enum Ribbon {
     CITADEL_HIT("Citadel hit", 30),
     TORPEDO_HIT("Torpedo hit", 30),
     DEPTH_CHARGE_HIT("Depth charge hit", 10),
-    SONAR_PING("Sonar ping", 1),
-    SPOTTED("Spotted", 10),
+    SONAR_PING("Sonar ping", 5),
+    SPOTTED("Spotted", 30),
     INCAPACITATION("Incapacitation", 10),
     SET_ON_FIRE("Set on fire", 20),
     CAUSED_FLOODING("Caused flooding", 40),
     AIRCRAFT_SHOT_DOWN("Aircraft shot down", 10),
     SHOT_DOWN_BY_FIGHTER("Shot down by fighter", 10),
-    CAPTURED("Captured", 60),
-    ASSISTED_IN_CAPTURE("Assisted in capture", 30),
+    CAPTURED("Captured", 80),
+    ASSISTED_IN_CAPTURE("Assisted in capture", 40),
     DEFENDED("Defended", 10),
-    BUFF_PICKED_UP("Buff picked up", 40);
+    BUFF_PICKED_UP("Buff picked up", 60);
 
     private static final Map<Ribbon, Set<PointValueOverride>> POINT_VALUE_OVERRIDES = setUpOverrides();
 
@@ -84,9 +84,11 @@ public enum Ribbon {
         for (Ribbon ribbon : Ribbon.values()) {
             pointValueOverrides.put(ribbon, new LinkedHashSet<>());
         }
+        pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.MEDIUM_CALIBER_GUNS, 2));
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3));
+        pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, 4));
         pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
-        pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 5));
+        pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 10));
         return pointValueOverrides;
     }
 }
