@@ -24,7 +24,7 @@ class AchievementTest {
         assertEquals(25, Achievement.CLOSE_QUARTERS_EXPERT.getFlatPointValue());
         assertEquals(50, Achievement.DEVASTATING_STRIKE.getFlatPointValue());
         assertEquals(75, Achievement.DOUBLE_STRIKE.getFlatPointValue());
-        assertEquals(100, Achievement.KRAKEN_UNLEASHED.getFlatPointValue());
+        assertEquals(150, Achievement.HIGH_CALIBER.getFlatPointValue());
         assertEquals(300, Achievement.SOLO_WARRIOR.getFlatPointValue());
     }
 
@@ -45,6 +45,15 @@ class AchievementTest {
     }
 
     @Test
+    void getPointValueModifiersShouldReturnCorrectListForKrakenUnleashed() {
+        Set<PointValueModifier> krakenUnleashedModifiers = Achievement.KRAKEN_UNLEASHED.getPointValueModifiers();
+        assertEquals(1, krakenUnleashedModifiers.size());
+        PointValueModifier destroyedModifier = krakenUnleashedModifiers.iterator().next();
+        assertEquals(Ribbon.DESTROYED, destroyedModifier.ribbon());
+        assertEquals(0.2, destroyedModifier.bonusModifier());
+    }
+
+    @Test
     void getPointValueModifiersShouldReturnCorrectListForCombatScout() {
         Set<PointValueModifier> combatScoutModifiers = Achievement.COMBAT_SCOUT.getPointValueModifiers();
         assertEquals(1, combatScoutModifiers.size());
@@ -60,10 +69,10 @@ class AchievementTest {
         Iterator<PointValueModifier> iterator = antiAirDefenseExpertModifiers.iterator();
         PointValueModifier aircraftShotDownModifier = iterator.next();
         assertEquals(Ribbon.AIRCRAFT_SHOT_DOWN, aircraftShotDownModifier.ribbon());
-        assertEquals(0.2, aircraftShotDownModifier.bonusModifier());
+        assertEquals(0.3, aircraftShotDownModifier.bonusModifier());
         PointValueModifier shotDownByFighterModifier = iterator.next();
         assertEquals(Ribbon.SHOT_DOWN_BY_FIGHTER, shotDownByFighterModifier.ribbon());
-        assertEquals(0.2, shotDownByFighterModifier.bonusModifier());
+        assertEquals(0.3, shotDownByFighterModifier.bonusModifier());
     }
 
     @Test
@@ -73,17 +82,17 @@ class AchievementTest {
         Iterator<PointValueModifier> iterator = withererModifiers.iterator();
         PointValueModifier setOnFireModifier = iterator.next();
         assertEquals(Ribbon.SET_ON_FIRE, setOnFireModifier.ribbon());
-        assertEquals(0.2, setOnFireModifier.bonusModifier());
+        assertEquals(0.3, setOnFireModifier.bonusModifier());
         PointValueModifier causedFloodingModifier = iterator.next();
         assertEquals(Ribbon.CAUSED_FLOODING, causedFloodingModifier.ribbon());
-        assertEquals(0.1, causedFloodingModifier.bonusModifier());
+        assertEquals(0.3, causedFloodingModifier.bonusModifier());
     }
 
     @Test
     void getAllAchievementsListedAsStringShouldReturnLongString() {
         String expectedString = """
-                - Arsonist: 20 points + 10% bonus points for all 'Set on fire' ribbons
-                - AA Defense Expert: 5 points + 20% bonus points for all 'Aircraft shot down' ribbons + 20% bonus points for all 'Shot down by fighter' ribbons
+                - Arsonist: 30 points + 10% bonus points for all 'Set on fire' ribbons
+                - AA Defense Expert: 15 points + 30% bonus points for all 'Aircraft shot down' ribbons + 30% bonus points for all 'Shot down by fighter' ribbons
                 - Close Quarters Expert: 25 points
                 - Devastating Strike: 50 points
                 - Double Strike: 75 points
@@ -93,12 +102,12 @@ class AchievementTest {
                 - Fireproof: 50 points
                 - Unsinkable: 50 points
                 - Dreadnought: 50 points
-                - Combat Scout: 70 points + 60% bonus points for all 'Spotted' ribbons
-                - Confederate: 100 points
-                - High Caliber: 100 points
-                - Kraken Unleashed: 100 points
+                - Combat Scout: 30 points + 60% bonus points for all 'Spotted' ribbons
+                - Confederate: 150 points
+                - High Caliber: 150 points
+                - Kraken Unleashed: 30 points + 20% bonus points for all 'Destroyed' ribbons
                 - Solo Warrior: 300 points
-                - Witherer: 40 points + 20% bonus points for all 'Set on fire' ribbons + 10% bonus points for all 'Caused flooding' ribbons
+                - Witherer: 30 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding' ribbons
                 """;
         assertEquals(expectedString, Achievement.getAllAchievementsListedAsString());
     }
