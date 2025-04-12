@@ -7,27 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BingoResultBarTest {
 
     @Test
-    void getPointRequirementShouldReturnZeroPointsForEachLevel() {
+    void getPointRequirementShouldReturnCorrectAmount() {
         assertEquals(0, new BingoResultBar(0).getPointRequirement());
-    }
-
-    @Test
-    void getPointRequirementShouldReturnFourHundredPointsForEachLevel() {
-        assertEquals(400, new BingoResultBar(1).getPointRequirement());
-    }
-
-    @Test
-    void getPointRequirementShouldReturnOneHundredAndFiftyPointsForEachLevel() {
-        assertEquals(550, new BingoResultBar(2).getPointRequirement());
+        assertEquals(300, new BingoResultBar(1).getPointRequirement());
+        assertEquals(500, new BingoResultBar(2).getPointRequirement());
         assertEquals(700, new BingoResultBar(3).getPointRequirement());
-        assertEquals(850, new BingoResultBar(4).getPointRequirement());
-        assertEquals(1000, new BingoResultBar(5).getPointRequirement());
-    }
-
-    @Test
-    void getPointRequirementShouldReturnTwoHundredPointsForEachLevel() {
-        assertEquals(1200, new BingoResultBar(6).getPointRequirement());
-        assertEquals(1400, new BingoResultBar(7).getPointRequirement());
+        assertEquals(950, new BingoResultBar(4).getPointRequirement());
+        assertEquals(1200, new BingoResultBar(5).getPointRequirement());
+        assertEquals(1500, new BingoResultBar(6).getPointRequirement());
+        assertEquals(1800, new BingoResultBar(7).getPointRequirement());
     }
 
     @Test

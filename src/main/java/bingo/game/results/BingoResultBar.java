@@ -9,11 +9,13 @@ public record BingoResultBar(int level) {
     private int getPointRequirement(int currentLevel) {
         final int pointRequirementForCurrentLevel;
         if (currentLevel > 5) {
-            pointRequirementForCurrentLevel = 200;
+            pointRequirementForCurrentLevel = 300;
+        } else if (currentLevel > 3) {
+            pointRequirementForCurrentLevel = 250;
         } else if (currentLevel > 1) {
-            pointRequirementForCurrentLevel = 150;
+            pointRequirementForCurrentLevel = 200;
         } else if (currentLevel > 0) {
-            pointRequirementForCurrentLevel = 400;
+            pointRequirementForCurrentLevel = 300;
         } else {
             return 0;
         }
