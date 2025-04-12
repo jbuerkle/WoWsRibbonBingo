@@ -15,7 +15,8 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 1. You have to start the challenge on level 1.
 2. You cannot skip any levels, but you can choose to end the challenge early. You cannot do this while in a match, or in
    case the challenge already ended for a different reason.
-3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice.
+3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice. **Exception:** Hybrid
+   ships which have player-controllable, carrier-like planes are banned from use for the main participant.
 4. You may invite any number of players into your division.
 5. If you play in a division, you and the players in your division may use every ship only **once** per challenge. Your
    ship pool will be shared between players, rather than each player having their own ship pool. However, only ships
@@ -48,29 +49,30 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 ## Point values per ribbon
 
 - Destroyed: 120 points
-- Main gun hit: 1 point (3 points for ships with gun caliber of 305mm+ as main armament)
+- Main gun hit: 1 point (2 points for ships with gun caliber of 203mm+ as main armament, 3 points for ships with gun
+  caliber of 305mm+ as main armament, 4 points for ships with gun caliber of 406mm+ as main armament)
 - Secondary hit: 1 point
 - Bomb hit: 3 points
 - Rocket hit: 3 points
 - Citadel hit: 30 points
 - Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
-- Sonar ping: 1 point
-- Spotted: 10 points (5 points for ships with aircraft as main armament)
+- Sonar ping: 5 points
+- Spotted: 30 points (10 points for ships with aircraft as main armament)
 - Incapacitation: 10 points
 - Set on fire: 20 points
 - Caused flooding: 40 points
 - Aircraft shot down: 10 points
 - Shot down by fighter: 10 points
-- Captured: 60 points
-- Assisted in capture: 30 points
+- Captured: 80 points
+- Assisted in capture: 40 points
 - Defended: 10 points
-- Buff picked up: 40 points
+- Buff picked up: 60 points
 
 ## Point values per achievement
 
-- Arsonist: 20 points + 10% bonus points for all 'Set on fire' ribbons
-- AA Defense Expert: 5 points + 20% bonus points for all 'Aircraft shot down' ribbons + 20% bonus points for all 'Shot
+- Arsonist: 30 points + 10% bonus points for all 'Set on fire' ribbons
+- AA Defense Expert: 15 points + 30% bonus points for all 'Aircraft shot down' ribbons + 30% bonus points for all 'Shot
   down by fighter' ribbons
 - Close Quarters Expert: 25 points
 - Devastating Strike: 50 points
@@ -81,12 +83,12 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Fireproof: 50 points
 - Unsinkable: 50 points
 - Dreadnought: 50 points
-- Combat Scout: 70 points + 60% bonus points for all 'Spotted' ribbons
-- Confederate: 100 points
-- High Caliber: 100 points
-- Kraken Unleashed: 100 points
+- Combat Scout: 30 points + 60% bonus points for all 'Spotted' ribbons
+- Confederate: 150 points
+- High Caliber: 150 points
+- Kraken Unleashed: 30 points + 20% bonus points for all 'Destroyed' ribbons
 - Solo Warrior: 300 points
-- Witherer: 40 points + 20% bonus points for all 'Set on fire' ribbons + 10% bonus points for all 'Caused flooding'
+- Witherer: 30 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding'
   ribbons
 
 Note: Bonus points for the same ribbon stack additively, **not** multiplicatively.
@@ -96,13 +98,13 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 | Level | Points required | Number of subs as reward: 2^(Level) |
 |-------|----------------:|------------------------------------:|
 | 0     |               0 |                         2^0 = 1 sub |
-| 1     |             400 |                        2^1 = 2 subs |
-| 2     |             550 |                        2^2 = 4 subs |
+| 1     |             300 |                        2^1 = 2 subs |
+| 2     |             500 |                        2^2 = 4 subs |
 | 3     |             700 |                        2^3 = 8 subs |
-| 4     |             850 |                       2^4 = 16 subs |
-| 5     |            1000 |                       2^5 = 32 subs |
-| 6     |            1200 |                       2^6 = 64 subs |
-| 7     |            1400 |                      2^7 = 128 subs |
+| 4     |             950 |                       2^4 = 16 subs |
+| 5     |            1200 |                       2^5 = 32 subs |
+| 6     |            1500 |                       2^6 = 64 subs |
+| 7     |            1800 |                      2^7 = 128 subs |
 
 The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
 higher reward.
