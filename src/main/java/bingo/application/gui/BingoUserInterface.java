@@ -146,7 +146,7 @@ public class BingoUserInterface extends Application {
                         return mainArmamentType;
                     }
                 }
-                return MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS;
+                return MainArmamentType.SMALL_CALIBER_GUNS;
             }
         });
         resetMainArmamentTypeToDefault();
@@ -270,7 +270,7 @@ public class BingoUserInterface extends Application {
     }
 
     private void resetMainArmamentTypeToDefault() {
-        mainArmamentTypeComboBox.setValue(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        mainArmamentTypeComboBox.setValue(MainArmamentType.SMALL_CALIBER_GUNS);
     }
 
     private void clearInput(TextField textField) {
