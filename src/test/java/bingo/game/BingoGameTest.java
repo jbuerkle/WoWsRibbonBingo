@@ -1,5 +1,6 @@
 package bingo.game;
 
+import bingo.achievements.Achievement;
 import bingo.game.results.BingoResult;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
@@ -18,21 +19,21 @@ class BingoGameTest {
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
-            ". Requirement of level 7: 1400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations! Your unused extra lives are converted to 6 subs each, for a total of 134 subs.";
+            ". Requirement of level 7: 1800 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations! Your unused extra lives are converted to 6 subs each, for a total of 134 subs.";
     private static final String LEVEL_ONE_GAME_OVER =
-            ". Requirement of level 1: 400 points, which means your result does not meet the point requirement. The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub";
+            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
-            ". Requirement of level 1: 400 points, which means your result does not meet the point requirement. You are allowed to retry due to imbalanced matchmaking (rule 8a or 8b). You gain 1 token due to imbalanced matchmaking as per rule 9b. You now have 1 token.";
+            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry due to imbalanced matchmaking (rule 8a or 8b). You gain 1 token due to imbalanced matchmaking as per rule 9b. You now have 1 token.";
     private static final String LEVEL_ONE_UNFAIR_DISADVANTAGE =
-            ". Requirement of level 1: 400 points, which means your result does not meet the point requirement. You are allowed to retry due to an unfair disadvantage (rule 8c). You now have 0 tokens.";
+            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry due to an unfair disadvantage (rule 8c). You now have 0 tokens.";
     private static final String LEVEL_ONE_EXTRA_LIFE =
-            ". Requirement of level 1: 400 points, which means your result does not meet the point requirement. You are allowed to retry because you have an extra life. You lose 1 extra life. You now have 2 tokens.";
+            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry because you have an extra life. You lose 1 extra life. You now have 2 tokens.";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub. Your unused extra lives are converted to 6 subs each, for a total of 7 subs.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
-            ". Requirement of level 1: 400 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You gain 1 token for a successful match as per rule 9a. You now have 1 token. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 550 points";
+            ". Requirement of level 1: 300 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You gain 1 token for a successful match as per rule 9a. You now have 1 token. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 500 points";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
-            ". Requirement of level 2: 550 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. You gain 1 token for a successful match as per rule 9a. You now have 2 tokens. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 700 points";
+            ". Requirement of level 2: 500 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. You gain 1 token for a successful match as per rule 9a. You now have 2 tokens. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 700 points";
 
     private List<RetryRule> activeRetryRules;
     private BingoGame bingoGame;
@@ -49,13 +50,13 @@ class BingoGameTest {
                 | Level | Points required | Number of subs as reward: 2^(Level) |
                 |---|---:|---:|
                 | 0 | 0 | 2^0 = 1 sub |
-                | 1 | 400 | 2^1 = 2 subs |
-                | 2 | 550 | 2^2 = 4 subs |
+                | 1 | 300 | 2^1 = 2 subs |
+                | 2 | 500 | 2^2 = 4 subs |
                 | 3 | 700 | 2^3 = 8 subs |
-                | 4 | 850 | 2^4 = 16 subs |
-                | 5 | 1000 | 2^5 = 32 subs |
-                | 6 | 1200 | 2^6 = 64 subs |
-                | 7 | 1400 | 2^7 = 128 subs |
+                | 4 | 950 | 2^4 = 16 subs |
+                | 5 | 1200 | 2^5 = 32 subs |
+                | 6 | 1500 | 2^6 = 64 subs |
+                | 7 | 1800 | 2^7 = 128 subs |
                 """;
         assertEquals(expectedString, bingoGame.getAllResultBarsAndRewardsInTableFormat());
     }
@@ -121,7 +122,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnLevelThreeNextWhenSubmittedResultIsSufficient() {
-        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 137);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 3);
@@ -133,8 +134,10 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnCongratulationsForLevelSevenWhenSubmittedResultIsSufficient() {
-        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.DESTROYED, 12);
+        bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 300);
+        bingoResult.addAchievementResult(Achievement.KRAKEN_UNLEASHED, 1);
         for (int level = START_LEVEL; level < MAX_LEVEL; level++) {
             assertSubmitBingoResultIsSuccessful(bingoResult);
             assertConfirmCurrentResultIsSuccessful();
@@ -238,14 +241,14 @@ class BingoGameTest {
     }
 
     private BingoResult createInsufficientBingoResultForLevelOne() {
-        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 37);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 2);
         return bingoResult;
     }
 
     private BingoResult createSufficientBingoResultForLevelOne() {
-        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_OR_MEDIUM_CALIBER_GUNS);
+        BingoResult bingoResult = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         bingoResult.addRibbonResult(Ribbon.MAIN_GUN_HIT, 237);
         bingoResult.addRibbonResult(Ribbon.SET_ON_FIRE, 12);
         return bingoResult;
@@ -294,10 +297,10 @@ class BingoGameTest {
     }
 
     private void assertToStringMethodReturnsFirstResultBar() {
-        assertEquals("Requirement of level 1: 400 points", bingoGame.toString());
+        assertEquals("Requirement of level 1: 300 points", bingoGame.toString());
     }
 
     private void assertToStringMethodReturnsSecondResultBar() {
-        assertEquals("Requirement of level 2: 550 points", bingoGame.toString());
+        assertEquals("Requirement of level 2: 500 points", bingoGame.toString());
     }
 }
