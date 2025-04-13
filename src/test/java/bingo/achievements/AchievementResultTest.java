@@ -115,32 +115,32 @@ class AchievementResultTest {
     void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithSmallCaliberGunsAndFiveSpottedRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SPOTTED, 5));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultSet, MainArmamentType.SMALL_CALIBER_GUNS);
-        assertEquals(120, term.getValue());
-        assertEquals("Combat Scout: 30 points + (Spotted: 5 * 30 points) * 0.6", term.getAsString());
+        assertEquals(150, term.getValue());
+        assertEquals("Combat Scout: 60 points + (Spotted: 5 * 30 points) * 0.6", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithSmallCaliberGunsAndTenSpottedRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SPOTTED, 10));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultSet, MainArmamentType.SMALL_CALIBER_GUNS);
-        assertEquals(210, term.getValue());
-        assertEquals("Combat Scout: 30 points + (Spotted: 10 * 30 points) * 0.6", term.getAsString());
+        assertEquals(240, term.getValue());
+        assertEquals("Combat Scout: 60 points + (Spotted: 10 * 30 points) * 0.6", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithAircraftAndFiveSpottedRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SPOTTED, 5));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultSet, MainArmamentType.AIRCRAFT);
-        assertEquals(60, term.getValue());
-        assertEquals("Combat Scout: 30 points + (Spotted: 5 * 10 points) * 0.6", term.getAsString());
+        assertEquals(90, term.getValue());
+        assertEquals("Combat Scout: 60 points + (Spotted: 5 * 10 points) * 0.6", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithAircraftAndFifteenSpottedRibbons() {
         ribbonResultSet.add(new RibbonResult(Ribbon.SPOTTED, 15));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultSet, MainArmamentType.AIRCRAFT);
-        assertEquals(120, term.getValue());
-        assertEquals("Combat Scout: 30 points + (Spotted: 15 * 10 points) * 0.6", term.getAsString());
+        assertEquals(150, term.getValue());
+        assertEquals("Combat Scout: 60 points + (Spotted: 15 * 10 points) * 0.6", term.getAsString());
     }
 
     @Test
@@ -164,9 +164,9 @@ class AchievementResultTest {
         ribbonResultSet.add(new RibbonResult(Ribbon.SHOT_DOWN_BY_FIGHTER, 10));
         ribbonResultSet.add(new RibbonResult(Ribbon.AIRCRAFT_SHOT_DOWN, 25));
         Term term = oneAntiAirDefenseExpertAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(120, term.getValue());
+        assertEquals(150, term.getValue());
         assertEquals(
-                "AA Defense Expert: 15 points + (Aircraft shot down: 25 * 10 points) * 0.3 + (Shot down by fighter: 10 * 10 points) * 0.3",
+                "AA Defense Expert: 45 points + (Aircraft shot down: 25 * 10 points) * 0.3 + (Shot down by fighter: 10 * 10 points) * 0.3",
                 term.getAsString());
     }
 
@@ -175,9 +175,9 @@ class AchievementResultTest {
         ribbonResultSet.add(new RibbonResult(Ribbon.SHOT_DOWN_BY_FIGHTER, 20));
         ribbonResultSet.add(new RibbonResult(Ribbon.AIRCRAFT_SHOT_DOWN, 50));
         Term term = oneAntiAirDefenseExpertAchievement.getAsTerm(ribbonResultSet, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(225, term.getValue());
+        assertEquals(255, term.getValue());
         assertEquals(
-                "AA Defense Expert: 15 points + (Aircraft shot down: 50 * 10 points) * 0.3 + (Shot down by fighter: 20 * 10 points) * 0.3",
+                "AA Defense Expert: 45 points + (Aircraft shot down: 50 * 10 points) * 0.3 + (Shot down by fighter: 20 * 10 points) * 0.3",
                 term.getAsString());
     }
 }

@@ -92,7 +92,7 @@ class AchievementTest {
     void getAllAchievementsListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Arsonist: 30 points + 10% bonus points for all 'Set on fire' ribbons
-                - AA Defense Expert: 15 points + 30% bonus points for all 'Aircraft shot down' ribbons + 30% bonus points for all 'Shot down by fighter' ribbons
+                - AA Defense Expert: 45 points + 30% bonus points for all 'Aircraft shot down' ribbons + 30% bonus points for all 'Shot down by fighter' ribbons
                 - Close Quarters Expert: 25 points
                 - Devastating Strike: 50 points
                 - Double Strike: 75 points
@@ -102,7 +102,7 @@ class AchievementTest {
                 - Fireproof: 50 points
                 - Unsinkable: 50 points
                 - Dreadnought: 50 points
-                - Combat Scout: 30 points + 60% bonus points for all 'Spotted' ribbons
+                - Combat Scout: 60 points + 60% bonus points for all 'Spotted' ribbons
                 - Confederate: 150 points
                 - High Caliber: 150 points
                 - Kraken Unleashed: 30 points + 20% bonus points for all 'Destroyed' ribbons

@@ -13,7 +13,7 @@ import java.util.Set;
 
 public enum Achievement {
     ARSONIST("Arsonist", 30),
-    AA_DEFENSE_EXPERT("AA Defense Expert", 15),
+    AA_DEFENSE_EXPERT("AA Defense Expert", 45),
     CLOSE_QUARTERS_EXPERT("Close Quarters Expert", 25),
     DEVASTATING_STRIKE("Devastating Strike", 50),
     DOUBLE_STRIKE("Double Strike", 75),
@@ -23,7 +23,7 @@ public enum Achievement {
     FIREPROOF("Fireproof", 50),
     UNSINKABLE("Unsinkable", 50),
     DREADNOUGHT("Dreadnought", 50),
-    COMBAT_SCOUT("Combat Scout", 30),
+    COMBAT_SCOUT("Combat Scout", 60),
     CONFEDERATE("Confederate", 150),
     HIGH_CALIBER("High Caliber", 150),
     KRAKEN_UNLEASHED("Kraken Unleashed", 30),
