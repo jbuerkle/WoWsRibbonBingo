@@ -10,6 +10,7 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithSmallCaliberGunsAsMainArmamentType() {
         assertEquals(1, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.SMALL_CALIBER_GUNS));
+        assertEquals(20, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.SMALL_CALIBER_GUNS));
         assertEquals(30, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.SMALL_CALIBER_GUNS));
         assertEquals(30, Ribbon.SPOTTED.getPointValue(MainArmamentType.SMALL_CALIBER_GUNS));
     }
@@ -17,6 +18,7 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithMediumCaliberGunsAsMainArmamentType() {
         assertEquals(2, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.MEDIUM_CALIBER_GUNS));
+        assertEquals(40, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.MEDIUM_CALIBER_GUNS));
         assertEquals(30, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.MEDIUM_CALIBER_GUNS));
         assertEquals(30, Ribbon.SPOTTED.getPointValue(MainArmamentType.MEDIUM_CALIBER_GUNS));
     }
@@ -24,6 +26,7 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithLargeCaliberGunsAsMainArmamentType() {
         assertEquals(3, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.LARGE_CALIBER_GUNS));
+        assertEquals(60, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.LARGE_CALIBER_GUNS));
         assertEquals(30, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.LARGE_CALIBER_GUNS));
         assertEquals(30, Ribbon.SPOTTED.getPointValue(MainArmamentType.LARGE_CALIBER_GUNS));
     }
@@ -31,6 +34,7 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithExtraLargeCaliberGunsAsMainArmamentType() {
         assertEquals(4, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS));
+        assertEquals(80, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS));
         assertEquals(30, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS));
         assertEquals(30, Ribbon.SPOTTED.getPointValue(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS));
     }
@@ -38,6 +42,7 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithTorpedoesAsMainArmamentType() {
         assertEquals(1, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.TORPEDOES));
+        assertEquals(20, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.TORPEDOES));
         assertEquals(30, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.TORPEDOES));
         assertEquals(30, Ribbon.SPOTTED.getPointValue(MainArmamentType.TORPEDOES));
     }
@@ -45,13 +50,14 @@ class RibbonTest {
     @Test
     void getPointValueShouldReturnCorrectValueWithAircraftAsMainArmamentType() {
         assertEquals(1, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.AIRCRAFT));
+        assertEquals(20, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.AIRCRAFT));
         assertEquals(15, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.AIRCRAFT));
         assertEquals(10, Ribbon.SPOTTED.getPointValue(MainArmamentType.AIRCRAFT));
     }
 
     @Test
     void toStringMethodShouldReturnCorrectDisplayText() {
-        assertEquals("Citadel hit: 30 points", Ribbon.CITADEL_HIT.toString());
+        assertEquals("Citadel hit: 20 points", Ribbon.CITADEL_HIT.toString());
         assertEquals("Rocket hit: 3 points", Ribbon.ROCKET_HIT.toString());
         assertEquals("Main gun hit: 1 point", Ribbon.MAIN_GUN_HIT.toString());
         assertEquals("Torpedo hit: 30 points", Ribbon.TORPEDO_HIT.toString());
@@ -65,7 +71,7 @@ class RibbonTest {
                 - Secondary hit: 1 point
                 - Bomb hit: 3 points
                 - Rocket hit: 3 points
-                - Citadel hit: 30 points
+                - Citadel hit: 20 points (40 points for ships with gun caliber of 203mm+ as main armament, 60 points for ships with gun caliber of 305mm+ as main armament, 80 points for ships with gun caliber of 406mm+ as main armament)
                 - Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
                 - Depth charge hit: 10 points
                 - Sonar ping: 5 points

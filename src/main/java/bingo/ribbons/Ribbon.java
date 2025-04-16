@@ -15,7 +15,7 @@ public enum Ribbon {
     SECONDARY_HIT("Secondary hit", 1),
     BOMB_HIT("Bomb hit", 3),
     ROCKET_HIT("Rocket hit", 3),
-    CITADEL_HIT("Citadel hit", 30),
+    CITADEL_HIT("Citadel hit", 20),
     TORPEDO_HIT("Torpedo hit", 30),
     DEPTH_CHARGE_HIT("Depth charge hit", 10),
     SONAR_PING("Sonar ping", 5),
@@ -87,6 +87,9 @@ public enum Ribbon {
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.MEDIUM_CALIBER_GUNS, 2));
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3));
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, 4));
+        pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.MEDIUM_CALIBER_GUNS, 40));
+        pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 60));
+        pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, 80));
         pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
         pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 10));
         return pointValueOverrides;
