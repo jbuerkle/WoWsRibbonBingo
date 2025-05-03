@@ -2,9 +2,13 @@ package bingo.tokens;
 
 import bingo.rules.RetryRule;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
-public class TokenCounter {
+public class TokenCounter implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 2094700030153408780L;
     private static final int TOKENS_NEEDED_FOR_EXTRA_LIFE = 6;
     private static final String YOU_GAIN = "You gain ";
     private static final String YOU_LOSE = "You lose ";
@@ -19,6 +23,16 @@ public class TokenCounter {
     public TokenCounter() {
         currentTokens = 0;
         resetMatchTokenCounters();
+    }
+
+    public TokenCounter(
+            int tokensAfterMatch, int tokensGainedForImbalancedMatch, int tokensGainedForSuccessfulMatch,
+            int extraLivesLostForUnsuccessfulMatch, int currentTokens) {
+        this.tokensAfterMatch = tokensAfterMatch;
+        this.tokensGainedForImbalancedMatch = tokensGainedForImbalancedMatch;
+        this.tokensGainedForSuccessfulMatch = tokensGainedForSuccessfulMatch;
+        this.extraLivesLostForUnsuccessfulMatch = extraLivesLostForUnsuccessfulMatch;
+        this.currentTokens = currentTokens;
     }
 
     public void calculateMatchResult(

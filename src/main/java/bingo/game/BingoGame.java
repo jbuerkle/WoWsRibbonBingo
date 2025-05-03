@@ -8,11 +8,14 @@ import bingo.tokens.TokenCounter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
-public class BingoGame {
+public class BingoGame implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6697185137194220209L;
     private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 7;
 
@@ -20,7 +23,7 @@ public class BingoGame {
     private final TokenCounter tokenCounter;
     private final ObservableList<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
-    private Optional<BingoResult> bingoResult;
+    private BingoResult bingoResult;
     private List<RetryRule> activeRetryRules;
     private BingoGameState bingoGameState;
     private int currentLevel;
@@ -38,9 +41,27 @@ public class BingoGame {
         resetBingoResult();
     }
 
+    public BingoGame(
+            int currentLevel, BingoGameState bingoGameState, List<RetryRule> activeRetryRules, BingoResult bingoResult,
+            boolean challengeEndedVoluntarily, ObservableList<Ship> shipsUsed, TokenCounter tokenCounter,
+            List<BingoResultBar> resultBars) {
+        this.currentLevel = currentLevel;
+        this.bingoGameState = bingoGameState;
+        this.activeRetryRules = activeRetryRules;
+        this.bingoResult = bingoResult;
+        this.challengeEndedVoluntarily = challengeEndedVoluntarily;
+        this.shipsUsed = shipsUsed;
+        this.tokenCounter = tokenCounter;
+        this.resultBars = resultBars;
+    }
+
     private void resetBingoResult() {
-        bingoResult = Optional.empty();
+        bingoResult = null;
         activeRetryRules = new LinkedList<>();
+    }
+
+    private boolean bingoResultIsSubmitted() {
+        return bingoResult != null;
     }
 
     private boolean processBingoGameAction(BingoGameAction selectedAction) {
@@ -126,7 +147,7 @@ public class BingoGame {
     public boolean submitBingoResult(BingoResult bingoResult, List<RetryRule> activeRetryRules) {
         boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.SUBMIT_RESULT);
         if (stateChangeSuccessful) {
-            this.bingoResult = Optional.ofNullable(bingoResult);
+            this.bingoResult = bingoResult;
             this.activeRetryRules = activeRetryRules;
             tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), activeRetryRules);
         }
@@ -146,7 +167,7 @@ public class BingoGame {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResult.isPresent() && bingoResult.get().getPointValue() >= getPointRequirementOfLevel(currentLevel);
+        return bingoResultIsSubmitted() && bingoResult.getPointValue() >= getPointRequirementOfLevel(currentLevel);
     }
 
     private int getPointRequirementOfLevel(int level) {
@@ -195,11 +216,13 @@ public class BingoGame {
         if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) || challengeEndedVoluntarily) {
             appendTextForVoluntaryEndOfChallenge(stringBuilder);
         } else {
-            bingoResult.ifPresent(result -> stringBuilder.append(result).append(". "));
+            if (bingoResultIsSubmitted()) {
+                stringBuilder.append(bingoResult).append(". ");
+            }
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
             if (requirementOfCurrentResultBarIsMet()) {
                 appendTextForSuccessfulMatch(stringBuilder);
-            } else if (bingoResult.isPresent()) {
+            } else if (bingoResultIsSubmitted()) {
                 appendTextForUnsuccessfulMatch(stringBuilder);
             }
         }

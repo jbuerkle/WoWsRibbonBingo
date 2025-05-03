@@ -8,13 +8,18 @@ import bingo.ribbons.Ribbon;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-public class BingoResult {
+public class BingoResult implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -4747703773714476437L;
+
     private final MainArmamentType mainArmamentType;
     private final Set<RibbonResult> ribbonResultSet;
     private final Set<AchievementResult> achievementResultSet;
@@ -23,6 +28,14 @@ public class BingoResult {
         this.mainArmamentType = mainArmamentType;
         this.ribbonResultSet = new HashSet<>();
         this.achievementResultSet = new HashSet<>();
+    }
+
+    public BingoResult(
+            MainArmamentType mainArmamentType, Set<RibbonResult> ribbonResultSet,
+            Set<AchievementResult> achievementResultSet) {
+        this.mainArmamentType = mainArmamentType;
+        this.ribbonResultSet = ribbonResultSet;
+        this.achievementResultSet = achievementResultSet;
     }
 
     public void addRibbonResult(Ribbon ribbon, int amount) {
