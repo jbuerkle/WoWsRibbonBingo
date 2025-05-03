@@ -10,8 +10,6 @@ import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
 import bingo.ships.Ship;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -25,7 +23,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,14 +31,13 @@ public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
+    private final BingoGame bingoGame;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final Map<Achievement, TextField> textFieldsByAchievement;
     private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
-    private final ObservableList<Ship> shipsUsed;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
     private final TextField shipInputField;
-    private final BingoGame bingoGame;
     private final TextArea textArea;
     private final GridPane mainGrid;
     private int mainGridRow;
@@ -49,14 +45,13 @@ public class BingoUserInterface extends Application {
     public BingoUserInterface() {
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
+        this.bingoGame = new BingoGame();
         this.textFieldsByRibbon = new HashMap<>();
         this.textFieldsByAchievement = new HashMap<>();
         this.checkBoxesByRetryRule = new HashMap<>();
-        this.shipsUsed = FXCollections.observableList(new LinkedList<>());
-        this.tableView = new TableView<>(shipsUsed);
+        this.tableView = new TableView<>(bingoGame.getShipsUsed());
         this.shipNameColumn = new TableColumn<>("Ships used");
         this.shipInputField = new TextField();
-        this.bingoGame = new BingoGame();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
         this.mainGrid.setPadding(new Insets(5));
@@ -291,14 +286,12 @@ public class BingoUserInterface extends Application {
     private void addShip(InputEvent event) {
         String trimmedUserInput = shipInputField.getText().trim();
         if (containsUsableInput(trimmedUserInput)) {
-            for (Ship ship : shipsUsed) {
-                if (trimmedUserInput.equalsIgnoreCase(ship.name())) {
-                    shipInputField.setText(SHIP_ALREADY_USED);
-                    return;
-                }
+            boolean shipSuccessfullyAdded = bingoGame.addShipUsed(trimmedUserInput);
+            if (shipSuccessfullyAdded) {
+                clearInput(shipInputField);
+            } else {
+                shipInputField.setText(SHIP_ALREADY_USED);
             }
-            shipsUsed.add(new Ship(trimmedUserInput));
-            clearInput(shipInputField);
         }
     }
 
@@ -308,7 +301,7 @@ public class BingoUserInterface extends Application {
 
     private void removeShip(InputEvent event) {
         Ship ship = tableView.getSelectionModel().getSelectedItem();
-        shipsUsed.remove(ship);
+        bingoGame.getShipsUsed().remove(ship);
     }
 
     private void setEventHandlers(Button button, EventHandler<InputEvent> eventHandler) {

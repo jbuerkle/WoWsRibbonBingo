@@ -5,9 +5,11 @@ import bingo.game.results.BingoResult;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
+import bingo.ships.Ship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +44,39 @@ class BingoGameTest {
     void setup() {
         activeRetryRules = new LinkedList<>();
         bingoGame = new BingoGame();
+    }
+
+    @Test
+    void addShipUsedShouldBeSuccessfulWhenShipNamesAreUnique() {
+        assertTrue(bingoGame.addShipUsed("A"));
+        assertTrue(bingoGame.addShipUsed("B"));
+        assertTrue(bingoGame.addShipUsed("C"));
+        assertEquals(3, bingoGame.getShipsUsed().size());
+    }
+
+    @Test
+    void addShipUsedShouldNotBeSuccessfulWhenItWasAlreadyAdded() {
+        bingoGame.addShipUsed("D");
+        assertFalse(bingoGame.addShipUsed("d"));
+        assertEquals(1, bingoGame.getShipsUsed().size());
+    }
+
+    @Test
+    void getShipsUsedShouldReturnEmptyList() {
+        assertTrue(bingoGame.getShipsUsed().isEmpty());
+    }
+
+    @Test
+    void getShipsUsedShouldReturnListOfShipsInTheOrderTheyWereAdded() {
+        bingoGame.addShipUsed("A");
+        bingoGame.addShipUsed("B");
+        bingoGame.addShipUsed("C");
+        List<Ship> shipsUsed = bingoGame.getShipsUsed();
+        assertEquals(3, shipsUsed.size());
+        Iterator<Ship> shipIterator = shipsUsed.iterator();
+        assertEquals("A", shipIterator.next().name());
+        assertEquals("B", shipIterator.next().name());
+        assertEquals("C", shipIterator.next().name());
     }
 
     @Test

@@ -3,7 +3,10 @@ package bingo.game;
 import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBar;
 import bingo.rules.RetryRule;
+import bingo.ships.Ship;
 import bingo.tokens.TokenCounter;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +18,7 @@ public class BingoGame {
 
     private final List<BingoResultBar> resultBars;
     private final TokenCounter tokenCounter;
+    private final ObservableList<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
     private Optional<BingoResult> bingoResult;
     private List<RetryRule> activeRetryRules;
@@ -24,6 +28,7 @@ public class BingoGame {
     public BingoGame() {
         this.resultBars = new LinkedList<>();
         this.tokenCounter = new TokenCounter();
+        this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.challengeEndedVoluntarily = false;
         for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
             resultBars.add(new BingoResultBar(level));
@@ -154,6 +159,20 @@ public class BingoGame {
 
     private boolean hasNextLevel() {
         return currentLevel < MAX_LEVEL;
+    }
+
+    public boolean addShipUsed(String shipName) {
+        for (Ship ship : shipsUsed) {
+            if (shipName.equalsIgnoreCase(ship.name())) {
+                return false;
+            }
+        }
+        shipsUsed.add(new Ship(shipName));
+        return true;
+    }
+
+    public ObservableList<Ship> getShipsUsed() {
+        return shipsUsed;
     }
 
     public String getAllResultBarsAndRewardsInTableFormat() {
