@@ -18,7 +18,7 @@ class RibbonResultTest {
         assertEquals(90, resultB.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
         assertEquals(90, resultC.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
         assertEquals(110, resultD.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
-        assertEquals(150, resultE.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
+        assertEquals(200, resultE.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getValue());
     }
 
     @Test
@@ -27,7 +27,7 @@ class RibbonResultTest {
         assertEquals(30, resultB.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
         assertEquals(30, resultC.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
         assertEquals(110, resultD.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
-        assertEquals(75, resultE.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
+        assertEquals(100, resultE.getAsTerm(MainArmamentType.AIRCRAFT).getValue());
     }
 
     @Test
@@ -41,7 +41,7 @@ class RibbonResultTest {
                 resultC.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
         assertEquals("Secondary hit: 110 points", resultD.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
         assertEquals(
-                "Torpedo hit: 5 * 30 points",
+                "Torpedo hit: 5 * 40 points",
                 resultE.getAsTerm(MainArmamentType.LARGE_CALIBER_GUNS).getAsString());
     }
 
@@ -51,6 +51,6 @@ class RibbonResultTest {
         assertEquals("Spotted: 3 * 10 points", resultB.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
         assertEquals("Main gun hit: 30 points", resultC.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
         assertEquals("Secondary hit: 110 points", resultD.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
-        assertEquals("Torpedo hit: 5 * 15 points", resultE.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
+        assertEquals("Torpedo hit: 5 * 20 points", resultE.getAsTerm(MainArmamentType.AIRCRAFT).getAsString());
     }
 }

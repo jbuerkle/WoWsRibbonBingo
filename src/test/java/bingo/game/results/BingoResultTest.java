@@ -38,7 +38,7 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.SPOTTED, 6);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
         result.addRibbonResult(Ribbon.CAUSED_FLOODING, 1);
-        assertEquals(340, result.getPointValue());
+        assertEquals(380, result.getPointValue());
     }
 
     @Test
@@ -162,7 +162,7 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
         assertEquals(
-                "Ribbon Bingo result: Torpedo hit: 20 * 30 points + Spotted: 10 * 30 points + Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points = 1240 points",
+                "Ribbon Bingo result: Torpedo hit: 20 * 40 points + Spotted: 10 * 30 points + Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points = 1440 points",
                 result.toString());
     }
 
@@ -174,7 +174,7 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
         assertEquals(
-                "Ribbon Bingo result: Torpedo hit: 20 * 15 points + Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points + Spotted: 10 * 10 points = 740 points",
+                "Ribbon Bingo result: Torpedo hit: 20 * 20 points + Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points + Spotted: 10 * 10 points = 840 points",
                 result.toString());
     }
 }
