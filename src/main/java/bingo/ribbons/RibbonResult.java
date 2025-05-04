@@ -7,7 +7,12 @@ import bingo.math.terms.impl.Multiplication;
 import bingo.math.terms.impl.TermWithPoints;
 import bingo.ships.MainArmamentType;
 
-public record RibbonResult(Ribbon ribbon, int amount) {
+import java.io.Serial;
+import java.io.Serializable;
+
+public record RibbonResult(Ribbon ribbon, int amount) implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -7882110148174513884L;
 
     public Term getAsTerm(MainArmamentType mainArmamentType) {
         Term pointValueTerm = new Literal(ribbon.getPointValue(mainArmamentType));

@@ -1,6 +1,11 @@
 package bingo.game.results;
 
-public record BingoResultBar(int level) {
+import java.io.Serial;
+import java.io.Serializable;
+
+public record BingoResultBar(int level) implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 350820194486527459L;
 
     public int getPointRequirement() {
         return getPointRequirement(this.level);

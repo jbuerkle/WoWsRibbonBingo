@@ -30,14 +30,6 @@ public class BingoResult implements Serializable {
         this.achievementResultSet = new HashSet<>();
     }
 
-    public BingoResult(
-            MainArmamentType mainArmamentType, Set<RibbonResult> ribbonResultSet,
-            Set<AchievementResult> achievementResultSet) {
-        this.mainArmamentType = mainArmamentType;
-        this.ribbonResultSet = ribbonResultSet;
-        this.achievementResultSet = achievementResultSet;
-    }
-
     public void addRibbonResult(Ribbon ribbon, int amount) {
         RibbonResult ribbonResult = new RibbonResult(ribbon, amount);
         addResult(ribbonResult, amount, ribbonResultSet, RibbonResult::ribbon);

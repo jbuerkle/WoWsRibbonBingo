@@ -25,16 +25,6 @@ public class TokenCounter implements Serializable {
         resetMatchTokenCounters();
     }
 
-    public TokenCounter(
-            int tokensAfterMatch, int tokensGainedForImbalancedMatch, int tokensGainedForSuccessfulMatch,
-            int extraLivesLostForUnsuccessfulMatch, int currentTokens) {
-        this.tokensAfterMatch = tokensAfterMatch;
-        this.tokensGainedForImbalancedMatch = tokensGainedForImbalancedMatch;
-        this.tokensGainedForSuccessfulMatch = tokensGainedForSuccessfulMatch;
-        this.extraLivesLostForUnsuccessfulMatch = extraLivesLostForUnsuccessfulMatch;
-        this.currentTokens = currentTokens;
-    }
-
     public void calculateMatchResult(
             boolean isSuccessfulMatch, boolean hasNextLevel, List<RetryRule> activeRetryRules) {
         resetMatchTokenCounters();

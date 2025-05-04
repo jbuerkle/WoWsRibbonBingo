@@ -6,11 +6,15 @@ import bingo.math.terms.impl.*;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-public record AchievementResult(Achievement achievement, int amount) {
+public record AchievementResult(Achievement achievement, int amount) implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -4822147319230201720L;
 
     public Term getAsTerm(Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
         Term flatPointValueTerm = new TermWithPoints(new Literal(achievement.getFlatPointValue()));

@@ -6,12 +6,14 @@ import bingo.math.terms.impl.Literal;
 import bingo.math.terms.impl.TermWithPoints;
 import bingo.ribbons.Ribbon;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-public enum Achievement {
+public enum Achievement implements Serializable {
     ARSONIST("Arsonist", 30),
     AA_DEFENSE_EXPERT("AA Defense Expert", 45),
     CLOSE_QUARTERS_EXPERT("Close Quarters Expert", 25),
@@ -30,6 +32,8 @@ public enum Achievement {
     SOLO_WARRIOR("Solo Warrior", 300),
     WITHERER("Witherer", 30);
 
+    @Serial
+    private static final long serialVersionUID = 8667639193335488476L;
     private static final Map<Achievement, Set<PointValueModifier>> POINT_VALUE_MODIFIERS = setUpModifiers();
 
     private final String displayText;

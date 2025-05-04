@@ -6,10 +6,12 @@ import bingo.math.terms.impl.TermWithPoints;
 import bingo.ribbons.overrides.PointValueOverride;
 import bingo.ships.MainArmamentType;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public enum Ribbon {
+public enum Ribbon implements Serializable {
     DESTROYED("Destroyed", 120),
     MAIN_GUN_HIT("Main gun hit", 1),
     SECONDARY_HIT("Secondary hit", 1),
@@ -30,6 +32,8 @@ public enum Ribbon {
     DEFENDED("Defended", 10),
     BUFF_PICKED_UP("Buff picked up", 60);
 
+    @Serial
+    private static final long serialVersionUID = 6166813751001367167L;
     private static final Map<Ribbon, Set<PointValueOverride>> POINT_VALUE_OVERRIDES = setUpOverrides();
 
     private final String displayText;

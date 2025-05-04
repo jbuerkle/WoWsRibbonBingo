@@ -8,8 +8,7 @@ import bingo.tokens.TokenCounter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class BingoGame implements Serializable {
 
     private final List<BingoResultBar> resultBars;
     private final TokenCounter tokenCounter;
-    private final ObservableList<Ship> shipsUsed;
+    private transient ObservableList<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
     private BingoResult bingoResult;
     private List<RetryRule> activeRetryRules;
@@ -41,18 +40,19 @@ public class BingoGame implements Serializable {
         resetBingoResult();
     }
 
-    public BingoGame(
-            int currentLevel, BingoGameState bingoGameState, List<RetryRule> activeRetryRules, BingoResult bingoResult,
-            boolean challengeEndedVoluntarily, ObservableList<Ship> shipsUsed, TokenCounter tokenCounter,
-            List<BingoResultBar> resultBars) {
-        this.currentLevel = currentLevel;
-        this.bingoGameState = bingoGameState;
-        this.activeRetryRules = activeRetryRules;
-        this.bingoResult = bingoResult;
-        this.challengeEndedVoluntarily = challengeEndedVoluntarily;
-        this.shipsUsed = shipsUsed;
-        this.tokenCounter = tokenCounter;
-        this.resultBars = resultBars;
+    @Serial
+    private void writeObject(ObjectOutputStream outputStream) throws IOException {
+        List<Ship> shipsUsedSerializable = new LinkedList<>(shipsUsed);
+        outputStream.defaultWriteObject();
+        outputStream.writeObject(shipsUsedSerializable);
+    }
+
+    @Serial
+    @SuppressWarnings("unchecked")
+    private void readObject(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
+        inputStream.defaultReadObject();
+        List<Ship> shipsUsedSerializable = (LinkedList<Ship>) inputStream.readObject();
+        shipsUsed = FXCollections.observableList(shipsUsedSerializable);
     }
 
     private void resetBingoResult() {
