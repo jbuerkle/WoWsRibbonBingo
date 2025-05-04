@@ -18,7 +18,7 @@ public enum Ribbon implements Serializable {
     BOMB_HIT("Bomb hit", 3),
     ROCKET_HIT("Rocket hit", 3),
     CITADEL_HIT("Citadel hit", 20),
-    TORPEDO_HIT("Torpedo hit", 30),
+    TORPEDO_HIT("Torpedo hit", 40),
     DEPTH_CHARGE_HIT("Depth charge hit", 10),
     SONAR_PING("Sonar ping", 5),
     SPOTTED("Spotted", 30),
@@ -94,7 +94,7 @@ public enum Ribbon implements Serializable {
         pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.MEDIUM_CALIBER_GUNS, 40));
         pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 60));
         pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, 80));
-        pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
+        pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 20));
         pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 10));
         return pointValueOverrides;
     }
