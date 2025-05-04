@@ -5,6 +5,7 @@ import bingo.application.gui.input.UserInputException;
 import bingo.game.BingoGame;
 import bingo.game.results.BingoResult;
 import bingo.game.util.BingoGameOutputSplitter;
+import bingo.game.util.BingoGameSerializer;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
@@ -19,9 +20,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,29 +37,36 @@ import java.util.function.Function;
 
 public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
+    private static final String AUTOSAVE_DIRECTORY = "autosave";
+
+    private Stage primaryStage;
+    private BingoGame bingoGame;
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
-    private final BingoGame bingoGame;
+    private final BingoGameSerializer bingoGameSerializer;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final Map<Achievement, TextField> textFieldsByAchievement;
     private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
     private final TextField shipInputField;
+    private final TextField playerNameInputField;
     private final TextArea textArea;
     private final GridPane mainGrid;
     private int mainGridRow;
 
     public BingoUserInterface() {
+        this.bingoGame = new BingoGame();
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
-        this.bingoGame = new BingoGame();
+        this.bingoGameSerializer = new BingoGameSerializer();
         this.textFieldsByRibbon = new HashMap<>();
         this.textFieldsByAchievement = new HashMap<>();
         this.checkBoxesByRetryRule = new HashMap<>();
-        this.tableView = new TableView<>(bingoGame.getShipsUsed());
+        this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
         this.shipInputField = new TextField();
+        this.playerNameInputField = new TextField();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
         this.mainGrid.setPadding(new Insets(5));
@@ -61,6 +76,7 @@ public class BingoUserInterface extends Application {
         setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
         resetInputFields();
+        createAutosaveDirectory();
     }
 
     private void setUpGridWithSevenInputFieldsPerRow() {
@@ -116,6 +132,7 @@ public class BingoUserInterface extends Application {
         textArea.setEditable(false);
         textArea.setWrapText(true);
         shipNameColumn.setCellValueFactory(ship -> ship.getValue().nameProperty());
+        tableView.setItems(bingoGame.getShipsUsed());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tableView.getColumns().add(shipNameColumn);
         GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
@@ -159,16 +176,22 @@ public class BingoUserInterface extends Application {
 
     private GridPane createGridPaneForTableInputFieldAndButtons() {
         Label shipInputFieldLabel = new Label("Name of ship used");
+        Label playerNameLabel = new Label("Name of player for autosave");
         Button addShipButton = new Button("Add ship from input field");
         Button removeShipButton = new Button("Remove ship selected in table");
+        Button loadAutosaveButton = new Button("Load game from autosave");
         setEventHandlers(addShipButton, this::addShip);
         setEventHandlers(removeShipButton, this::removeShip);
+        setEventHandlers(loadAutosaveButton, this::loadFromSaveFile);
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.add(shipInputFieldLabel, 0, 0);
         gridPane.add(shipInputField, 0, 1);
         gridPane.add(addShipButton, 0, 2);
         gridPane.add(removeShipButton, 0, 3);
+        gridPane.add(playerNameLabel, 0, 4);
+        gridPane.add(playerNameInputField, 0, 5);
+        gridPane.add(loadAutosaveButton, 0, 6);
         return gridPane;
     }
 
@@ -196,7 +219,7 @@ public class BingoUserInterface extends Application {
         return textField;
     }
 
-    private void submitResult(InputEvent event) {
+    private void submitResult(@SuppressWarnings("unused") InputEvent event) {
         BingoResult bingoResult = new BingoResult(mainArmamentTypeComboBox.getValue());
         try {
             for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
@@ -238,14 +261,65 @@ public class BingoUserInterface extends Application {
         }
     }
 
-    private void confirmResult(InputEvent event) {
+    private void confirmResult(@SuppressWarnings("unused") InputEvent event) {
         boolean stateChangeSuccessful = bingoGame.confirmCurrentResult();
         if (stateChangeSuccessful) {
             resetInputFields();
+            createAutosaveFile();
         }
     }
 
-    private void resetInputFieldsAndBingoGame(InputEvent event) {
+    private void createAutosaveDirectory() {
+        try {
+            Files.createDirectories(Paths.get(AUTOSAVE_DIRECTORY));
+        } catch (IOException exception) {
+            textArea.setText("Failed to create autosave directory: " + exception.getMessage());
+        }
+    }
+
+    private void createAutosaveFile() {
+        String trimmedUserInput = playerNameInputField.getText().trim();
+        if (!trimmedUserInput.isBlank()) {
+            String fileName = generateFileNameForAutosave(trimmedUserInput);
+            String filePath = "%s/%s".formatted(AUTOSAVE_DIRECTORY, fileName);
+            try {
+                bingoGameSerializer.saveGame(bingoGame, filePath);
+            } catch (IOException exception) {
+                textArea.setText("Failed to create autosave file: " + exception.getMessage());
+            }
+        }
+    }
+
+    private String generateFileNameForAutosave(String playerName) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+        String dateString = today.format(formatter);
+        return "%s_%s.wrb".formatted(playerName, dateString);
+    }
+
+    private void loadFromSaveFile(@SuppressWarnings("unused") InputEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter wrbFilter = new FileChooser.ExtensionFilter("WRB Files (*.wrb)", "*.wrb");
+        fileChooser.getExtensionFilters().add(wrbFilter);
+        fileChooser.setInitialDirectory(new File(AUTOSAVE_DIRECTORY));
+        fileChooser.setTitle("Open WRB File");
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        if (selectedFile != null) {
+            loadFromSaveFile(selectedFile.getPath());
+        }
+    }
+
+    private void loadFromSaveFile(String filePath) {
+        try {
+            bingoGame = bingoGameSerializer.loadGame(filePath);
+            tableView.setItems(bingoGame.getShipsUsed());
+            resetInputFields();
+        } catch (IOException | ClassNotFoundException exception) {
+            textArea.setText("Failed to load from save file: " + exception.getMessage());
+        }
+    }
+
+    private void resetInputFieldsAndBingoGame(@SuppressWarnings("unused") InputEvent event) {
         resetInputFieldsAndBingoGame();
     }
 
@@ -276,14 +350,14 @@ public class BingoUserInterface extends Application {
         checkBox.setSelected(false);
     }
 
-    private void endChallenge(InputEvent event) {
+    private void endChallenge(@SuppressWarnings("unused") InputEvent event) {
         boolean stateChangeSuccessful = bingoGame.endChallenge();
         if (stateChangeSuccessful) {
             setTextInTextArea();
         }
     }
 
-    private void addShip(InputEvent event) {
+    private void addShip(@SuppressWarnings("unused") InputEvent event) {
         String trimmedUserInput = shipInputField.getText().trim();
         if (containsUsableInput(trimmedUserInput)) {
             boolean shipSuccessfullyAdded = bingoGame.addShipUsed(trimmedUserInput);
@@ -299,7 +373,7 @@ public class BingoUserInterface extends Application {
         return !userInput.isBlank() && !userInput.equals(SHIP_ALREADY_USED);
     }
 
-    private void removeShip(InputEvent event) {
+    private void removeShip(@SuppressWarnings("unused") InputEvent event) {
         Ship ship = tableView.getSelectionModel().getSelectedItem();
         bingoGame.getShipsUsed().remove(ship);
     }
@@ -320,6 +394,7 @@ public class BingoUserInterface extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         Scene scene = new Scene(mainGrid);
         primaryStage.setTitle("World of Warships Ribbon Bingo");
         primaryStage.setScene(scene);
