@@ -56,7 +56,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - Rocket hit: 3 points
 - Citadel hit: 20 points (40 points for ships with gun caliber of 203mm+ as main armament, 60 points for ships with gun
   caliber of 305mm+ as main armament, 80 points for ships with gun caliber of 406mm+ as main armament)
-- Torpedo hit: 30 points (15 points for ships with aircraft as main armament)
+- Torpedo hit: 40 points (20 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
 - Sonar ping: 5 points
 - Spotted: 30 points (10 points for ships with aircraft as main armament)
