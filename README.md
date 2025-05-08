@@ -119,3 +119,4 @@ higher reward.
 | Hyf1re          | 10.04.2025               | ArmoredGuppy, OverLordBou |     140 subs |
 | OverLordBou     | 18.04.2025               | Ausomaster                |     140 subs |
 | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |     134 subs |
+| Hyf1re          | 08.05.2025               | ArmoredGuppy              |     128 subs |
