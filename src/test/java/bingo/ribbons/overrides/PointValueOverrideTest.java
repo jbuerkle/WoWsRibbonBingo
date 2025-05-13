@@ -10,7 +10,7 @@ class PointValueOverrideTest {
     @Test
     void toStringMethodShouldReturnCorrectDisplayText() {
         assertEquals(
-                "30 points for ships with gun caliber of 305mm+ as main armament",
+                "30 points for ships with gun caliber of 305mm up to 405mm as main armament",
                 getPointValueOverrideAsString());
     }
 
