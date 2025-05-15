@@ -2,6 +2,8 @@ package bingo.game;
 
 import bingo.achievements.Achievement;
 import bingo.game.results.BingoResult;
+import bingo.restrictions.ShipRestriction;
+import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
@@ -36,6 +38,7 @@ class BingoGameTest {
             ". Requirement of level 1: 300 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. You gain 1 token for a successful match as per rule 9a. You now have 1 token. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 500 points";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
             ". Requirement of level 2: 500 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. You gain 1 token for a successful match as per rule 9a. You now have 2 tokens. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 700 points";
+    private static final ShipRestriction SHIP_RESTRICTION = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
 
     private List<RetryRule> activeRetryRules;
     private BingoGame bingoGame;
@@ -44,6 +47,24 @@ class BingoGameTest {
     void setup() {
         activeRetryRules = new LinkedList<>();
         bingoGame = new BingoGame();
+    }
+
+    @Test
+    void setShipRestrictionShouldBeSuccessfulWhenNoneIsSet() {
+        assertTrue(bingoGame.setShipRestriction(SHIP_RESTRICTION));
+    }
+
+    @Test
+    void setShipRestrictionShouldBeSuccessfulWhenThePreviousOneIsRemoved() {
+        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        bingoGame.removeShipRestriction();
+        assertTrue(bingoGame.setShipRestriction(SHIP_RESTRICTION));
+    }
+
+    @Test
+    void setShipRestrictionShouldNotBeSuccessfulWhenOneIsAlreadySet() {
+        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        assertFalse(bingoGame.setShipRestriction(SHIP_RESTRICTION));
     }
 
     @Test
@@ -102,6 +123,14 @@ class BingoGameTest {
     }
 
     @Test
+    void toStringMethodShouldReturnFirstResultBarWithShipRestrictionWhenNoResultWasSubmitted() {
+        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        assertEquals(
+                "Requirement of level 1: 300 points. Ships with aircraft as main armament are banned from use in the current level.",
+                bingoGame.toString());
+    }
+
+    @Test
     void toStringMethodShouldReturnGameOverWhenSubmittedResultIsInsufficient() {
         BingoResult bingoResult = createInsufficientBingoResultForLevelOne();
         assertSubmitBingoResultIsSuccessful(bingoResult);
@@ -149,6 +178,15 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnSecondResultBarWhenNoResultWasSubmitted() {
+        BingoResult bingoResult = createSufficientBingoResultForLevelOne();
+        assertSubmitBingoResultIsSuccessful(bingoResult);
+        assertConfirmCurrentResultIsSuccessful();
+        assertToStringMethodReturnsSecondResultBar();
+    }
+
+    @Test
+    void toStringMethodShouldReturnSecondResultBarWithoutShipRestrictionWhenNoResultWasSubmitted() {
+        bingoGame.setShipRestriction(SHIP_RESTRICTION);
         BingoResult bingoResult = createSufficientBingoResultForLevelOne();
         assertSubmitBingoResultIsSuccessful(bingoResult);
         assertConfirmCurrentResultIsSuccessful();

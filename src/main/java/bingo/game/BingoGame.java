@@ -2,6 +2,7 @@ package bingo.game;
 
 import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBar;
+import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
 import bingo.ships.Ship;
 import bingo.tokens.TokenCounter;
@@ -22,6 +23,7 @@ public class BingoGame implements Serializable {
     private final TokenCounter tokenCounter;
     private transient ObservableList<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
+    private ShipRestriction shipRestriction;
     private BingoResult bingoResult;
     private List<RetryRule> activeRetryRules;
     private BingoGameState bingoGameState;
@@ -98,6 +100,7 @@ public class BingoGame implements Serializable {
                 if (requirementOfCurrentResultBarIsMet()) {
                     if (hasNextLevel()) {
                         bingoGameState = BingoGameState.LEVEL_INITIALIZED;
+                        removeShipRestriction();
                         resetBingoResult();
                         currentLevel++;
                     } else {
@@ -182,6 +185,22 @@ public class BingoGame implements Serializable {
         return currentLevel < MAX_LEVEL;
     }
 
+    private boolean shipRestrictionIsSet() {
+        return shipRestriction != null;
+    }
+
+    public boolean setShipRestriction(ShipRestriction shipRestriction) {
+        if (shipRestrictionIsSet()) {
+            return false;
+        }
+        this.shipRestriction = shipRestriction;
+        return true;
+    }
+
+    public void removeShipRestriction() {
+        shipRestriction = null;
+    }
+
     public boolean addShipUsed(String shipName) {
         for (Ship ship : shipsUsed) {
             if (shipName.equalsIgnoreCase(ship.name())) {
@@ -224,6 +243,8 @@ public class BingoGame implements Serializable {
                 appendTextForSuccessfulMatch(stringBuilder);
             } else if (bingoResultIsSubmitted()) {
                 appendTextForUnsuccessfulMatch(stringBuilder);
+            } else if (shipRestrictionIsSet()) {
+                stringBuilder.append(". ").append(shipRestriction.getDisplayText()).append(".");
             }
         }
         appendTextIfBingoGameIsInChallengeEndedState(stringBuilder);
