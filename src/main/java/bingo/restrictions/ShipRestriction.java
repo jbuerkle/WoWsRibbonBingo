@@ -1,6 +1,8 @@
 package bingo.restrictions;
 
-public interface ShipRestriction {
+import java.io.Serializable;
+
+public interface ShipRestriction extends Serializable {
 
     String getDisplayText();
 }
