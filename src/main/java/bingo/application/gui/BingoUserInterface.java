@@ -1,11 +1,13 @@
 package bingo.application.gui;
 
 import bingo.achievements.Achievement;
-import bingo.application.gui.input.UserInputException;
 import bingo.game.BingoGame;
+import bingo.game.input.UserInputException;
 import bingo.game.results.BingoResult;
 import bingo.game.util.BingoGameOutputSplitter;
 import bingo.game.util.BingoGameSerializer;
+import bingo.restrictions.ShipRestriction;
+import bingo.restrictions.generator.RandomShipRestrictionGenerator;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
@@ -36,11 +38,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class BingoUserInterface extends Application {
+    private static final String SHIP_RESTRICTION_ALREADY_SET = "A ship restriction is already set!";
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private static final String AUTOSAVE_DIRECTORY = "autosave";
 
     private Stage primaryStage;
     private BingoGame bingoGame;
+    private final RandomShipRestrictionGenerator randomShipRestrictionGenerator;
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final BingoGameSerializer bingoGameSerializer;
@@ -50,6 +54,7 @@ public class BingoUserInterface extends Application {
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
     private final TextField shipInputField;
+    private final TextField numberInputField;
     private final TextField playerNameInputField;
     private final TextArea textArea;
     private final GridPane mainGrid;
@@ -57,6 +62,7 @@ public class BingoUserInterface extends Application {
 
     public BingoUserInterface() {
         this.bingoGame = new BingoGame();
+        this.randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.bingoGameSerializer = new BingoGameSerializer();
@@ -66,6 +72,7 @@ public class BingoUserInterface extends Application {
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
         this.shipInputField = new TextField();
+        this.numberInputField = new TextField();
         this.playerNameInputField = new TextField();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
@@ -136,10 +143,12 @@ public class BingoUserInterface extends Application {
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tableView.getColumns().add(shipNameColumn);
         GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
+        GridPane autosaveGrid = createGridPaneForAutosaveInputFieldAndButton();
         GridPane gridPane = createNewGridPane();
         gridPane.add(textArea, 0, 0);
         gridPane.add(tableView, 1, 0);
         gridPane.add(tableInputGrid, 2, 0);
+        gridPane.add(autosaveGrid, 3, 0);
         mainGridRow++;
     }
 
@@ -176,22 +185,37 @@ public class BingoUserInterface extends Application {
 
     private GridPane createGridPaneForTableInputFieldAndButtons() {
         Label shipInputFieldLabel = new Label("Name of ship used");
-        Label playerNameLabel = new Label("Name of player for autosave");
+        Label numberInputFieldLabel = new Label("Number chosen by player (1 to 100)");
         Button addShipButton = new Button("Add ship from input field");
         Button removeShipButton = new Button("Remove ship selected in table");
-        Button loadAutosaveButton = new Button("Load game from autosave");
+        Button setRestrictionButton = new Button("Get ship restriction for chosen number");
+        Button removeRestrictionButton = new Button("Remove current ship restriction");
         setEventHandlers(addShipButton, this::addShip);
         setEventHandlers(removeShipButton, this::removeShip);
-        setEventHandlers(loadAutosaveButton, this::loadFromSaveFile);
+        setEventHandlers(setRestrictionButton, this::setRestriction);
+        setEventHandlers(removeRestrictionButton, this::removeRestriction);
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.add(shipInputFieldLabel, 0, 0);
         gridPane.add(shipInputField, 0, 1);
         gridPane.add(addShipButton, 0, 2);
         gridPane.add(removeShipButton, 0, 3);
-        gridPane.add(playerNameLabel, 0, 4);
-        gridPane.add(playerNameInputField, 0, 5);
-        gridPane.add(loadAutosaveButton, 0, 6);
+        gridPane.add(numberInputFieldLabel, 0, 4);
+        gridPane.add(numberInputField, 0, 5);
+        gridPane.add(setRestrictionButton, 0, 6);
+        gridPane.add(removeRestrictionButton, 0, 7);
+        return gridPane;
+    }
+
+    private GridPane createGridPaneForAutosaveInputFieldAndButton() {
+        Label playerNameLabel = new Label("Name of player for autosave");
+        Button loadAutosaveButton = new Button("Load game from autosave");
+        setEventHandlers(loadAutosaveButton, this::loadFromSaveFile);
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.add(playerNameLabel, 0, 0);
+        gridPane.add(playerNameInputField, 0, 1);
+        gridPane.add(loadAutosaveButton, 0, 2);
         return gridPane;
     }
 
@@ -248,9 +272,7 @@ public class BingoUserInterface extends Application {
 
     private int getAmountFromUserInput(TextField textField, String displayText) throws UserInputException {
         String trimmedUserInput = textField.getText().trim();
-        if (trimmedUserInput.isBlank()) {
-            return 0;
-        } else {
+        if (userInputIsNotBlank(trimmedUserInput)) {
             try {
                 return Integer.parseInt(trimmedUserInput);
             } catch (NumberFormatException exception) {
@@ -259,6 +281,7 @@ public class BingoUserInterface extends Application {
                 throw new UserInputException(message, exception);
             }
         }
+        return 0;
     }
 
     private void confirmResult(@SuppressWarnings("unused") InputEvent event) {
@@ -279,7 +302,7 @@ public class BingoUserInterface extends Application {
 
     private void createAutosaveFile() {
         String trimmedUserInput = playerNameInputField.getText().trim();
-        if (!trimmedUserInput.isBlank()) {
+        if (userInputIsNotBlank(trimmedUserInput)) {
             String fileName = generateFileNameForAutosave(trimmedUserInput);
             String filePath = "%s/%s".formatted(AUTOSAVE_DIRECTORY, fileName);
             try {
@@ -359,23 +382,44 @@ public class BingoUserInterface extends Application {
 
     private void addShip(@SuppressWarnings("unused") InputEvent event) {
         String trimmedUserInput = shipInputField.getText().trim();
-        if (containsUsableInput(trimmedUserInput)) {
+        if (userInputIsNotBlank(trimmedUserInput)) {
             boolean shipSuccessfullyAdded = bingoGame.addShipUsed(trimmedUserInput);
             if (shipSuccessfullyAdded) {
                 clearInput(shipInputField);
             } else {
-                shipInputField.setText(SHIP_ALREADY_USED);
+                textArea.setText(SHIP_ALREADY_USED);
             }
         }
     }
 
-    private boolean containsUsableInput(String userInput) {
-        return !userInput.isBlank() && !userInput.equals(SHIP_ALREADY_USED);
+    private boolean userInputIsNotBlank(String userInput) {
+        return !userInput.isBlank();
     }
 
     private void removeShip(@SuppressWarnings("unused") InputEvent event) {
         Ship ship = tableView.getSelectionModel().getSelectedItem();
         bingoGame.getShipsUsed().remove(ship);
+    }
+
+    private void setRestriction(@SuppressWarnings("unused") InputEvent event) {
+        try {
+            int number = getAmountFromUserInput(numberInputField, "Number chosen by player");
+            ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
+            boolean restrictionSuccessfullySet = bingoGame.setShipRestriction(shipRestriction);
+            if (restrictionSuccessfullySet) {
+                clearInput(numberInputField);
+                setTextInTextArea();
+            } else {
+                textArea.setText(SHIP_RESTRICTION_ALREADY_SET);
+            }
+        } catch (UserInputException exception) {
+            textArea.setText(exception.getMessage());
+        }
+    }
+
+    private void removeRestriction(@SuppressWarnings("unused") InputEvent event) {
+        bingoGame.removeShipRestriction();
+        setTextInTextArea();
     }
 
     private void setEventHandlers(Button button, EventHandler<InputEvent> eventHandler) {
