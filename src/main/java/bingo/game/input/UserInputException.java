@@ -1,4 +1,4 @@
-package bingo.application.gui.input;
+package bingo.game.input;
 
 import java.io.Serial;
 
@@ -8,5 +8,9 @@ public class UserInputException extends Exception {
 
     public UserInputException(String message, Exception cause) {
         super(message, cause);
+    }
+
+    public UserInputException(String message) {
+        super(message);
     }
 }
