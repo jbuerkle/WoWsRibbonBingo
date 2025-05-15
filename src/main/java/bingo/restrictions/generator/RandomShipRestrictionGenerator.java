@@ -1,5 +1,6 @@
 package bingo.restrictions.generator;
 
+import bingo.game.input.UserInputException;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.restrictions.impl.ForcedMainArmamentType;
@@ -28,14 +29,15 @@ public class RandomShipRestrictionGenerator {
     /**
      * @param number a number between 1 and 100.
      * @return a random {@link ShipRestriction} for the chosen number.
+     * @throws UserInputException if the number is outside the allowed range.
      */
-    public ShipRestriction getForNumber(int number) {
+    public ShipRestriction getForNumber(int number) throws UserInputException {
         if (number < MIN_NUMBER || number > MAX_NUMBER) {
-            String message = "The number %s is outside of the allowed range (between %s and %s)".formatted(
+            String message = "The number %s is outside the allowed range (between %s and %s)".formatted(
                     number,
                     MIN_NUMBER,
                     MAX_NUMBER);
-            throw new IllegalArgumentException(message);
+            throw new UserInputException(message);
         }
         assignShipRestrictionsToAllNumbers();
         return shipRestrictionsByNumber.get(number);

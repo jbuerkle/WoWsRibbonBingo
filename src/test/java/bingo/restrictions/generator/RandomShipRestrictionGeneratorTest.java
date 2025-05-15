@@ -1,5 +1,6 @@
 package bingo.restrictions.generator;
 
+import bingo.game.input.UserInputException;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.restrictions.impl.ForcedMainArmamentType;
@@ -58,7 +59,7 @@ class RandomShipRestrictionGeneratorTest {
     }
 
     @Test
-    void getForNumberShouldReturnShipRestrictionsForMinAndMaxNumber() {
+    void getForNumberShouldReturnShipRestrictionsForMinAndMaxNumber() throws UserInputException {
         RandomShipRestrictionGenerator randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
 
         assertNotNull(randomShipRestrictionGenerator.getForNumber(1));
@@ -66,21 +67,21 @@ class RandomShipRestrictionGeneratorTest {
     }
 
     @Test
-    void getForNumberZeroShouldThrowIllegalArgumentException() {
+    void getForNumberZeroShouldThrowUserInputException() {
         RandomShipRestrictionGenerator randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
 
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> randomShipRestrictionGenerator.getForNumber(0));
-        assertEquals("The number 0 is outside of the allowed range (between 1 and 100)", exception.getMessage());
+        UserInputException exception =
+                assertThrows(UserInputException.class, () -> randomShipRestrictionGenerator.getForNumber(0));
+        assertEquals("The number 0 is outside the allowed range (between 1 and 100)", exception.getMessage());
     }
 
     @Test
-    void getForNumberOneHundredOneShouldThrowIllegalArgumentException() {
+    void getForNumberOneHundredOneShouldThrowUserInputException() {
         RandomShipRestrictionGenerator randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
 
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> randomShipRestrictionGenerator.getForNumber(101));
-        assertEquals("The number 101 is outside of the allowed range (between 1 and 100)", exception.getMessage());
+        UserInputException exception =
+                assertThrows(UserInputException.class, () -> randomShipRestrictionGenerator.getForNumber(101));
+        assertEquals("The number 101 is outside the allowed range (between 1 and 100)", exception.getMessage());
     }
 
     private void assertBannedMainArmamentTypeIs(
