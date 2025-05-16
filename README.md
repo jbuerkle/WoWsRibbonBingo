@@ -112,6 +112,23 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
 higher reward.
 
+## Optional ship restrictions (not part of the main rule set)
+
+For streamers who participated frequently in the challenge, additional ship restrictions may apply. At the start of
+every level, different ship restrictions are randomly assigned to 100 slots. The streamer picks any number between 1 and
+100, which corresponds to one of the slots:
+
+- 50% chance for ships with a certain type of main armament to be banned from use in the current level
+- 50% chance to be forced to use a ship with a certain type of main armament in the current level
+
+This 50/50 distribution is **always** guaranteed on every level, whereas the chances of each type of main armament
+occurring are equal (but the **actual** distribution varies). The types of main armaments which can occur are:
+
+- Gun calibers up to 202mm
+- Gun calibers of 203mm up to 304mm
+- Gun calibers of 305mm up to 405mm
+- Gun calibers of 406mm and above
+
 ## Hall of Fame
 
 | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
