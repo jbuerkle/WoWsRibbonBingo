@@ -6,19 +6,25 @@ import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.restrictions.impl.ForcedMainArmamentType;
 import bingo.ships.MainArmamentType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class RandomShipRestrictionGenerator {
-    private static final int MIN_NUMBER = 1;
-    private static final int MAX_NUMBER = 100;
-
+    private final List<ShipRestriction> allPossibleRestrictions;
     private final Random random;
 
-    private Map<Integer, ShipRestriction> shipRestrictionsByNumber;
-
     RandomShipRestrictionGenerator(Random random) {
+        List<MainArmamentType> allPossibleMainArmamentTypes = List.of(
+                MainArmamentType.SMALL_CALIBER_GUNS,
+                MainArmamentType.MEDIUM_CALIBER_GUNS,
+                MainArmamentType.LARGE_CALIBER_GUNS,
+                MainArmamentType.EXTRA_LARGE_CALIBER_GUNS);
+        this.allPossibleRestrictions = new LinkedList<>();
+        for (MainArmamentType mainArmamentType : allPossibleMainArmamentTypes) {
+            allPossibleRestrictions.add(new BannedMainArmamentType(mainArmamentType));
+            allPossibleRestrictions.add(new ForcedMainArmamentType(mainArmamentType));
+        }
         this.random = random;
     }
 
@@ -27,56 +33,28 @@ public class RandomShipRestrictionGenerator {
     }
 
     /**
-     * @param number a number between 1 and 100.
+     * @param number any positive number (including 0).
      * @return a random {@link ShipRestriction} for the chosen number.
      * @throws UserInputException if the number is outside the allowed range.
      */
     public ShipRestriction getForNumber(int number) throws UserInputException {
-        if (number < MIN_NUMBER || number > MAX_NUMBER) {
-            String message = "The number %s is outside the allowed range (between %s and %s)".formatted(
-                    number,
-                    MIN_NUMBER,
-                    MAX_NUMBER);
+        if (number < 0) {
+            String message = "The number %s is outside the allowed range (not a positive number)".formatted(number);
             throw new UserInputException(message);
         }
-        assignShipRestrictionsToAllNumbers();
-        return shipRestrictionsByNumber.get(number);
+        List<ShipRestriction> restrictionsInRandomOrder = getAllPossibleRestrictionsInRandomOrder();
+        int index = number % restrictionsInRandomOrder.size();
+        return restrictionsInRandomOrder.get(index);
     }
 
-    Map<Integer, ShipRestriction> getShipRestrictionsByNumber() {
-        return shipRestrictionsByNumber;
-    }
-
-    void assignShipRestrictionsToAllNumbers() {
-        shipRestrictionsByNumber = new HashMap<>();
-        int assignedSlots = 0;
-        while (assignedSlots < MAX_NUMBER / 2) {
-            int number = random.nextInt(MIN_NUMBER, MAX_NUMBER + 1);
-            if (numberIsUnassigned(number)) {
-                shipRestrictionsByNumber.put(number, new BannedMainArmamentType(getRandomMainArmamentType()));
-                assignedSlots++;
-            }
+    private List<ShipRestriction> getAllPossibleRestrictionsInRandomOrder() {
+        List<ShipRestriction> copyOfAllRestrictions = new LinkedList<>(allPossibleRestrictions);
+        List<ShipRestriction> restrictionsInRandomOrder = new LinkedList<>();
+        while (!copyOfAllRestrictions.isEmpty()) {
+            int randomIndex = random.nextInt(0, copyOfAllRestrictions.size());
+            ShipRestriction shipRestriction = copyOfAllRestrictions.remove(randomIndex);
+            restrictionsInRandomOrder.add(shipRestriction);
         }
-        for (int number = MIN_NUMBER; number <= MAX_NUMBER; number++) {
-            if (numberIsUnassigned(number)) {
-                shipRestrictionsByNumber.put(number, new ForcedMainArmamentType(getRandomMainArmamentType()));
-            }
-        }
-    }
-
-    private boolean numberIsUnassigned(int number) {
-        return !shipRestrictionsByNumber.containsKey(number);
-    }
-
-    private MainArmamentType getRandomMainArmamentType() {
-        int number = random.nextInt(1, 5);
-        return switch (number) {
-            case 1 -> MainArmamentType.SMALL_CALIBER_GUNS;
-            case 2 -> MainArmamentType.MEDIUM_CALIBER_GUNS;
-            case 3 -> MainArmamentType.LARGE_CALIBER_GUNS;
-            case 4 -> MainArmamentType.EXTRA_LARGE_CALIBER_GUNS;
-            default -> throw new IllegalArgumentException("Unexpected value %s from random number generator".formatted(
-                    number));
-        };
+        return restrictionsInRandomOrder;
     }
 }
