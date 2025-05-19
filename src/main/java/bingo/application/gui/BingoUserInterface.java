@@ -8,6 +8,8 @@ import bingo.game.util.BingoGameOutputSplitter;
 import bingo.game.util.BingoGameSerializer;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.generator.RandomShipRestrictionGenerator;
+import bingo.restrictions.impl.BannedMainArmamentType;
+import bingo.restrictions.impl.ForcedMainArmamentType;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
@@ -36,11 +38,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class BingoUserInterface extends Application {
     private static final String SHIP_RESTRICTION_ALREADY_SET = "A ship restriction is already set!";
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private static final String AUTOSAVE_DIRECTORY = "autosave";
+    private static final String EMPTY_STRING = "";
 
     private Stage primaryStage;
     private BingoGame bingoGame;
@@ -153,10 +157,12 @@ public class BingoUserInterface extends Application {
     }
 
     private void setUpMainArmamentTypeComboBox() {
-        mainArmamentTypeComboBox.getItems().addAll(MainArmamentType.values());
         mainArmamentTypeComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(MainArmamentType mainArmamentType) {
+                if (mainArmamentType == null) {
+                    return EMPTY_STRING;
+                }
                 return mainArmamentType.getDisplayText();
             }
 
@@ -167,10 +173,27 @@ public class BingoUserInterface extends Application {
                         return mainArmamentType;
                     }
                 }
-                return MainArmamentType.SMALL_CALIBER_GUNS;
+                return null;
             }
         });
-        resetMainArmamentTypeToDefault();
+        updateComboBoxWithAllowedMainArmamentTypes();
+    }
+
+    private void updateComboBoxWithAllowedMainArmamentTypes() {
+        ShipRestriction shipRestriction = bingoGame.getShipRestriction();
+        final List<MainArmamentType> allowedMainArmamentTypes;
+        if (shipRestriction instanceof BannedMainArmamentType(MainArmamentType bannedMainArmamentType)) {
+            allowedMainArmamentTypes = Stream.of(MainArmamentType.values())
+                    .filter(mainArmamentType -> !mainArmamentType.equals(bannedMainArmamentType))
+                    .toList();
+        } else if (shipRestriction instanceof ForcedMainArmamentType(MainArmamentType forcedMainArmamentType)) {
+            allowedMainArmamentTypes = List.of(forcedMainArmamentType);
+        } else {
+            allowedMainArmamentTypes = List.of(MainArmamentType.values());
+        }
+        mainArmamentTypeComboBox.getItems().clear();
+        mainArmamentTypeComboBox.getItems().addAll(allowedMainArmamentTypes);
+        mainArmamentTypeComboBox.setValue(allowedMainArmamentTypes.getFirst());
     }
 
     private void setUpCheckBoxesForRetryRules(GridPane gridPane) {
@@ -287,6 +310,7 @@ public class BingoUserInterface extends Application {
     private void confirmResult(@SuppressWarnings("unused") InputEvent event) {
         boolean stateChangeSuccessful = bingoGame.confirmCurrentResult();
         if (stateChangeSuccessful) {
+            updateComboBoxWithAllowedMainArmamentTypes();
             resetInputFields();
             createAutosaveFile();
         }
@@ -336,6 +360,7 @@ public class BingoUserInterface extends Application {
         try {
             bingoGame = bingoGameSerializer.loadGame(filePath);
             tableView.setItems(bingoGame.getShipsUsed());
+            updateComboBoxWithAllowedMainArmamentTypes();
             resetInputFields();
         } catch (IOException | ClassNotFoundException exception) {
             textArea.setText("Failed to load from save file: " + exception.getMessage());
@@ -357,16 +382,11 @@ public class BingoUserInterface extends Application {
         textFieldsByRibbon.values().forEach(this::clearInput);
         textFieldsByAchievement.values().forEach(this::clearInput);
         checkBoxesByRetryRule.values().forEach(this::clearInput);
-        resetMainArmamentTypeToDefault();
         setTextInTextArea();
     }
 
-    private void resetMainArmamentTypeToDefault() {
-        mainArmamentTypeComboBox.setValue(MainArmamentType.SMALL_CALIBER_GUNS);
-    }
-
     private void clearInput(TextField textField) {
-        textField.setText("");
+        textField.setText(EMPTY_STRING);
     }
 
     private void clearInput(CheckBox checkBox) {
@@ -407,6 +427,7 @@ public class BingoUserInterface extends Application {
             ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
             boolean restrictionSuccessfullySet = bingoGame.setShipRestriction(shipRestriction);
             if (restrictionSuccessfullySet) {
+                updateComboBoxWithAllowedMainArmamentTypes();
                 clearInput(numberInputField);
                 setTextInTextArea();
             } else {
@@ -419,6 +440,7 @@ public class BingoUserInterface extends Application {
 
     private void removeRestriction(@SuppressWarnings("unused") InputEvent event) {
         bingoGame.removeShipRestriction();
+        updateComboBoxWithAllowedMainArmamentTypes();
         setTextInTextArea();
     }
 
