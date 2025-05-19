@@ -68,6 +68,17 @@ class BingoGameTest {
     }
 
     @Test
+    void getShipRestrictionShouldReturnNullWhenNoneIsSet() {
+        assertNull(bingoGame.getShipRestriction());
+    }
+
+    @Test
+    void getShipRestrictionShouldReturnTheOneWhichWasSet() {
+        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        assertEquals(SHIP_RESTRICTION, bingoGame.getShipRestriction());
+    }
+
+    @Test
     void addShipUsedShouldBeSuccessfulWhenShipNamesAreUnique() {
         assertTrue(bingoGame.addShipUsed("A"));
         assertTrue(bingoGame.addShipUsed("B"));

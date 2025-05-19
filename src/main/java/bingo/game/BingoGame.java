@@ -197,6 +197,10 @@ public class BingoGame implements Serializable {
         return true;
     }
 
+    public ShipRestriction getShipRestriction() {
+        return shipRestriction;
+    }
+
     public void removeShipRestriction() {
         shipRestriction = null;
     }
