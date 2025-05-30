@@ -19,8 +19,8 @@ public class BingoGame implements Serializable {
     private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 7;
 
-    private final List<BingoResultBar> resultBars;
     private final TokenCounter tokenCounter;
+    private final List<BingoResultBar> resultBars;
     private transient ObservableList<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
     private ShipRestriction shipRestriction;
@@ -29,9 +29,9 @@ public class BingoGame implements Serializable {
     private BingoGameState bingoGameState;
     private int currentLevel;
 
-    public BingoGame() {
+    BingoGame(TokenCounter tokenCounter) {
+        this.tokenCounter = tokenCounter;
         this.resultBars = new LinkedList<>();
-        this.tokenCounter = new TokenCounter();
         this.shipsUsed = FXCollections.observableList(new LinkedList<>());
         this.challengeEndedVoluntarily = false;
         for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
@@ -40,6 +40,10 @@ public class BingoGame implements Serializable {
         this.bingoGameState = BingoGameState.LEVEL_INITIALIZED;
         this.currentLevel = START_LEVEL;
         resetBingoResult();
+    }
+
+    public BingoGame() {
+        this(new TokenCounter());
     }
 
     @Serial

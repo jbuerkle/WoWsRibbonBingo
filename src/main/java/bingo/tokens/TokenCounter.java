@@ -10,9 +10,9 @@ public class TokenCounter implements Serializable {
     @Serial
     private static final long serialVersionUID = 2094700030153408780L;
     private static final int TOKENS_NEEDED_FOR_EXTRA_LIFE = 6;
-    private static final String YOU_GAIN = "You gain ";
-    private static final String YOU_LOSE = "You lose ";
     private static final String SENTENCE_END = ". ";
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
 
     private int currentTokens;
     private int extraLivesLostForUnsuccessfulMatch;
@@ -58,14 +58,15 @@ public class TokenCounter implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Token counter: ");
         if (tokensGainedForSuccessfulMatch > 0 && tokensGainedForImbalancedMatch > 0) {
             stringBuilder.append(tokensGainedForSuccessfulMatchAsString())
-                    .append(" and ")
+                    .append(", ")
                     .append(tokensGainedForImbalancedMatchAsString());
         } else if (tokensGainedForSuccessfulMatch > 0) {
             stringBuilder.append(tokensGainedForSuccessfulMatchAsString()).append(SENTENCE_END);
         } else if (tokensGainedForImbalancedMatch > 0) {
-            stringBuilder.append(YOU_GAIN).append(tokensGainedForImbalancedMatchAsString());
+            stringBuilder.append(tokensGainedForImbalancedMatchAsString());
         } else if (extraLivesLostForUnsuccessfulMatch > 0) {
             stringBuilder.append(extraLivesLostForUnsuccessfulMatchAsString());
         }
@@ -74,28 +75,28 @@ public class TokenCounter implements Serializable {
     }
 
     private String tokensGainedForSuccessfulMatchAsString() {
-        return YOU_GAIN.concat(getTokensAsString(tokensGainedForSuccessfulMatch))
-                .concat(" for a successful match as per rule 9a");
+        return PLUS.concat(getTokensAsString(tokensGainedForSuccessfulMatch)).concat(" (successful match)");
     }
 
     private String tokensGainedForImbalancedMatchAsString() {
-        return getTokensAsString(tokensGainedForImbalancedMatch).concat(" due to imbalanced matchmaking as per rule 9b")
+        return PLUS.concat(getTokensAsString(tokensGainedForImbalancedMatch))
+                .concat(" (imbalanced matchmaking)")
                 .concat(SENTENCE_END);
     }
 
     private String extraLivesLostForUnsuccessfulMatchAsString() {
-        return YOU_LOSE.concat(getExtraLivesAsString(extraLivesLostForUnsuccessfulMatch)).concat(SENTENCE_END);
+        return MINUS.concat(getExtraLivesAsString(extraLivesLostForUnsuccessfulMatch)).concat(" \uD83D\uDC94 ");
     }
 
     private String resultAfterMatchAsString() {
         int extraLives = getExtraLivesAfterMatch();
         int unusedTokens = getUnusedTokensAfterMatch();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("You now have ");
+        stringBuilder.append("Now ");
         if (extraLives > 0) {
-            stringBuilder.append(getExtraLivesAsString(extraLives)).append(" and ");
+            stringBuilder.append(getExtraLivesAsString(extraLives)).append(" ❤️ and ");
         }
-        stringBuilder.append(getTokensAsString(unusedTokens)).append(".");
+        stringBuilder.append(getTokensAsString(unusedTokens)).append(" \uD83E\uDE99 total.");
         return stringBuilder.toString();
     }
 

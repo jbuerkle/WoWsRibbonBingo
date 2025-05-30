@@ -10,14 +10,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TokenCounterTest {
-    private static final String YOU_NOW_HAVE_ZERO_TOKENS = "You now have 0 tokens.";
-    private static final String YOU_NOW_HAVE_ONE_TOKEN = "You now have 1 token.";
-    private static final String YOU_NOW_HAVE_TWO_TOKENS = "You now have 2 tokens.";
-    private static final String YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_ZERO_TOKENS = "You now have 1 extra life and 0 tokens.";
-    private static final String YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS = "You now have 1 extra life and 5 tokens.";
-    private static final String YOU_GAIN = "You gain ";
-    private static final String ONE_TOKEN_FOR_RULE_9A = "1 token for a successful match as per rule 9a";
-    private static final String ONE_TOKEN_FOR_RULE_9B = "1 token due to imbalanced matchmaking as per rule 9b. ";
+    private static final String TOKEN_COUNTER_PREFIX = "Token counter: ";
+    private static final String NOW_ZERO_TOKENS = "Now 0 tokens \uD83E\uDE99 total.";
+    private static final String NOW_ONE_TOKEN = "Now 1 token \uD83E\uDE99 total.";
+    private static final String NOW_TWO_TOKENS = "Now 2 tokens \uD83E\uDE99 total.";
+    private static final String NOW_ONE_EXTRA_LIFE_AND_ZERO_TOKENS =
+            "Now 1 extra life ❤️ and 0 tokens \uD83E\uDE99 total.";
+    private static final String NOW_ONE_EXTRA_LIFE_AND_FIVE_TOKENS =
+            "Now 1 extra life ❤️ and 5 tokens \uD83E\uDE99 total.";
+    private static final String NOW_TWO_EXTRA_LIVES_AND_ONE_TOKEN =
+            "Now 2 extra lives ❤️ and 1 token \uD83E\uDE99 total.";
+    private static final String ONE_TOKEN_FOR_RULE_9A = "+1 token (successful match)";
+    private static final String ONE_TOKEN_FOR_RULE_9B = "+1 token (imbalanced matchmaking). ";
+    private static final String MINUS_ONE_EXTRA_LIFE = "-1 extra life \uD83D\uDC94 ";
 
     private List<RetryRule> activeRetryRules;
     private TokenCounter tokenCounter;
@@ -30,28 +35,26 @@ class TokenCounterTest {
 
     @Test
     void initialCounterShouldReturnZeroTokens() {
-        assertCounterShows(YOU_NOW_HAVE_ZERO_TOKENS);
+        assertCounterShows(NOW_ZERO_TOKENS);
         assertExtraLivesAre(0);
     }
 
     @Test
     void initialCounterShouldNotChangeAfterConfirmation() {
-        checkCounterBeforeAndAfterConfirmation(YOU_NOW_HAVE_ZERO_TOKENS);
+        checkCounterBeforeAndAfterConfirmation(NOW_ZERO_TOKENS);
     }
 
     @Test
     void counterShouldAddOneTokenForSuccessfulMatch() {
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(
-                YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9A).concat(". "),
-                YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(ONE_TOKEN_FOR_RULE_9A.concat(". "), NOW_ONE_TOKEN);
     }
 
     @Test
     void counterShouldAddOneTokenForImbalancedMatch() {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9B), YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(ONE_TOKEN_FOR_RULE_9B, NOW_ONE_TOKEN);
     }
 
     @Test
@@ -65,22 +68,22 @@ class TokenCounterTest {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
         checkCounterBeforeAndAfterConfirmation(
-                YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9A).concat(" and ").concat(ONE_TOKEN_FOR_RULE_9B),
-                YOU_NOW_HAVE_TWO_TOKENS);
+                ONE_TOKEN_FOR_RULE_9A.concat(", ").concat(ONE_TOKEN_FOR_RULE_9B),
+                NOW_TWO_TOKENS);
     }
 
     @Test
     void counterShouldAddOneTokenForFinalLevelIfNotSuccessful() {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(false, false, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(YOU_GAIN.concat(ONE_TOKEN_FOR_RULE_9B), YOU_NOW_HAVE_ONE_TOKEN);
+        checkCounterBeforeAndAfterConfirmation(ONE_TOKEN_FOR_RULE_9B, NOW_ONE_TOKEN);
     }
 
     @Test
     void counterShouldNotAddTokensForFinalLevelIfSuccessful() {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(true, false, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(YOU_NOW_HAVE_ZERO_TOKENS);
+        checkCounterBeforeAndAfterConfirmation(NOW_ZERO_TOKENS);
     }
 
     @Test
@@ -88,27 +91,27 @@ class TokenCounterTest {
         activeRetryRules.add(RetryRule.IMBALANCED_MATCHMAKING);
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
         tokenCounter.cancelMatchResult();
-        assertCounterShows(YOU_NOW_HAVE_ZERO_TOKENS);
+        assertCounterShows(NOW_ZERO_TOKENS);
     }
 
     @Test
     void counterShouldAddOneExtraLife() {
         addTokensUntilCounterIsAt(6);
-        assertCounterShows(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_ZERO_TOKENS);
+        assertCounterShows(NOW_ONE_EXTRA_LIFE_AND_ZERO_TOKENS);
         assertExtraLivesAre(1);
     }
 
     @Test
     void counterShouldAddOneExtraLifeAndFiveTokens() {
         addTokensUntilCounterIsAt(11);
-        assertCounterShows(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
+        assertCounterShows(NOW_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
         assertExtraLivesAre(1);
     }
 
     @Test
     void counterShouldAddTwoExtraLivesAndOneToken() {
         addTokensUntilCounterIsAt(13);
-        assertCounterShows("You now have 2 extra lives and 1 token.");
+        assertCounterShows(NOW_TWO_EXTRA_LIVES_AND_ONE_TOKEN);
         assertExtraLivesAre(2);
     }
 
@@ -116,7 +119,7 @@ class TokenCounterTest {
     void counterShouldDeductOneExtraLife() {
         addTokensUntilCounterIsAt(6);
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation("You lose 1 extra life. ", YOU_NOW_HAVE_ZERO_TOKENS);
+        checkCounterBeforeAndAfterConfirmation(MINUS_ONE_EXTRA_LIFE, NOW_ZERO_TOKENS);
     }
 
     @Test
@@ -124,14 +127,14 @@ class TokenCounterTest {
         addTokensUntilCounterIsAt(6);
         activeRetryRules.add(RetryRule.UNFAIR_DISADVANTAGE);
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_ZERO_TOKENS);
+        checkCounterBeforeAndAfterConfirmation(NOW_ONE_EXTRA_LIFE_AND_ZERO_TOKENS);
         assertExtraLivesAre(1);
     }
 
     @Test
     void counterShouldNotDeductTokensWhenThereAreNone() {
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
-        checkCounterBeforeAndAfterConfirmation(YOU_NOW_HAVE_ZERO_TOKENS);
+        checkCounterBeforeAndAfterConfirmation(NOW_ZERO_TOKENS);
     }
 
     @Test
@@ -140,7 +143,7 @@ class TokenCounterTest {
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
         tokenCounter.confirmMatchResult();
-        assertCounterShows(YOU_NOW_HAVE_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
+        assertCounterShows(NOW_ONE_EXTRA_LIFE_AND_FIVE_TOKENS);
         assertExtraLivesAre(1);
     }
 
@@ -150,7 +153,7 @@ class TokenCounterTest {
         tokenCounter.calculateMatchResult(true, true, activeRetryRules);
         tokenCounter.calculateMatchResult(false, true, activeRetryRules);
         tokenCounter.confirmMatchResult();
-        assertCounterShows(YOU_NOW_HAVE_ZERO_TOKENS);
+        assertCounterShows(NOW_ZERO_TOKENS);
         assertExtraLivesAre(0);
     }
 
@@ -176,7 +179,7 @@ class TokenCounterTest {
     }
 
     private void assertCounterShows(String expectedString) {
-        assertEquals(expectedString, tokenCounter.toString());
+        assertEquals(TOKEN_COUNTER_PREFIX.concat(expectedString), tokenCounter.toString());
     }
 
     private void assertExtraLivesAre(int expectedNumber) {
