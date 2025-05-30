@@ -32,9 +32,9 @@ class BingoResultBarTest {
 
     @Test
     void getNumberOfSubsAsStringShouldReturnCorrectDisplayText() {
-        assertEquals("1 sub", new BingoResultBar(0).getNumberOfSubsAsString());
-        assertEquals("2 subs", new BingoResultBar(1).getNumberOfSubsAsString());
-        assertEquals("4 subs", new BingoResultBar(2).getNumberOfSubsAsString());
-        assertEquals("8 subs", new BingoResultBar(3).getNumberOfSubsAsString());
+        assertEquals("1 sub \uD83C\uDF81", new BingoResultBar(0).getNumberOfSubsAsString());
+        assertEquals("2 subs \uD83C\uDF81", new BingoResultBar(1).getNumberOfSubsAsString());
+        assertEquals("4 subs \uD83C\uDF81", new BingoResultBar(2).getNumberOfSubsAsString());
+        assertEquals("8 subs \uD83C\uDF81", new BingoResultBar(3).getNumberOfSubsAsString());
     }
 }

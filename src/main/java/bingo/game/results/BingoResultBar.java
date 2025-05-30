@@ -31,6 +31,6 @@ public record BingoResultBar(int level) implements Serializable {
 
     public String getNumberOfSubsAsString() {
         int numberOfSubs = getNumberOfSubsAsReward();
-        return numberOfSubs + (numberOfSubs == 1 ? " sub" : " subs");
+        return numberOfSubs + (numberOfSubs == 1 ? " sub" : " subs") + " \uD83C\uDF81";
     }
 }

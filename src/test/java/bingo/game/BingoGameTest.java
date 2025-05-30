@@ -27,21 +27,29 @@ class BingoGameTest {
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
-            ". Requirement of level 7: 1800 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 128 subs. This is the highest reward you can get. Congratulations! Your unused extra lives are converted to 6 subs each, for a total of 140 subs.";
+            ". Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 + (unused extra lives: 2) * 6 = 140 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_GAME_OVER =
-            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub";
+            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
-            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry due to imbalanced matchmaking (rule 8a or 8b). ";
+            ". Requirement of level 1: 300 points ❌ Active retry rules: Imbalanced matchmaking (rule 8a or 8b) ✅ ";
     private static final String LEVEL_ONE_UNFAIR_DISADVANTAGE =
-            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry due to an unfair disadvantage (rule 8c). ";
+            ". Requirement of level 1: 300 points ❌ Active retry rules: Unfair disadvantage (rule 8c) ✅ ";
     private static final String LEVEL_ONE_EXTRA_LIFE =
-            ". Requirement of level 1: 300 points, which means your result does not meet the point requirement. You are allowed to retry because you have an extra life. ";
+            ". Requirement of level 1: 300 points ❌ Active retry rules: Extra life (rule 8d) ✅ ";
+    private static final String LEVEL_ONE_VOLUNTARY_END =
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub. Your unused extra lives are converted to 6 subs each, for a total of 7 subs.";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 + (unused extra lives: 1) * 6 = 7 subs \uD83C\uDF81";
+    private static final String LEVEL_ONE_REQUIREMENT = "Requirement of level 1: 300 points";
+    private static final String LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION =
+            "Requirement of level 1: 300 points. Ships with aircraft as main armament are banned from use in the current level.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
-            ". Requirement of level 1: 300 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 2 subs. Token counter: Dummy token text. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 2: 500 points";
+            ". Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 500 points";
+    private static final String LEVEL_TWO_VOLUNTARY_END =
+            "Challenge ended voluntarily on level 2. Your reward from the previous level: 2 subs \uD83C\uDF81";
+    private static final String LEVEL_TWO_REQUIREMENT = "Requirement of level 2: 500 points";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
-            ". Requirement of level 2: 500 points, which means your result meets the point requirement, and you unlocked the reward for the current level: 4 subs. Token counter: Dummy token text. You can choose to end the challenge and receive your reward, or continue to the next level. Requirement of level 3: 700 points";
+            ". Requirement of level 2: 500 points ✅ Unlocked reward: 4 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 3: 700 points";
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
     private static final ShipRestriction SHIP_RESTRICTION = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
@@ -127,14 +135,14 @@ class BingoGameTest {
         String expectedString = """
                 | Level | Points required | Number of subs as reward: 2^(Level) |
                 |---|---:|---:|
-                | 0 | 0 | 2^0 = 1 sub |
-                | 1 | 300 | 2^1 = 2 subs |
-                | 2 | 500 | 2^2 = 4 subs |
-                | 3 | 700 | 2^3 = 8 subs |
-                | 4 | 900 | 2^4 = 16 subs |
-                | 5 | 1200 | 2^5 = 32 subs |
-                | 6 | 1500 | 2^6 = 64 subs |
-                | 7 | 1800 | 2^7 = 128 subs |
+                | 0 | 0 | 2^0 = 1 sub \uD83C\uDF81 |
+                | 1 | 300 | 2^1 = 2 subs \uD83C\uDF81 |
+                | 2 | 500 | 2^2 = 4 subs \uD83C\uDF81 |
+                | 3 | 700 | 2^3 = 8 subs \uD83C\uDF81 |
+                | 4 | 900 | 2^4 = 16 subs \uD83C\uDF81 |
+                | 5 | 1200 | 2^5 = 32 subs \uD83C\uDF81 |
+                | 6 | 1500 | 2^6 = 64 subs \uD83C\uDF81 |
+                | 7 | 1800 | 2^7 = 128 subs \uD83C\uDF81 |
                 """;
         assertEquals(expectedString, bingoGame.getAllResultBarsAndRewardsInTableFormat());
     }
@@ -147,9 +155,7 @@ class BingoGameTest {
     @Test
     void toStringMethodShouldReturnFirstResultBarWithShipRestrictionWhenNoResultWasSubmitted() {
         bingoGame.setShipRestriction(SHIP_RESTRICTION);
-        assertEquals(
-                "Requirement of level 1: 300 points. Ships with aircraft as main armament are banned from use in the current level.",
-                bingoGame.toString());
+        assertEquals(LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION, bingoGame.toString());
     }
 
     @Test
@@ -263,17 +269,13 @@ class BingoGameTest {
         assertEndChallengeIsNotSuccessful();
         assertConfirmCurrentResultIsSuccessful();
         assertEndChallengeIsSuccessful();
-        assertEquals(
-                "Challenge ended voluntarily on level 2. Your reward from the previous level: 2 subs.",
-                bingoGame.toString());
+        assertEquals(LEVEL_TWO_VOLUNTARY_END, bingoGame.toString());
     }
 
     @Test
     void endChallengeShouldBePossibleWhenNoResultWasSubmitted() {
         assertEndChallengeIsSuccessful();
-        assertEquals(
-                "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub.",
-                bingoGame.toString());
+        assertEquals(LEVEL_ONE_VOLUNTARY_END, bingoGame.toString());
     }
 
     @Test
@@ -404,10 +406,10 @@ class BingoGameTest {
     }
 
     private void assertToStringMethodReturnsFirstResultBar() {
-        assertEquals("Requirement of level 1: 300 points", bingoGame.toString());
+        assertEquals(LEVEL_ONE_REQUIREMENT, bingoGame.toString());
     }
 
     private void assertToStringMethodReturnsSecondResultBar() {
-        assertEquals("Requirement of level 2: 500 points", bingoGame.toString());
+        assertEquals(LEVEL_TWO_REQUIREMENT, bingoGame.toString());
     }
 }

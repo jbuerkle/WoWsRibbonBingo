@@ -264,51 +264,53 @@ public class BingoGame implements Serializable {
         stringBuilder.append("Challenge ended voluntarily on level ")
                 .append(currentLevel)
                 .append(". Your reward from the previous level: ")
-                .append(previousResultBar.getNumberOfSubsAsString())
-                .append(".");
+                .append(previousResultBar.getNumberOfSubsAsString());
         appendTextForConversionOfExtraLives(previousResultBar, stringBuilder);
     }
 
     private void appendTextForSuccessfulMatch(StringBuilder stringBuilder) {
         BingoResultBar currentResultBar = resultBars.get(currentLevel);
-        stringBuilder.append(
-                ", which means your result meets the point requirement, and you unlocked the reward for the current level: ");
-        stringBuilder.append(currentResultBar.getNumberOfSubsAsString()).append(". ");
+        stringBuilder.append(" ✅ Unlocked reward: ").append(currentResultBar.getNumberOfSubsAsString()).append(" ");
         if (hasNextLevel()) {
-            stringBuilder.append(tokenCounter)
-                    .append(" You can choose to end the challenge and receive your reward, or continue to the next level. ");
+            stringBuilder.append(tokenCounter).append(" ➡️ ");
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
         } else {
-            stringBuilder.append("This is the highest reward you can get. Congratulations!");
+            stringBuilder.append("This is the highest reward you can get. Congratulations! \uD83C\uDF8A");
             appendTextForConversionOfExtraLives(currentResultBar, stringBuilder);
         }
     }
 
     private void appendTextForUnsuccessfulMatch(StringBuilder stringBuilder) {
-        stringBuilder.append(", which means your result does not meet the point requirement. ");
+        stringBuilder.append(" ❌ Active retry rules: ");
         if (retryingIsAllowed()) {
-            stringBuilder.append("You are allowed to retry ");
             if (activeRetryRules.contains(RetryRule.IMBALANCED_MATCHMAKING)) {
-                stringBuilder.append("due to ").append(RetryRule.IMBALANCED_MATCHMAKING.getDisplayText().toLowerCase());
+                stringBuilder.append(RetryRule.IMBALANCED_MATCHMAKING.getDisplayText());
             } else if (activeRetryRules.contains(RetryRule.UNFAIR_DISADVANTAGE)) {
-                stringBuilder.append("due to an ").append(RetryRule.UNFAIR_DISADVANTAGE.getDisplayText().toLowerCase());
+                stringBuilder.append(RetryRule.UNFAIR_DISADVANTAGE.getDisplayText());
             } else if (tokenCounter.hasExtraLife()) {
-                stringBuilder.append("because you have an extra life");
+                stringBuilder.append("Extra life (rule 8d)");
             }
-            stringBuilder.append(". ").append(tokenCounter);
+            stringBuilder.append(" ✅ ").append(tokenCounter);
         } else {
             stringBuilder.append(
-                    "The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
+                    "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
             stringBuilder.append(resultBars.getFirst().getNumberOfSubsAsString());
         }
     }
 
     private void appendTextForConversionOfExtraLives(BingoResultBar resultBar, StringBuilder stringBuilder) {
         if (tokenCounter.hasExtraLife()) {
-            int totalReward = resultBar.getNumberOfSubsAsReward() + tokenCounter.getCurrentExtraLives() * 6;
-            stringBuilder.append(" Your unused extra lives are converted to 6 subs each, for a total of ")
-                    .append(totalReward)
-                    .append(" subs.");
+            int unlockedReward = resultBar.getNumberOfSubsAsReward();
+            int extraLives = tokenCounter.getCurrentExtraLives();
+            int conversionFactorForExtraLives = 6;
+            int totalReward = unlockedReward + extraLives * conversionFactorForExtraLives;
+            String calculationAsText =
+                    " Total reward: %s + (unused extra lives: %s) * %s = %s subs \uD83C\uDF81".formatted(
+                            unlockedReward,
+                            extraLives,
+                            conversionFactorForExtraLives,
+                            totalReward);
+            stringBuilder.append(calculationAsText);
         }
     }
 
