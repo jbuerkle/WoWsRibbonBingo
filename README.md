@@ -100,14 +100,14 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 
 | Level | Points required | Number of subs as reward: 2^(Level) |
 |-------|----------------:|------------------------------------:|
-| 0     |               0 |                         2^0 = 1 sub |
-| 1     |             300 |                        2^1 = 2 subs |
-| 2     |             500 |                        2^2 = 4 subs |
-| 3     |             700 |                        2^3 = 8 subs |
-| 4     |             900 |                       2^4 = 16 subs |
-| 5     |            1200 |                       2^5 = 32 subs |
-| 6     |            1500 |                       2^6 = 64 subs |
-| 7     |            1800 |                      2^7 = 128 subs |
+| 0     |               0 |                      2^0 = 1 sub 🎁 |
+| 1     |             300 |                     2^1 = 2 subs 🎁 |
+| 2     |             500 |                     2^2 = 4 subs 🎁 |
+| 3     |             700 |                     2^3 = 8 subs 🎁 |
+| 4     |             900 |                    2^4 = 16 subs 🎁 |
+| 5     |            1200 |                    2^5 = 32 subs 🎁 |
+| 6     |            1500 |                    2^6 = 64 subs 🎁 |
+| 7     |            1800 |                   2^7 = 128 subs 🎁 |
 
 The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
 higher reward.
@@ -136,10 +136,10 @@ the number picked by the streamer.
 
 | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
 |-----------------|--------------------------|---------------------------|-------------:|
-| OverLordBou     | 21.02.2025               | Your_SAT_Score            |     140 subs |
-| OverLordBou     | 04.04.2025               | Your_SAT_Score            |     140 subs |
-| Hyf1re          | 10.04.2025               | ArmoredGuppy, OverLordBou |     140 subs |
-| OverLordBou     | 18.04.2025               | Ausomaster                |     140 subs |
-| OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |     134 subs |
-| Hyf1re          | 08.05.2025               | ArmoredGuppy              |     128 subs |
-| OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |     134 subs |
+| OverLordBou     | 21.02.2025               | Your_SAT_Score            |  140 subs 🎁 |
+| OverLordBou     | 04.04.2025               | Your_SAT_Score            |  140 subs 🎁 |
+| Hyf1re          | 10.04.2025               | ArmoredGuppy, OverLordBou |  140 subs 🎁 |
+| OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
+| OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
+| OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
