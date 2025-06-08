@@ -208,7 +208,7 @@ public class BingoUserInterface extends Application {
 
     private GridPane createGridPaneForTableInputFieldAndButtons() {
         Label shipInputFieldLabel = new Label("Name of ship used");
-        Label numberInputFieldLabel = new Label("Any positive number chosen by player");
+        Label numberInputFieldLabel = new Label("Any positive integer chosen by player");
         Button addShipButton = new Button("Add ship from input field");
         Button removeShipButton = new Button("Remove ship selected in table");
         Button setRestrictionButton = new Button("Get ship restriction for chosen number");

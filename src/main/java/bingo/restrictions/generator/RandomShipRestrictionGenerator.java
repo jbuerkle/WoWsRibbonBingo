@@ -33,7 +33,7 @@ public class RandomShipRestrictionGenerator {
     }
 
     /**
-     * @param number any positive number (including 0).
+     * @param number any positive integer (including 0).
      * @return a random {@link ShipRestriction} for the chosen number.
      * @throws UserInputException if the number is outside the allowed range.
      */

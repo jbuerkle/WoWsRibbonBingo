@@ -50,13 +50,13 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 
 - Destroyed: 120 points
 - Main gun hit: 1 point (2 points for ships with gun caliber of 203mm up to 304mm as main armament, 3 points for ships
-  with gun caliber of 305mm up to 405mm as main armament, 4 points for ships with gun caliber of 406mm and above as main
+  with gun caliber of 305mm up to 405mm as main armament, 4 points for ships with gun caliber of 406mm or above as main
   armament)
 - Secondary hit: 1 point
 - Bomb hit: 3 points
 - Rocket hit: 3 points
 - Citadel hit: 20 points (40 points for ships with gun caliber of 203mm up to 304mm as main armament, 60 points for
-  ships with gun caliber of 305mm up to 405mm as main armament, 80 points for ships with gun caliber of 406mm and above
+  ships with gun caliber of 305mm up to 405mm as main armament, 80 points for ships with gun caliber of 406mm or above
   as main armament)
 - Torpedo hit: 40 points (20 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
@@ -115,7 +115,7 @@ higher reward.
 ## Optional ship restrictions (not part of the main rule set)
 
 For streamers who participated frequently in the challenge, additional ship restrictions may apply. At the start of
-every level, all possible ship restrictions are put into a random order. The streamer picks any positive number
+every level, all possible ship restrictions are put into a random order. The streamer picks any positive integer
 (including 0), which corresponds to one of these restrictions:
 
 - 50% chance for ships with a certain type of main armament to be banned from use in the current level
@@ -123,10 +123,10 @@ every level, all possible ship restrictions are put into a random order. The str
 
 The types of main armaments which can occur are:
 
-- Gun calibers up to 202mm
+- Gun calibers of 202mm or below
 - Gun calibers of 203mm up to 304mm
 - Gun calibers of 305mm up to 405mm
-- Gun calibers of 406mm and above
+- Gun calibers of 406mm or above
 
 Each of these categories has an equal chance to occur (25%). A perfectly equal distribution is **always** guaranteed on
 every level, which means the chance for any particular combination to be picked is 12.5%. The main deciding factor is
