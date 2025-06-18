@@ -6,10 +6,9 @@ import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
 import bingo.ships.Ship;
 import bingo.tokens.TokenCounter;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
-import java.io.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class BingoGame implements Serializable {
 
     private final TokenCounter tokenCounter;
     private final List<BingoResultBar> resultBars;
-    private transient ObservableList<Ship> shipsUsed;
+    private final List<Ship> shipsUsed;
     private boolean challengeEndedVoluntarily;
     private ShipRestriction shipRestriction;
     private BingoResult bingoResult;
@@ -32,7 +31,7 @@ public class BingoGame implements Serializable {
     BingoGame(TokenCounter tokenCounter) {
         this.tokenCounter = tokenCounter;
         this.resultBars = new LinkedList<>();
-        this.shipsUsed = FXCollections.observableList(new LinkedList<>());
+        this.shipsUsed = new LinkedList<>();
         this.challengeEndedVoluntarily = false;
         for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
             resultBars.add(new BingoResultBar(level));
@@ -44,21 +43,6 @@ public class BingoGame implements Serializable {
 
     public BingoGame() {
         this(new TokenCounter());
-    }
-
-    @Serial
-    private void writeObject(ObjectOutputStream outputStream) throws IOException {
-        List<Ship> shipsUsedSerializable = new LinkedList<>(shipsUsed);
-        outputStream.defaultWriteObject();
-        outputStream.writeObject(shipsUsedSerializable);
-    }
-
-    @Serial
-    @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
-        inputStream.defaultReadObject();
-        List<Ship> shipsUsedSerializable = (LinkedList<Ship>) inputStream.readObject();
-        shipsUsed = FXCollections.observableList(shipsUsedSerializable);
     }
 
     private void resetBingoResult() {
@@ -209,17 +193,18 @@ public class BingoGame implements Serializable {
         shipRestriction = null;
     }
 
-    public boolean addShipUsed(String shipName) {
-        for (Ship ship : shipsUsed) {
-            if (shipName.equalsIgnoreCase(ship.name())) {
+    public boolean addShipUsed(Ship shipUsed) {
+        String nameOfShipUsed = shipUsed.name();
+        for (Ship previouslyUsedShip : shipsUsed) {
+            if (nameOfShipUsed.equalsIgnoreCase(previouslyUsedShip.name())) {
                 return false;
             }
         }
-        shipsUsed.add(new Ship(shipName));
+        shipsUsed.add(shipUsed);
         return true;
     }
 
-    public ObservableList<Ship> getShipsUsed() {
+    public List<Ship> getShipsUsed() {
         return shipsUsed;
     }
 

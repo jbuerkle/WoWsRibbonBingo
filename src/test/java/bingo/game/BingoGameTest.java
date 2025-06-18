@@ -53,6 +53,9 @@ class BingoGameTest {
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
     private static final ShipRestriction SHIP_RESTRICTION = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
+    private static final Ship SHIP_A = new Ship("A");
+    private static final Ship SHIP_B = new Ship("B");
+    private static final Ship SHIP_C = new Ship("C");
 
     @Mock
     private TokenCounter mockedTokenCounter;
@@ -99,16 +102,16 @@ class BingoGameTest {
 
     @Test
     void addShipUsedShouldBeSuccessfulWhenShipNamesAreUnique() {
-        assertTrue(bingoGame.addShipUsed("A"));
-        assertTrue(bingoGame.addShipUsed("B"));
-        assertTrue(bingoGame.addShipUsed("C"));
+        assertTrue(bingoGame.addShipUsed(SHIP_A));
+        assertTrue(bingoGame.addShipUsed(SHIP_B));
+        assertTrue(bingoGame.addShipUsed(SHIP_C));
         assertEquals(3, bingoGame.getShipsUsed().size());
     }
 
     @Test
     void addShipUsedShouldNotBeSuccessfulWhenItWasAlreadyAdded() {
-        bingoGame.addShipUsed("D");
-        assertFalse(bingoGame.addShipUsed("d"));
+        bingoGame.addShipUsed(new Ship("D"));
+        assertFalse(bingoGame.addShipUsed(new Ship("d")));
         assertEquals(1, bingoGame.getShipsUsed().size());
     }
 
@@ -119,15 +122,15 @@ class BingoGameTest {
 
     @Test
     void getShipsUsedShouldReturnListOfShipsInTheOrderTheyWereAdded() {
-        bingoGame.addShipUsed("A");
-        bingoGame.addShipUsed("B");
-        bingoGame.addShipUsed("C");
+        bingoGame.addShipUsed(SHIP_A);
+        bingoGame.addShipUsed(SHIP_B);
+        bingoGame.addShipUsed(SHIP_C);
         List<Ship> shipsUsed = bingoGame.getShipsUsed();
         assertEquals(3, shipsUsed.size());
         Iterator<Ship> shipIterator = shipsUsed.iterator();
-        assertEquals("A", shipIterator.next().name());
-        assertEquals("B", shipIterator.next().name());
-        assertEquals("C", shipIterator.next().name());
+        assertEquals(SHIP_A, shipIterator.next());
+        assertEquals(SHIP_B, shipIterator.next());
+        assertEquals(SHIP_C, shipIterator.next());
     }
 
     @Test

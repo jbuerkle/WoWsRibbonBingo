@@ -143,7 +143,6 @@ public class BingoUserInterface extends Application {
         textArea.setEditable(false);
         textArea.setWrapText(true);
         shipNameColumn.setCellValueFactory(ship -> ship.getValue().nameProperty());
-        tableView.setItems(bingoGame.getShipsUsed());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tableView.getColumns().add(shipNameColumn);
         GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
@@ -359,7 +358,8 @@ public class BingoUserInterface extends Application {
     private void loadFromSaveFile(String filePath) {
         try {
             bingoGame = bingoGameSerializer.loadGame(filePath);
-            tableView.setItems(bingoGame.getShipsUsed());
+            tableView.getItems().clear();
+            tableView.getItems().addAll(bingoGame.getShipsUsed());
             updateComboBoxWithAllowedMainArmamentTypes();
             resetInputFields();
         } catch (IOException | ClassNotFoundException exception) {
@@ -403,8 +403,10 @@ public class BingoUserInterface extends Application {
     private void addShip(@SuppressWarnings("unused") InputEvent event) {
         String trimmedUserInput = shipInputField.getText().trim();
         if (userInputIsNotBlank(trimmedUserInput)) {
-            boolean shipSuccessfullyAdded = bingoGame.addShipUsed(trimmedUserInput);
+            Ship ship = new Ship(trimmedUserInput);
+            boolean shipSuccessfullyAdded = bingoGame.addShipUsed(ship);
             if (shipSuccessfullyAdded) {
+                tableView.getItems().add(ship);
                 clearInput(shipInputField);
             } else {
                 textArea.setText(SHIP_ALREADY_USED);
@@ -419,6 +421,7 @@ public class BingoUserInterface extends Application {
     private void removeShip(@SuppressWarnings("unused") InputEvent event) {
         Ship ship = tableView.getSelectionModel().getSelectedItem();
         bingoGame.getShipsUsed().remove(ship);
+        tableView.getItems().remove(ship);
     }
 
     private void setRestriction(@SuppressWarnings("unused") InputEvent event) {
