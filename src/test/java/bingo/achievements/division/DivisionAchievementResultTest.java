@@ -1,4 +1,4 @@
-package bingo.achievements;
+package bingo.achievements.division;
 
 import bingo.math.terms.Term;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package bingo.achievements;
+package bingo.achievements.division;
 
 import org.junit.jupiter.api.Test;
 
