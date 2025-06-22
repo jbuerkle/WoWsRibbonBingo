@@ -10,14 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BingoResultTest {
 
     @Test
-    void getPointValueShouldReturnSixtyPoints() {
+    void getPointValueShouldReturnCorrectValueForOneRibbonResult() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.SPOTTED, 2);
         assertEquals(60, result.getPointValue());
     }
 
     @Test
-    void getPointValueShouldReturnTwentyFivePoints() {
+    void getPointValueShouldReturnCorrectValueForOverwrittenAchievementResult() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 2);
         result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 1);
@@ -25,7 +25,7 @@ class BingoResultTest {
     }
 
     @Test
-    void getPointValueShouldReturnFiftyPoints() {
+    void getPointValueShouldReturnCorrectValueForOverwrittenRibbonResult() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.INCAPACITATION, 3);
         result.addRibbonResult(Ribbon.INCAPACITATION, 5);
@@ -33,7 +33,7 @@ class BingoResultTest {
     }
 
     @Test
-    void getPointValueShouldReturnThreeHundredAndFortyPoints() {
+    void getPointValueShouldReturnCorrectValueForMultipleRibbonResults() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.SPOTTED, 6);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
@@ -42,7 +42,7 @@ class BingoResultTest {
     }
 
     @Test
-    void getPointValueShouldReturnEightHundredPoints() {
+    void getPointValueShouldReturnCorrectValueForMixedResults() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.DESTROYED, 5);
         result.addAchievementResult(Achievement.KRAKEN_UNLEASHED, 1);
