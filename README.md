@@ -27,7 +27,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
     - If your result meets the point requirement, you unlock the reward for the current level.
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
 8. Exceptions to rule 7 which allow you to retry and keep your unlocked rewards:
-    - 8a: The match was less than 12 minutes long, **and** you were alive at the end of the match.
+    - 8a: The match was less than 14 minutes long, **and** you were alive at the end of the match.
     - 8b: The player difference at the end of the match was 5 or more players, **and:**
         - In case of a win, you were alive at the end of the match.
         - In case of a loss (or a draw), you were one of the last 7 players alive on your team.
