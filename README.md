@@ -143,3 +143,4 @@ the number picked by the streamer.
 | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
 | Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
 | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
