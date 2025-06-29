@@ -6,6 +6,7 @@ import bingo.game.input.UserInputException;
 import bingo.game.results.BingoResult;
 import bingo.game.util.BingoGameOutputSplitter;
 import bingo.game.util.BingoGameSerializer;
+import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.generator.RandomShipRestrictionGenerator;
 import bingo.restrictions.impl.BannedMainArmamentType;
@@ -45,6 +46,7 @@ public class BingoUserInterface extends Application {
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
     private static final String AUTOSAVE_DIRECTORY = "autosave";
     private static final String EMPTY_STRING = "";
+    private static final Player PLAYER = new Player("Dummy"); // FIXME: backward-compatible dummy implementation
 
     private Stage primaryStage;
     private BingoGame bingoGame;
@@ -65,7 +67,7 @@ public class BingoUserInterface extends Application {
     private int mainGridRow;
 
     public BingoUserInterface() {
-        this.bingoGame = new BingoGame();
+        this.bingoGame = new BingoGame(List.of(PLAYER));
         this.randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
@@ -179,7 +181,7 @@ public class BingoUserInterface extends Application {
     }
 
     private void updateComboBoxWithAllowedMainArmamentTypes() {
-        ShipRestriction shipRestriction = bingoGame.getShipRestriction();
+        ShipRestriction shipRestriction = bingoGame.getShipRestrictionForPlayer(PLAYER).orElse(null);
         final List<MainArmamentType> allowedMainArmamentTypes;
         if (shipRestriction instanceof BannedMainArmamentType(MainArmamentType bannedMainArmamentType)) {
             allowedMainArmamentTypes = Stream.of(MainArmamentType.values())
@@ -283,7 +285,8 @@ public class BingoUserInterface extends Application {
                     .filter(entry -> entry.getValue().isSelected())
                     .map(Map.Entry::getKey)
                     .toList();
-            boolean stateChangeSuccessful = bingoGame.submitBingoResult(bingoResult, activeRetryRules);
+            bingoGame.setActiveRetryRules(activeRetryRules);
+            boolean stateChangeSuccessful = bingoGame.submitBingoResultForPlayer(PLAYER, bingoResult);
             if (stateChangeSuccessful) {
                 setTextInTextArea();
             }
@@ -420,15 +423,17 @@ public class BingoUserInterface extends Application {
 
     private void removeShip(@SuppressWarnings("unused") InputEvent event) {
         Ship ship = tableView.getSelectionModel().getSelectedItem();
-        bingoGame.getShipsUsed().remove(ship);
-        tableView.getItems().remove(ship);
+        boolean shipSuccessfullyRemoved = bingoGame.removeShipUsed(ship);
+        if (shipSuccessfullyRemoved) {
+            tableView.getItems().remove(ship);
+        }
     }
 
     private void setRestriction(@SuppressWarnings("unused") InputEvent event) {
         try {
             int number = getAmountFromUserInput(numberInputField, "Number chosen by player");
             ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
-            boolean restrictionSuccessfullySet = bingoGame.setShipRestriction(shipRestriction);
+            boolean restrictionSuccessfullySet = bingoGame.setShipRestrictionForPlayer(PLAYER, shipRestriction);
             if (restrictionSuccessfullySet) {
                 updateComboBoxWithAllowedMainArmamentTypes();
                 clearInput(numberInputField);
@@ -442,7 +447,7 @@ public class BingoUserInterface extends Application {
     }
 
     private void removeRestriction(@SuppressWarnings("unused") InputEvent event) {
-        bingoGame.removeShipRestriction();
+        bingoGame.removeShipRestrictionForPlayer(PLAYER);
         updateComboBoxWithAllowedMainArmamentTypes();
         setTextInTextArea();
     }

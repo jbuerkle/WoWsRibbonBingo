@@ -1,6 +1,7 @@
 package bingo.game;
 
 import bingo.game.results.BingoResult;
+import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.rules.RetryRule;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -56,6 +58,7 @@ class BingoGameTest {
     private static final Ship SHIP_A = new Ship("A");
     private static final Ship SHIP_B = new Ship("B");
     private static final Ship SHIP_C = new Ship("C");
+    private static final Player PLAYER = new Player("Dummy"); // FIXME: backward-compatible dummy implementation
 
     @Mock
     private TokenCounter mockedTokenCounter;
@@ -68,36 +71,38 @@ class BingoGameTest {
     @BeforeEach
     void setup() {
         activeRetryRules = new LinkedList<>();
-        bingoGame = new BingoGame(mockedTokenCounter);
+        bingoGame = new BingoGame(List.of(PLAYER), mockedTokenCounter);
     }
 
     @Test
     void setShipRestrictionShouldBeSuccessfulWhenNoneIsSet() {
-        assertTrue(bingoGame.setShipRestriction(SHIP_RESTRICTION));
+        assertTrue(bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION));
     }
 
     @Test
     void setShipRestrictionShouldBeSuccessfulWhenThePreviousOneIsRemoved() {
-        bingoGame.setShipRestriction(SHIP_RESTRICTION);
-        bingoGame.removeShipRestriction();
-        assertTrue(bingoGame.setShipRestriction(SHIP_RESTRICTION));
+        bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION);
+        bingoGame.removeShipRestrictionForPlayer(PLAYER);
+        assertTrue(bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION));
     }
 
     @Test
     void setShipRestrictionShouldNotBeSuccessfulWhenOneIsAlreadySet() {
-        bingoGame.setShipRestriction(SHIP_RESTRICTION);
-        assertFalse(bingoGame.setShipRestriction(SHIP_RESTRICTION));
+        bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION);
+        assertFalse(bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION));
     }
 
     @Test
-    void getShipRestrictionShouldReturnNullWhenNoneIsSet() {
-        assertNull(bingoGame.getShipRestriction());
+    void getShipRestrictionShouldReturnEmptyOptionalWhenNoneIsSet() {
+        assertTrue(bingoGame.getShipRestrictionForPlayer(PLAYER).isEmpty());
     }
 
     @Test
     void getShipRestrictionShouldReturnTheOneWhichWasSet() {
-        bingoGame.setShipRestriction(SHIP_RESTRICTION);
-        assertEquals(SHIP_RESTRICTION, bingoGame.getShipRestriction());
+        bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION);
+        Optional<ShipRestriction> returnedShipRestriction = bingoGame.getShipRestrictionForPlayer(PLAYER);
+        assertTrue(returnedShipRestriction.isPresent());
+        assertEquals(SHIP_RESTRICTION, returnedShipRestriction.get());
     }
 
     @Test
@@ -157,7 +162,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnFirstResultBarWithShipRestrictionWhenNoResultWasSubmitted() {
-        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION);
         assertEquals(LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION, bingoGame.toString());
     }
 
@@ -227,7 +232,7 @@ class BingoGameTest {
     @Test
     void toStringMethodShouldReturnSecondResultBarWithoutShipRestrictionWhenNoResultWasSubmitted() {
         mockSufficientBingoResult();
-        bingoGame.setShipRestriction(SHIP_RESTRICTION);
+        bingoGame.setShipRestrictionForPlayer(PLAYER, SHIP_RESTRICTION);
         assertSubmitBingoResultIsSuccessful();
         assertConfirmCurrentResultIsSuccessful();
         assertToStringMethodReturnsSecondResultBar();
@@ -377,11 +382,13 @@ class BingoGameTest {
     }
 
     private void assertSubmitBingoResultIsSuccessful() {
-        assertTrue(bingoGame.submitBingoResult(mockedBingoResult, activeRetryRules));
+        bingoGame.setActiveRetryRules(activeRetryRules);
+        assertTrue(bingoGame.submitBingoResultForPlayer(PLAYER, mockedBingoResult));
     }
 
     private void assertSubmitBingoResultIsNotSuccessful() {
-        assertFalse(bingoGame.submitBingoResult(mockedBingoResult, activeRetryRules));
+        bingoGame.setActiveRetryRules(activeRetryRules);
+        assertFalse(bingoGame.submitBingoResultForPlayer(PLAYER, mockedBingoResult));
     }
 
     private void assertConfirmCurrentResultIsSuccessful() {
