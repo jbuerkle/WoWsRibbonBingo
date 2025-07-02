@@ -10,6 +10,7 @@ import bingo.tokens.TokenCounter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -55,6 +56,8 @@ class BingoGameTest {
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
     private static final String DUMMY_DIVISION_TEXT = "Shared division achievements: Dummy division text";
+    private static final String INCORRECT_NUMBER_OF_PLAYERS = "The number of players must be between 1 and 3";
+    private static final String INCORRECT_PLAYER = "Player Player D is not part of the game";
     private static final Ship SHIP_A = new Ship("Ship A");
     private static final Ship SHIP_B = new Ship("Ship B");
     private static final Ship SHIP_C = new Ship("Ship C");
@@ -88,6 +91,12 @@ class BingoGameTest {
     }
 
     @Test
+    void submitSharedDivisionAchievementsShouldUpdateTokenCounter() {
+        assertSubmitSharedDivisionAchievementsIsSuccessful();
+        verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
+    }
+
+    @Test
     void getSharedDivisionAchievementsShouldReturnEmptyOptionalWhenNoneAreSet() {
         assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
     }
@@ -98,6 +107,32 @@ class BingoGameTest {
         Optional<SharedDivisionAchievements> returnedDivisionAchievements = bingoGame.getSharedDivisionAchievements();
         assertTrue(returnedDivisionAchievements.isPresent());
         assertEquals(mockedDivisionAchievements, returnedDivisionAchievements.get());
+    }
+
+    @Test
+    void setActiveRetryRulesShouldOverwriteTheListWhichWasPreviouslySet() {
+        setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE));
+        setActiveRetryRules(Collections.emptyList());
+        assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+    }
+
+    @Test
+    void setActiveRetryRulesShouldUpdateTokenCounter() {
+        List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
+        setActiveRetryRules(activeRetryRules);
+        verify(mockedTokenCounter).calculateMatchResult(false, true, activeRetryRules);
+    }
+
+    @Test
+    void getActiveRetryRulesShouldReturnEmptyListWhenNoneAreSet() {
+        assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+    }
+
+    @Test
+    void getActiveRetryRulesShouldReturnTheOnesWhichWereSet() {
+        List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
+        setActiveRetryRules(activeRetryRules);
+        assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
     }
 
     @Test
@@ -119,6 +154,15 @@ class BingoGameTest {
     }
 
     @Test
+    void setShipRestrictionShouldThrowIllegalArgumentException() {
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_PLAYER,
+                () -> bingoGame.setShipRestrictionForPlayer(
+                        PLAYER_D,
+                        mockedShipRestriction));
+    }
+
+    @Test
     void getShipRestrictionShouldReturnEmptyOptionalWhenNoneIsSet() {
         assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
     }
@@ -129,6 +173,27 @@ class BingoGameTest {
         Optional<ShipRestriction> returnedShipRestriction = bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER);
         assertTrue(returnedShipRestriction.isPresent());
         assertEquals(mockedShipRestriction, returnedShipRestriction.get());
+    }
+
+    @Test
+    void getShipRestrictionShouldThrowIllegalArgumentException() {
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_PLAYER,
+                () -> bingoGame.getShipRestrictionForPlayer(PLAYER_D));
+    }
+
+    @Test
+    void removeShipRestrictionShouldRemoveTheRestrictionWhichWasPreviouslySet() {
+        bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
+        bingoGame.removeShipRestrictionForPlayer(SINGLE_PLAYER);
+        assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
+    }
+
+    @Test
+    void removeShipRestrictionShouldThrowIllegalArgumentException() {
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_PLAYER,
+                () -> bingoGame.removeShipRestrictionForPlayer(PLAYER_D));
     }
 
     @Test
@@ -192,17 +257,17 @@ class BingoGameTest {
 
     @Test
     void setupShouldFailBecauseNoPlayersWereRegistered() {
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> setupBingoGameWithPlayers(Collections.emptyList()));
-        assertEquals("The number of players must be between 1 and 3", exception.getMessage());
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_NUMBER_OF_PLAYERS,
+                () -> setupBingoGameWithPlayers(Collections.emptyList()));
     }
 
     @Test
     void setupShouldFailBecauseMoreThanThreePlayersWereRegistered() {
         List<Player> players = List.of(PLAYER_A, PLAYER_B, PLAYER_C, PLAYER_D);
-        IllegalArgumentException exception =
-                assertThrows(IllegalArgumentException.class, () -> setupBingoGameWithPlayers(players));
-        assertEquals("The number of players must be between 1 and 3", exception.getMessage());
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_NUMBER_OF_PLAYERS,
+                () -> setupBingoGameWithPlayers(players));
     }
 
     @Test
@@ -388,6 +453,41 @@ class BingoGameTest {
     }
 
     @Test
+    void submitBingoResultShouldUpdateTokenCounter() {
+        assertSubmitBingoResultIsSuccessful();
+        verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
+    }
+
+    @Test
+    void submitBingoResultShouldThrowIllegalArgumentException() {
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_PLAYER,
+                () -> bingoGame.submitBingoResultForPlayer(
+                        PLAYER_D,
+                        mockedBingoResult));
+    }
+
+    @Test
+    void getBingoResultShouldReturnEmptyOptionalWhenNoneIsSet() {
+        assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
+    }
+
+    @Test
+    void getBingoResultShouldReturnTheOneWhichWasSet() {
+        assertSubmitBingoResultIsSuccessful();
+        Optional<BingoResult> returnedBingoResult = bingoGame.getBingoResultForPlayer(SINGLE_PLAYER);
+        assertTrue(returnedBingoResult.isPresent());
+        assertEquals(mockedBingoResult, returnedBingoResult.get());
+    }
+
+    @Test
+    void getBingoResultShouldThrowIllegalArgumentException() {
+        assertIllegalArgumentExceptionIsThrownWithMessage(
+                INCORRECT_PLAYER,
+                () -> bingoGame.getBingoResultForPlayer(PLAYER_D));
+    }
+
+    @Test
     void confirmCurrentResultShouldNotBePossibleWhenThereIsNothingToConfirm() {
         assertConfirmCurrentResultIsNotSuccessful();
         assertToStringMethodReturnsFirstResultBar();
@@ -521,5 +621,10 @@ class BingoGameTest {
 
     private void assertToStringMethodReturnsSecondResultBar() {
         assertEquals(LEVEL_TWO_REQUIREMENT, bingoGame.toString());
+    }
+
+    private void assertIllegalArgumentExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(expectedMessage, exception.getMessage());
     }
 }
