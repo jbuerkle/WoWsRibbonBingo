@@ -152,6 +152,7 @@ public class BingoGame implements Serializable {
         boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.SUBMIT_RESULT);
         if (stateChangeSuccessful) {
             this.sharedDivisionAchievements = sharedDivisionAchievements;
+            updateTokenCounterWithCurrentResults();
         }
         return stateChangeSuccessful;
     }
@@ -160,8 +161,12 @@ public class BingoGame implements Serializable {
         return Optional.ofNullable(sharedDivisionAchievements);
     }
 
-    public void removeSharedDivisionAchievements() {
+    private void removeSharedDivisionAchievements() {
         sharedDivisionAchievements = null;
+    }
+
+    private void updateTokenCounterWithCurrentResults() {
+        tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), activeRetryRules);
     }
 
     private boolean bingoResultIsSubmittedForAllPlayers() {
@@ -173,7 +178,7 @@ public class BingoGame implements Serializable {
         boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.SUBMIT_RESULT);
         if (stateChangeSuccessful) {
             bingoResultByPlayer.put(player, bingoResult);
-            tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), activeRetryRules);
+            updateTokenCounterWithCurrentResults();
         }
         return stateChangeSuccessful;
     }
@@ -181,11 +186,6 @@ public class BingoGame implements Serializable {
     public Optional<BingoResult> getBingoResultForPlayer(Player player) {
         ensurePlayerIsPartOfTheGame(player);
         return Optional.ofNullable(bingoResultByPlayer.get(player));
-    }
-
-    public void removeBingoResultForPlayer(Player player) {
-        ensurePlayerIsPartOfTheGame(player);
-        bingoResultByPlayer.remove(player);
     }
 
     private void removeAllBingoResults() {
@@ -260,6 +260,7 @@ public class BingoGame implements Serializable {
     public void setActiveRetryRules(List<RetryRule> activeRetryRules) {
         removeActiveRetryRules();
         this.activeRetryRules.addAll(activeRetryRules);
+        updateTokenCounterWithCurrentResults();
     }
 
     public List<RetryRule> getActiveRetryRules() {
