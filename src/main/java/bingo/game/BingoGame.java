@@ -145,6 +145,10 @@ public class BingoGame implements Serializable {
         removeSharedDivisionAchievements();
     }
 
+    private boolean anyResultIsSubmitted() {
+        return sharedDivisionAchievementsAreSubmitted() || !bingoResultByPlayer.isEmpty();
+    }
+
     private boolean sharedDivisionAchievementsAreSubmitted() {
         return getSharedDivisionAchievements().isPresent();
     }
@@ -238,7 +242,7 @@ public class BingoGame implements Serializable {
     }
 
     private Term getAsTerm(long pointValue) {
-        return new Literal((int) pointValue);
+        return new TermWithPoints(new Literal((int) pointValue));
     }
 
     private long getPointRequirementOfLevel(int level) {
@@ -386,7 +390,7 @@ public class BingoGame implements Serializable {
     }
 
     private void appendTextForTotalResult(StringBuilder stringBuilder) {
-        if (moreThanOnePlayerIsRegistered()) {
+        if (moreThanOnePlayerIsRegistered() && anyResultIsSubmitted()) {
             stringBuilder.append(getTotalResultAsString()).append(SENTENCE_END);
         }
     }

@@ -44,6 +44,10 @@ class BingoGameTest {
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 + (unused extra lives: 1) * 6 = 7 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
+    private static final String LEVEL_ONE_REQUIREMENT_FOR_TWO_PLAYERS =
+            "Requirement of level 1: 420 points. Token counter: Dummy token text.";
+    private static final String LEVEL_ONE_REQUIREMENT_FOR_THREE_PLAYERS =
+            "Requirement of level 1: 540 points. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION =
             "Requirement of level 1: 300 points. Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
@@ -54,6 +58,22 @@ class BingoGameTest {
             "Requirement of level 2: 500 points. Token counter: Dummy token text.";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
             ". Requirement of level 2: 500 points ✅ Unlocked reward: 4 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 3: 700 points";
+    private static final String MULTIPLAYER_RESTRICTION_B =
+            "Requirement of level 1: 540 points. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+    private static final String MULTIPLAYER_RESTRICTION_AB =
+            "Requirement of level 1: 540 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+    private static final String MULTIPLAYER_RESTRICTION_ABC =
+            "Requirement of level 1: 540 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Player C's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+    private static final String MULTIPLAYER_RESULT_B =
+            "Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points. " +
+                    MULTIPLAYER_RESTRICTION_ABC;
+    private static final String MULTIPLAYER_RESULT_AB =
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points = 60 points. " +
+                    MULTIPLAYER_RESTRICTION_ABC;
+    private static final String MULTIPLAYER_RESULT_ABC =
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 540 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
+    private static final String MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS =
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Shared division achievements: Dummy division text. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 540 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 900 points";
     private static final String DUMMY_SHIP_RESTRICTION_TEXT = "Dummy ship restriction text";
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
@@ -310,7 +330,7 @@ class BingoGameTest {
         assertSubmitBingoResultIsSuccessful();
         assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER, bingoGame.toString());
         assertConfirmCurrentResultIsSuccessful();
-        assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER.concat(END_OF_CHALLENGE_CONFIRMED), bingoGame.toString());
+        assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
     }
 
     @Test
@@ -402,11 +422,39 @@ class BingoGameTest {
         assertEquals(DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS, bingoGame.toString());
         assertConfirmCurrentResultIsSuccessful();
         assertEquals(
-                DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS.concat(END_OF_CHALLENGE_CONFIRMED),
+                DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS + END_OF_CHALLENGE_CONFIRMED,
                 bingoGame.toString());
         verify(mockedTokenCounter, times(MAX_LEVEL - 1)).calculateMatchResult(true, true, Collections.emptyList());
         verify(mockedTokenCounter, times(1)).calculateMatchResult(true, false, Collections.emptyList());
         verify(mockedTokenCounter, times(MAX_LEVEL)).confirmMatchResult();
+    }
+
+    @Test
+    void toStringMethodShouldShowHigherRequirementForTwoPlayers() {
+        mockTokenCounterToString();
+        setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B));
+        assertEquals(LEVEL_ONE_REQUIREMENT_FOR_TWO_PLAYERS, bingoGame.toString());
+    }
+
+    @Test
+    void toStringMethodShouldShowHigherRequirementForThreePlayers() {
+        mockTokenCounterToString();
+        setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
+        assertEquals(LEVEL_ONE_REQUIREMENT_FOR_THREE_PLAYERS, bingoGame.toString());
+    }
+
+    @Test
+    void toStringMethodShouldUpdateStepByStepForMultiplayer() {
+        mockBingoResultToString();
+        mockTokenCounterToString();
+        mockShipRestrictionGetDisplayText();
+        mockSharedDivisionAchievementsToString();
+        mockInsufficientBingoResult();
+        mockSharedDivisionAchievementsGetPointValue();
+        setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
+        setShipRestrictionsOneByOneAndCheckResults();
+        submitBingoResultsOneByOneAndCheckResults();
+        submitDivisionAchievementsAndCheckResults();
     }
 
     @Test
@@ -432,7 +480,7 @@ class BingoGameTest {
         assertEndChallengeIsSuccessful();
         assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE, bingoGame.toString());
         assertConfirmCurrentResultIsSuccessful();
-        assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE.concat(END_OF_CHALLENGE_CONFIRMED), bingoGame.toString());
+        assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
     }
 
     @Test
@@ -548,6 +596,10 @@ class BingoGameTest {
         when(mockedDivisionAchievements.toString()).thenReturn(DUMMY_DIVISION_TEXT);
     }
 
+    private void mockSharedDivisionAchievementsGetPointValue() {
+        when(mockedDivisionAchievements.getPointValue()).thenReturn(600L);
+    }
+
     private void mockBingoResultToString() {
         when(mockedBingoResult.toString()).thenReturn(DUMMY_RESULT_TEXT);
     }
@@ -578,6 +630,29 @@ class BingoGameTest {
 
     private void setActiveRetryRules(List<RetryRule> activeRetryRules) {
         bingoGame.setActiveRetryRules(activeRetryRules);
+    }
+
+    private void setShipRestrictionsOneByOneAndCheckResults() {
+        bingoGame.setShipRestrictionForPlayer(PLAYER_B, mockedShipRestriction);
+        assertEquals(MULTIPLAYER_RESTRICTION_B, bingoGame.toString());
+        bingoGame.setShipRestrictionForPlayer(PLAYER_A, mockedShipRestriction);
+        assertEquals(MULTIPLAYER_RESTRICTION_AB, bingoGame.toString());
+        bingoGame.setShipRestrictionForPlayer(PLAYER_C, mockedShipRestriction);
+        assertEquals(MULTIPLAYER_RESTRICTION_ABC, bingoGame.toString());
+    }
+
+    private void submitBingoResultsOneByOneAndCheckResults() {
+        bingoGame.submitBingoResultForPlayer(PLAYER_B, mockedBingoResult);
+        assertEquals(MULTIPLAYER_RESULT_B, bingoGame.toString());
+        bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult);
+        assertEquals(MULTIPLAYER_RESULT_AB, bingoGame.toString());
+        bingoGame.submitBingoResultForPlayer(PLAYER_C, mockedBingoResult);
+        assertEquals(MULTIPLAYER_RESULT_ABC, bingoGame.toString());
+    }
+
+    private void submitDivisionAchievementsAndCheckResults() {
+        bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
+        assertEquals(MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS, bingoGame.toString());
     }
 
     private void assertSubmitSharedDivisionAchievementsIsSuccessful() {
