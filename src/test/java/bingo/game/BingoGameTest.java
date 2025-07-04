@@ -42,14 +42,16 @@ class BingoGameTest {
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 + (unused extra lives: 1) * 6 = 7 subs \uD83C\uDF81";
-    private static final String LEVEL_ONE_REQUIREMENT = "Requirement of level 1: 300 points";
+    private static final String LEVEL_ONE_REQUIREMENT =
+            "Requirement of level 1: 300 points. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION =
-            "Requirement of level 1: 300 points. Dummy ship restriction text.";
+            "Requirement of level 1: 300 points. Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
             ". Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 500 points";
     private static final String LEVEL_TWO_VOLUNTARY_END =
             "Challenge ended voluntarily on level 2. Your reward from the previous level: 2 subs \uD83C\uDF81";
-    private static final String LEVEL_TWO_REQUIREMENT = "Requirement of level 2: 500 points";
+    private static final String LEVEL_TWO_REQUIREMENT =
+            "Requirement of level 2: 500 points. Token counter: Dummy token text.";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
             ". Requirement of level 2: 500 points ✅ Unlocked reward: 4 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 3: 700 points";
     private static final String DUMMY_SHIP_RESTRICTION_TEXT = "Dummy ship restriction text";
@@ -289,11 +291,13 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnFirstResultBarWhenNoResultWasSubmitted() {
+        mockTokenCounterToString();
         assertToStringMethodReturnsFirstResultBar();
     }
 
     @Test
     void toStringMethodShouldReturnFirstResultBarWithShipRestrictionWhenNoResultWasSubmitted() {
+        mockTokenCounterToString();
         mockShipRestrictionGetDisplayText();
         bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
         assertEquals(LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION, bingoGame.toString());
@@ -356,6 +360,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnSecondResultBarWhenNoResultWasSubmitted() {
+        mockTokenCounterToString();
         mockSufficientBingoResult();
         assertSubmitBingoResultIsSuccessful();
         assertConfirmCurrentResultIsSuccessful();
@@ -364,6 +369,7 @@ class BingoGameTest {
 
     @Test
     void toStringMethodShouldReturnSecondResultBarWithoutShipRestrictionWhenNoResultWasSubmitted() {
+        mockTokenCounterToString();
         mockSufficientBingoResult();
         bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
         assertSubmitBingoResultIsSuccessful();
@@ -437,6 +443,7 @@ class BingoGameTest {
 
     @Test
     void submitBingoResultShouldBePossibleIfEndOfChallengeIsNotConfirmed() {
+        mockTokenCounterToString();
         mockSufficientBingoResult();
         assertEndChallengeIsSuccessful();
         assertSubmitBingoResultIsSuccessful();
@@ -489,18 +496,21 @@ class BingoGameTest {
 
     @Test
     void confirmCurrentResultShouldNotBePossibleWhenThereIsNothingToConfirm() {
+        mockTokenCounterToString();
         assertConfirmCurrentResultIsNotSuccessful();
         assertToStringMethodReturnsFirstResultBar();
     }
 
     @Test
     void doResetForCurrentLevelShouldBePossibleWhenNoResultWasSubmitted() {
+        mockTokenCounterToString();
         assertResetCurrentLevelIsSuccessful();
         assertToStringMethodReturnsFirstResultBar();
     }
 
     @Test
     void doResetForCurrentLevelShouldCancelEndOfChallenge() {
+        mockTokenCounterToString();
         assertEndChallengeIsSuccessful();
         assertResetCurrentLevelIsSuccessful();
         assertToStringMethodReturnsFirstResultBar();
@@ -508,6 +518,7 @@ class BingoGameTest {
 
     @Test
     void doResetForCurrentLevelShouldRemovePreviouslySubmittedResults() {
+        mockTokenCounterToString();
         mockSufficientBingoResult();
         setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE));
         assertSubmitBingoResultIsSuccessful();

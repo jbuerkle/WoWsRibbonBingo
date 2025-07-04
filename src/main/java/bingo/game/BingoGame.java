@@ -21,6 +21,7 @@ public class BingoGame implements Serializable {
     private static final long serialVersionUID = -6697185137194220209L;
     private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 7;
+    private static final String SENTENCE_END = ". ";
 
     private final TokenCounter tokenCounter;
     private final List<BingoResultBar> resultBars;
@@ -355,6 +356,7 @@ public class BingoGame implements Serializable {
                 appendTextForUnsuccessfulMatch(stringBuilder);
             } else {
                 appendTextForShipRestrictions(stringBuilder);
+                appendTextForTokenCounter(stringBuilder);
             }
         }
         appendTextIfBingoGameIsInChallengeEndedState(stringBuilder);
@@ -373,38 +375,36 @@ public class BingoGame implements Serializable {
             if (moreThanOnePlayerIsRegistered()) {
                 stringBuilder.append(player.name()).append("'s ");
             }
-            stringBuilder.append(bingoResult).append(". ");
+            stringBuilder.append(bingoResult).append(SENTENCE_END);
         };
     }
 
     private void appendTextForSharedDivisionAchievements(StringBuilder stringBuilder) {
         if (moreThanOnePlayerIsRegistered() && sharedDivisionAchievementsAreSubmitted()) {
-            stringBuilder.append(sharedDivisionAchievements).append(". ");
+            stringBuilder.append(sharedDivisionAchievements).append(SENTENCE_END);
         }
     }
 
     private void appendTextForTotalResult(StringBuilder stringBuilder) {
         if (moreThanOnePlayerIsRegistered()) {
-            stringBuilder.append(getTotalResultAsString()).append(". ");
+            stringBuilder.append(getTotalResultAsString()).append(SENTENCE_END);
         }
     }
 
     private void appendTextForShipRestrictions(StringBuilder stringBuilder) {
-        if (!shipRestrictionByPlayer.isEmpty()) {
-            for (Player player : players) {
-                Optional<ShipRestriction> shipRestriction = getShipRestrictionForPlayer(player);
-                shipRestriction.ifPresent(appendTextForShipRestriction(stringBuilder, player));
-            }
-            stringBuilder.append(".");
+        for (Player player : players) {
+            Optional<ShipRestriction> shipRestriction = getShipRestrictionForPlayer(player);
+            shipRestriction.ifPresent(appendTextForShipRestriction(stringBuilder, player));
         }
     }
 
     private Consumer<ShipRestriction> appendTextForShipRestriction(StringBuilder stringBuilder, Player player) {
         return shipRestriction -> {
+            stringBuilder.append(SENTENCE_END);
             if (moreThanOnePlayerIsRegistered()) {
                 stringBuilder.append(player.name()).append("'s ship restriction: ");
             }
-            stringBuilder.append(". ").append(shipRestriction.getDisplayText());
+            stringBuilder.append(shipRestriction.getDisplayText());
         };
     }
 
@@ -461,6 +461,10 @@ public class BingoGame implements Serializable {
                             totalReward);
             stringBuilder.append(calculationAsText);
         }
+    }
+
+    private void appendTextForTokenCounter(StringBuilder stringBuilder) {
+        stringBuilder.append(SENTENCE_END).append(tokenCounter);
     }
 
     private void appendTextIfBingoGameIsInChallengeEndedState(StringBuilder stringBuilder) {
