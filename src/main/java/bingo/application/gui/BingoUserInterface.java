@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.stream.Stream;
 public class BingoUserInterface extends Application {
     private static final String SHIP_RESTRICTION_ALREADY_SET = "A ship restriction is already set!";
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
+    private static final String NOT_AUTOSAVED_YET = "Not autosaved yet";
     private static final String AUTOSAVE_DIRECTORY = "autosave";
     private static final String EMPTY_STRING = "";
     private static final Player PLAYER = new Player("Dummy"); // FIXME: backward-compatible dummy implementation
@@ -59,6 +61,7 @@ public class BingoUserInterface extends Application {
     private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
+    private final Label lastAutosaveLabel;
     private final TextField shipInputField;
     private final TextField numberInputField;
     private final TextField playerNameInputField;
@@ -77,6 +80,7 @@ public class BingoUserInterface extends Application {
         this.checkBoxesByRetryRule = new HashMap<>();
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
+        this.lastAutosaveLabel = new Label(NOT_AUTOSAVED_YET);
         this.shipInputField = new TextField();
         this.numberInputField = new TextField();
         this.playerNameInputField = new TextField();
@@ -240,6 +244,7 @@ public class BingoUserInterface extends Application {
         gridPane.add(playerNameLabel, 0, 0);
         gridPane.add(playerNameInputField, 0, 1);
         gridPane.add(loadAutosaveButton, 0, 2);
+        gridPane.add(lastAutosaveLabel, 0, 3);
         return gridPane;
     }
 
@@ -333,6 +338,7 @@ public class BingoUserInterface extends Application {
             String filePath = "%s/%s".formatted(AUTOSAVE_DIRECTORY, fileName);
             try {
                 bingoGameSerializer.saveGame(bingoGame, filePath);
+                updateLastAutosaveLabel();
             } catch (IOException exception) {
                 textArea.setText("Failed to create autosave file: " + exception.getMessage());
             }
@@ -344,6 +350,13 @@ public class BingoUserInterface extends Application {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
         String dateString = today.format(formatter);
         return "%s_%s.wrb".formatted(playerName, dateString);
+    }
+
+    private void updateLastAutosaveLabel() {
+        LocalTime currentTime = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String timeString = currentTime.format(formatter);
+        lastAutosaveLabel.setText("Last successful autosave at " + timeString);
     }
 
     private void loadFromSaveFile(@SuppressWarnings("unused") InputEvent event) {
@@ -361,6 +374,7 @@ public class BingoUserInterface extends Application {
     private void loadFromSaveFile(String filePath) {
         try {
             bingoGame = bingoGameSerializer.loadGame(filePath);
+            lastAutosaveLabel.setText(NOT_AUTOSAVED_YET);
             tableView.getItems().clear();
             tableView.getItems().addAll(bingoGame.getShipsUsed());
             updateComboBoxWithAllowedMainArmamentTypes();
