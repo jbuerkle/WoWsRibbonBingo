@@ -250,8 +250,9 @@ public class BingoUserInterface extends Application {
 
     private void setTextInTextArea() {
         String bingoGameOutput = bingoGame.toString();
-        String splitOutput = bingoGameOutputSplitter.process(bingoGameOutput);
-        textArea.setText(splitOutput);
+        List<String> splitOutput = bingoGameOutputSplitter.process(bingoGameOutput);
+        String splitOutputAsString = bingoGameOutputSplitter.combineAsStringWithDoubleLineBreaks(splitOutput);
+        textArea.setText(splitOutputAsString);
     }
 
     private GridPane createNewGridPane() {
