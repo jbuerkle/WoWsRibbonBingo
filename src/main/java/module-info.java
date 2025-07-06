@@ -1,4 +1,4 @@
-module WoWsRibbonBingo {
+module com.github.jbuerkle.WoWsRibbonBingo {
     requires javafx.controls;
     requires javafx.graphics;
 
