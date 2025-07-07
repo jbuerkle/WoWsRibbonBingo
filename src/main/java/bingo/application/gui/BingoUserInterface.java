@@ -31,6 +31,7 @@ import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -481,10 +482,18 @@ public class BingoUserInterface extends Application {
         };
     }
 
+    private void setStyleSheetsFor(Scene scene) {
+        URL resourceUrl = getClass().getResource("/stylesheets/dark-mode.css");
+        if (resourceUrl != null) {
+            scene.getStylesheets().add(resourceUrl.toExternalForm());
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         Scene scene = new Scene(mainGrid);
+        setStyleSheetsFor(scene);
         primaryStage.setTitle("World of Warships Ribbon Bingo");
         primaryStage.setScene(scene);
         primaryStage.show();
