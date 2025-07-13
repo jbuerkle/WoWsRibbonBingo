@@ -1,6 +1,7 @@
 module com.github.jbuerkle.WoWsRibbonBingo {
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
 
-    exports bingo.application.gui;
+    exports bingo.application;
 }
