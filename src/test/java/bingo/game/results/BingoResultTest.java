@@ -6,13 +6,26 @@ import bingo.ships.MainArmamentType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BingoResultTest {
+
+    @Test
+    void getMainArmamentTypeShouldReturnTheCorrectArmamentType() {
+        BingoResult resultA = new BingoResult(MainArmamentType.MEDIUM_CALIBER_GUNS);
+        BingoResult resultB = new BingoResult(MainArmamentType.LARGE_CALIBER_GUNS);
+        BingoResult resultC = new BingoResult(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS);
+        assertEquals(MainArmamentType.MEDIUM_CALIBER_GUNS, resultA.getMainArmamentType());
+        assertEquals(MainArmamentType.LARGE_CALIBER_GUNS, resultB.getMainArmamentType());
+        assertEquals(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, resultC.getMainArmamentType());
+    }
 
     @Test
     void getPointValueShouldReturnCorrectValueForOneRibbonResult() {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.SPOTTED, 2);
+        assertEquals(1, result.getRibbonResultSet().size());
+        assertTrue(result.getAchievementResultSet().isEmpty());
         assertEquals(60, result.getPointValue());
     }
 
@@ -21,6 +34,8 @@ class BingoResultTest {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 2);
         result.addAchievementResult(Achievement.CLOSE_QUARTERS_EXPERT, 1);
+        assertTrue(result.getRibbonResultSet().isEmpty());
+        assertEquals(1, result.getAchievementResultSet().size());
         assertEquals(25, result.getPointValue());
     }
 
@@ -29,6 +44,8 @@ class BingoResultTest {
         BingoResult result = new BingoResult(MainArmamentType.SMALL_CALIBER_GUNS);
         result.addRibbonResult(Ribbon.INCAPACITATION, 3);
         result.addRibbonResult(Ribbon.INCAPACITATION, 5);
+        assertEquals(1, result.getRibbonResultSet().size());
+        assertTrue(result.getAchievementResultSet().isEmpty());
         assertEquals(50, result.getPointValue());
     }
 
@@ -38,6 +55,8 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.SPOTTED, 6);
         result.addRibbonResult(Ribbon.TORPEDO_HIT, 4);
         result.addRibbonResult(Ribbon.CAUSED_FLOODING, 1);
+        assertEquals(3, result.getRibbonResultSet().size());
+        assertTrue(result.getAchievementResultSet().isEmpty());
         assertEquals(380, result.getPointValue());
     }
 
@@ -47,6 +66,8 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.DESTROYED, 5);
         result.addAchievementResult(Achievement.KRAKEN_UNLEASHED, 1);
         result.addAchievementResult(Achievement.DEVASTATING_STRIKE, 1);
+        assertEquals(1, result.getRibbonResultSet().size());
+        assertEquals(2, result.getAchievementResultSet().size());
         assertEquals(800, result.getPointValue());
     }
 

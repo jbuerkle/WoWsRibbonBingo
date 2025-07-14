@@ -54,6 +54,18 @@ public class BingoResult implements Serializable {
         matchingResult.ifPresent(resultSet::remove);
     }
 
+    public MainArmamentType getMainArmamentType() {
+        return mainArmamentType;
+    }
+
+    public Set<RibbonResult> getRibbonResultSet() {
+        return new HashSet<>(ribbonResultSet);
+    }
+
+    public Set<AchievementResult> getAchievementResultSet() {
+        return new HashSet<>(achievementResultSet);
+    }
+
     public long getPointValue() {
         return Math.round(getAsTerm().getValue());
     }
