@@ -1,6 +1,7 @@
 package bingo.application.gui;
 
 import bingo.achievements.Achievement;
+import bingo.achievements.AchievementResult;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
@@ -14,9 +15,11 @@ import bingo.restrictions.generator.RandomShipRestrictionGenerator;
 import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.restrictions.impl.ForcedMainArmamentType;
 import bingo.ribbons.Ribbon;
+import bingo.ribbons.RibbonResult;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
 import bingo.ships.Ship;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -30,21 +33,18 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class BingoGameUserInterface {
     private static final String SHIP_RESTRICTION_ALREADY_SET = "A ship restriction is already set!";
     private static final String SHIP_ALREADY_USED = "This ship was already used!";
-    private static final String NOT_AUTOSAVED_YET = "Not autosaved yet";
-    private static final Player PLAYER = new Player("Dummy"); // FIXME: backward-compatible dummy implementation
 
     private final BingoGame bingoGame;
     private final Stage primaryStage;
     private final RandomShipRestrictionGenerator randomShipRestrictionGenerator;
+    private final ComboBox<Player> playerComboBox;
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
     private final BingoGameOutputSplitter bingoGameOutputSplitter;
     private final BingoGameSerializer bingoGameSerializer;
@@ -57,7 +57,6 @@ public class BingoGameUserInterface {
     private final Label lastAutosaveLabel;
     private final TextField shipInputField;
     private final TextField numberInputField;
-    private final TextField playerNameInputField;
     private final TextArea textArea;
     private final GridPane mainGrid;
     private int mainGridRow;
@@ -66,6 +65,7 @@ public class BingoGameUserInterface {
         this.bingoGame = bingoGame;
         this.primaryStage = primaryStage;
         this.randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
+        this.playerComboBox = new ComboBox<>();
         this.mainArmamentTypeComboBox = new ComboBox<>();
         this.bingoGameOutputSplitter = new BingoGameOutputSplitter();
         this.bingoGameSerializer = new BingoGameSerializer();
@@ -75,16 +75,15 @@ public class BingoGameUserInterface {
         this.checkBoxesByRetryRule = new HashMap<>();
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
-        this.lastAutosaveLabel = new Label(NOT_AUTOSAVED_YET);
+        this.lastAutosaveLabel = new Label("Game not autosaved yet");
         this.shipInputField = new TextField();
         this.numberInputField = new TextField();
-        this.playerNameInputField = new TextField();
         this.textArea = new TextArea();
         this.mainGrid = new GridPane();
         this.mainGrid.setPadding(new Insets(5));
         this.mainGridRow = 0;
         setUpGridWithSevenInputFieldsPerRow();
-        setUpGridWithComboBoxAndCheckBoxes();
+        setUpGridWithComboBoxesAndCheckBoxes();
         setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
         resetInputFields();
@@ -118,12 +117,16 @@ public class BingoGameUserInterface {
         mainGridRow++;
     }
 
-    private void setUpGridWithComboBoxAndCheckBoxes() {
+    private void setUpGridWithComboBoxesAndCheckBoxes() {
+        Label playerLabel = new Label("Player");
         Label mainArmamentTypeLabel = new Label("Main armament of ship used");
+        setUpPlayerComboBox();
         setUpMainArmamentTypeComboBox();
         GridPane gridPane = createNewGridPane();
-        gridPane.add(mainArmamentTypeLabel, 0, 0);
-        gridPane.add(mainArmamentTypeComboBox, 0, 1);
+        gridPane.add(playerLabel, 0, 0);
+        gridPane.add(playerComboBox, 0, 1);
+        gridPane.add(mainArmamentTypeLabel, 1, 0);
+        gridPane.add(mainArmamentTypeComboBox, 1, 1);
         setUpCheckBoxesForRetryRules(gridPane);
         mainGridRow++;
     }
@@ -142,6 +145,7 @@ public class BingoGameUserInterface {
         gridPane.add(confirmButton, 1, 0);
         gridPane.add(endChallengeButton, 2, 0);
         gridPane.add(resetButton, 3, 0);
+        gridPane.add(lastAutosaveLabel, 4, 0);
         mainGridRow++;
     }
 
@@ -153,13 +157,37 @@ public class BingoGameUserInterface {
         tableView.getColumns().add(shipNameColumn);
         tableView.getItems().addAll(bingoGame.getShipsUsed());
         GridPane tableInputGrid = createGridPaneForTableInputFieldAndButtons();
-        GridPane autosaveGrid = createGridPaneForAutosaveInputFieldAndButton();
         GridPane gridPane = createNewGridPane();
         gridPane.add(textArea, 0, 0);
         gridPane.add(tableView, 1, 0);
         gridPane.add(tableInputGrid, 2, 0);
-        gridPane.add(autosaveGrid, 3, 0);
         mainGridRow++;
+    }
+
+    private void setUpPlayerComboBox() {
+        List<Player> registeredPlayers = bingoGame.getPlayers();
+        playerComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Player player) {
+                if (player == null) {
+                    return UserInterfaceConstants.EMPTY_STRING;
+                }
+                return player.name();
+            }
+
+            @Override
+            public Player fromString(String string) {
+                for (Player player : registeredPlayers) {
+                    if (player.name().equals(string)) {
+                        return player;
+                    }
+                }
+                return null;
+            }
+        });
+        playerComboBox.getItems().addAll(registeredPlayers);
+        playerComboBox.setOnAction(this::onPlayerSelectionChange);
+        playerComboBox.setValue(registeredPlayers.getFirst());
     }
 
     private void setUpMainArmamentTypeComboBox() {
@@ -186,7 +214,7 @@ public class BingoGameUserInterface {
     }
 
     private void updateComboBoxWithAllowedMainArmamentTypes() {
-        ShipRestriction shipRestriction = bingoGame.getShipRestrictionForPlayer(PLAYER).orElse(null);
+        ShipRestriction shipRestriction = bingoGame.getShipRestrictionForPlayer(getSelectedPlayer()).orElse(null);
         final List<MainArmamentType> allowedMainArmamentTypes;
         if (shipRestriction instanceof BannedMainArmamentType(MainArmamentType bannedMainArmamentType)) {
             allowedMainArmamentTypes = Stream.of(MainArmamentType.values())
@@ -203,7 +231,7 @@ public class BingoGameUserInterface {
     }
 
     private void setUpCheckBoxesForRetryRules(GridPane gridPane) {
-        int column = 1;
+        int column = 2;
         for (RetryRule retryRule : RetryRule.values()) {
             CheckBox checkBox = new CheckBox(retryRule.getDisplayText());
             checkBoxesByRetryRule.put(retryRule, checkBox);
@@ -233,16 +261,6 @@ public class BingoGameUserInterface {
         gridPane.add(numberInputField, 0, 5);
         gridPane.add(setRestrictionButton, 0, 6);
         gridPane.add(removeRestrictionButton, 0, 7);
-        return gridPane;
-    }
-
-    private GridPane createGridPaneForAutosaveInputFieldAndButton() {
-        Label playerNameLabel = new Label("Name of player for autosave");
-        GridPane gridPane = new GridPane();
-        gridPane.setVgap(10);
-        gridPane.add(playerNameLabel, 0, 0);
-        gridPane.add(playerNameInputField, 0, 1);
-        gridPane.add(lastAutosaveLabel, 0, 2);
         return gridPane;
     }
 
@@ -290,7 +308,7 @@ public class BingoGameUserInterface {
                     .map(Map.Entry::getKey)
                     .toList();
             bingoGame.setActiveRetryRules(activeRetryRules);
-            boolean stateChangeSuccessful = bingoGame.submitBingoResultForPlayer(PLAYER, bingoResult);
+            boolean stateChangeSuccessful = bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
             if (stateChangeSuccessful) {
                 setTextInTextArea();
             }
@@ -323,24 +341,29 @@ public class BingoGameUserInterface {
     }
 
     private void createAutosaveFile() {
-        String trimmedUserInput = playerNameInputField.getText().trim();
-        if (userInputIsNotBlank(trimmedUserInput)) {
-            String fileName = generateFileNameForAutosave(trimmedUserInput);
-            String filePath = "%s/%s".formatted(UserInterfaceConstants.AUTOSAVE_DIRECTORY, fileName);
-            try {
-                bingoGameSerializer.saveGame(bingoGame, filePath);
-                updateLastAutosaveLabel();
-            } catch (IOException exception) {
-                textArea.setText("Failed to create autosave file: " + exception.getMessage());
-            }
+        String fileName = generateFileNameForAutosave();
+        String filePath = "%s/%s".formatted(UserInterfaceConstants.AUTOSAVE_DIRECTORY, fileName);
+        try {
+            bingoGameSerializer.saveGame(bingoGame, filePath);
+            updateLastAutosaveLabel();
+        } catch (IOException exception) {
+            textArea.setText("Failed to create autosave file: " + exception.getMessage());
         }
     }
 
-    private String generateFileNameForAutosave(String playerName) {
+    private String generateFileNameForAutosave() {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
         String dateString = today.format(formatter);
-        return "%s_%s.wrb".formatted(playerName, dateString);
+        return "%s_%s.wrb".formatted(getPlayerNamesAsString(), dateString);
+    }
+
+    private String getPlayerNamesAsString() {
+        return bingoGame.getPlayers()
+                .stream()
+                .map(Player::name)
+                .reduce((playerNameA, playerNameB) -> playerNameA.concat("+").concat(playerNameB))
+                .orElseThrow();
     }
 
     private void updateLastAutosaveLabel() {
@@ -366,6 +389,11 @@ public class BingoGameUserInterface {
         textFieldsByAchievement.values().forEach(this::clearInput);
         checkBoxesByRetryRule.values().forEach(this::clearInput);
         setTextInTextArea();
+    }
+
+    private void clearAllPlayerDependantInputFields() {
+        textFieldsByRibbon.values().forEach(this::clearInput);
+        textFieldsByAchievement.values().forEach(this::clearInput);
     }
 
     private void clearInput(TextField textField) {
@@ -413,7 +441,8 @@ public class BingoGameUserInterface {
         try {
             int number = getAmountFromUserInput(numberInputField, "Number chosen by player");
             ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
-            boolean restrictionSuccessfullySet = bingoGame.setShipRestrictionForPlayer(PLAYER, shipRestriction);
+            boolean restrictionSuccessfullySet =
+                    bingoGame.setShipRestrictionForPlayer(getSelectedPlayer(), shipRestriction);
             if (restrictionSuccessfullySet) {
                 updateComboBoxWithAllowedMainArmamentTypes();
                 clearInput(numberInputField);
@@ -427,8 +456,38 @@ public class BingoGameUserInterface {
     }
 
     private void removeRestriction(InputEvent ignoredEvent) {
-        bingoGame.removeShipRestrictionForPlayer(PLAYER);
+        bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
         updateComboBoxWithAllowedMainArmamentTypes();
         setTextInTextArea();
+    }
+
+    private void onPlayerSelectionChange(ActionEvent ignoredEvent) {
+        Optional<BingoResult> optionalBingoResult = bingoGame.getBingoResultForPlayer(getSelectedPlayer());
+        updateComboBoxWithAllowedMainArmamentTypes();
+        clearAllPlayerDependantInputFields();
+        if (optionalBingoResult.isPresent()) {
+            BingoResult bingoResult = optionalBingoResult.get();
+            mainArmamentTypeComboBox.setValue(bingoResult.getMainArmamentType());
+            updateRibbonAmountsFromPlayerData(bingoResult.getRibbonResultSet());
+            updateAchievementAmountsFromPlayerData(bingoResult.getAchievementResultSet());
+        }
+    }
+
+    private void updateRibbonAmountsFromPlayerData(Set<RibbonResult> ribbonResultSet) {
+        for (RibbonResult ribbonResult : ribbonResultSet) {
+            TextField textField = textFieldsByRibbon.get(ribbonResult.ribbon());
+            textField.setText(String.valueOf(ribbonResult.amount()));
+        }
+    }
+
+    private void updateAchievementAmountsFromPlayerData(Set<AchievementResult> achievementResultSet) {
+        for (AchievementResult achievementResult : achievementResultSet) {
+            TextField textField = textFieldsByAchievement.get(achievementResult.achievement());
+            textField.setText(String.valueOf(achievementResult.amount()));
+        }
+    }
+
+    private Player getSelectedPlayer() {
+        return playerComboBox.getSelectionModel().getSelectedItem();
     }
 }
