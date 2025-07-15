@@ -550,6 +550,18 @@ class BingoGameTest {
     }
 
     @Test
+    void confirmCurrentResultShouldNotBePossibleUntilResultsHaveBeenSubmittedForAllPlayers() {
+        setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
+        assertConfirmCurrentResultIsNotSuccessful();
+        bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult);
+        assertConfirmCurrentResultIsNotSuccessful();
+        bingoGame.submitBingoResultForPlayer(PLAYER_B, mockedBingoResult);
+        assertConfirmCurrentResultIsNotSuccessful();
+        bingoGame.submitBingoResultForPlayer(PLAYER_C, mockedBingoResult);
+        assertConfirmCurrentResultIsSuccessful();
+    }
+
+    @Test
     void doResetForCurrentLevelShouldBePossibleWhenNoResultWasSubmitted() {
         mockTokenCounterToString();
         assertResetCurrentLevelIsSuccessful();

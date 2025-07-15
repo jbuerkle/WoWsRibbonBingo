@@ -89,25 +89,12 @@ public class BingoGame implements Serializable {
         return switch (selectedAction) {
             case SUBMIT_RESULT -> true;
             case CONFIRM_RESULT -> {
-                if (requirementOfCurrentResultBarIsMet()) {
-                    if (hasNextLevel()) {
-                        bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-                        removeAllShipRestrictions();
-                        removeSubmittedMatchResults();
-                        currentLevel++;
-                    } else {
-                        bingoGameState = BingoGameState.CHALLENGE_ENDED;
-                    }
+                if (bingoResultIsSubmittedForAllPlayers()) {
+                    processConfirmationWhenAllResultsAreSubmitted();
+                    yield true;
                 } else {
-                    if (retryingIsAllowed()) {
-                        bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-                        removeSubmittedMatchResults();
-                    } else {
-                        bingoGameState = BingoGameState.CHALLENGE_ENDED;
-                    }
+                    yield false;
                 }
-                tokenCounter.confirmMatchResult();
-                yield true;
             }
             case RESET_WITHOUT_CONFIRMING -> {
                 bingoGameState = BingoGameState.LEVEL_INITIALIZED;
@@ -115,6 +102,35 @@ public class BingoGame implements Serializable {
             }
             case END_CHALLENGE_VOLUNTARILY -> false;
         };
+    }
+
+    private void processConfirmationWhenAllResultsAreSubmitted() {
+        if (requirementOfCurrentResultBarIsMet()) {
+            processConfirmationForSuccessfulMatch();
+        } else {
+            processConfirmationForUnsuccessfulMatch();
+        }
+        tokenCounter.confirmMatchResult();
+    }
+
+    private void processConfirmationForSuccessfulMatch() {
+        if (hasNextLevel()) {
+            bingoGameState = BingoGameState.LEVEL_INITIALIZED;
+            removeAllShipRestrictions();
+            removeSubmittedMatchResults();
+            currentLevel++;
+        } else {
+            bingoGameState = BingoGameState.CHALLENGE_ENDED;
+        }
+    }
+
+    private void processConfirmationForUnsuccessfulMatch() {
+        if (retryingIsAllowed()) {
+            bingoGameState = BingoGameState.LEVEL_INITIALIZED;
+            removeSubmittedMatchResults();
+        } else {
+            bingoGameState = BingoGameState.CHALLENGE_ENDED;
+        }
     }
 
     private void processActionForUnconfirmedVoluntaryEndState(BingoGameAction selectedAction) {
