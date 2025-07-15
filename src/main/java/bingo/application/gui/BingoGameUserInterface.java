@@ -86,7 +86,7 @@ public class BingoGameUserInterface {
         setUpGridWithComboBoxesAndCheckBoxes();
         setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
-        resetInputFields();
+        performResetOnUserInterface();
     }
 
     public void setScene() {
@@ -135,17 +135,20 @@ public class BingoGameUserInterface {
         Button submitButton = new Button("Submit result");
         Button confirmButton = new Button("Confirm result");
         Button endChallengeButton = new Button("End challenge");
-        Button resetButton = new Button("Reset input fields");
+        Button resetButton = new Button("Reset current level");
+        Button clearInputButton = new Button("Clear input fields");
         userInterfaceUtility.setEventHandlers(submitButton, this::submitResult);
         userInterfaceUtility.setEventHandlers(confirmButton, this::confirmResult);
         userInterfaceUtility.setEventHandlers(endChallengeButton, this::endChallenge);
-        userInterfaceUtility.setEventHandlers(resetButton, this::resetInputFieldsAndBingoGame);
+        userInterfaceUtility.setEventHandlers(resetButton, this::resetCurrentLevel);
+        userInterfaceUtility.setEventHandlers(clearInputButton, this::clearAllInputFields);
         GridPane gridPane = createNewGridPane();
         gridPane.add(submitButton, 0, 0);
         gridPane.add(confirmButton, 1, 0);
         gridPane.add(endChallengeButton, 2, 0);
         gridPane.add(resetButton, 3, 0);
-        gridPane.add(lastAutosaveLabel, 4, 0);
+        gridPane.add(clearInputButton, 4, 0);
+        gridPane.add(lastAutosaveLabel, 5, 0);
         mainGridRow++;
     }
 
@@ -335,7 +338,7 @@ public class BingoGameUserInterface {
         boolean stateChangeSuccessful = bingoGame.confirmCurrentResult();
         if (stateChangeSuccessful) {
             updateComboBoxWithAllowedMainArmamentTypes();
-            resetInputFields();
+            performResetOnUserInterface();
             createAutosaveFile();
         }
     }
@@ -373,35 +376,47 @@ public class BingoGameUserInterface {
         lastAutosaveLabel.setText("Last successful autosave at " + timeString);
     }
 
-    private void resetInputFieldsAndBingoGame(InputEvent ignoredEvent) {
-        resetInputFieldsAndBingoGame();
+    private void resetCurrentLevel(InputEvent ignoredEvent) {
+        resetCurrentLevel();
     }
 
-    private void resetInputFieldsAndBingoGame() {
+    private void resetCurrentLevel() {
         boolean stateChangeSuccessful = bingoGame.doResetForCurrentLevel();
         if (stateChangeSuccessful) {
-            resetInputFields();
+            performResetOnUserInterface();
         }
     }
 
-    private void resetInputFields() {
-        textFieldsByRibbon.values().forEach(this::clearInput);
-        textFieldsByAchievement.values().forEach(this::clearInput);
-        checkBoxesByRetryRule.values().forEach(this::clearInput);
+    private void performResetOnUserInterface() {
+        resetCheckBoxes();
+        clearAllInputFields();
         setTextInTextArea();
     }
 
-    private void clearAllPlayerDependantInputFields() {
+    private void resetCheckBoxes() {
+        checkBoxesByRetryRule.values().forEach(checkBox -> checkBox.setSelected(false));
+    }
+
+    private void clearAllInputFields(InputEvent ignoredEvent) {
+        clearAllInputFields();
+    }
+
+    private void clearAllInputFields() {
+        clearPlayerDependentInputFields();
+        clearInputFieldsForDivisionAchievements();
+    }
+
+    private void clearPlayerDependentInputFields() {
         textFieldsByRibbon.values().forEach(this::clearInput);
         textFieldsByAchievement.values().forEach(this::clearInput);
+    }
+
+    private void clearInputFieldsForDivisionAchievements() {
+        // TODO: add implementation
     }
 
     private void clearInput(TextField textField) {
         textField.setText(UserInterfaceConstants.EMPTY_STRING);
-    }
-
-    private void clearInput(CheckBox checkBox) {
-        checkBox.setSelected(false);
     }
 
     private void endChallenge(InputEvent ignoredEvent) {
@@ -464,7 +479,7 @@ public class BingoGameUserInterface {
     private void onPlayerSelectionChange(ActionEvent ignoredEvent) {
         Optional<BingoResult> optionalBingoResult = bingoGame.getBingoResultForPlayer(getSelectedPlayer());
         updateComboBoxWithAllowedMainArmamentTypes();
-        clearAllPlayerDependantInputFields();
+        clearPlayerDependentInputFields();
         if (optionalBingoResult.isPresent()) {
             BingoResult bingoResult = optionalBingoResult.get();
             mainArmamentTypeComboBox.setValue(bingoResult.getMainArmamentType());
