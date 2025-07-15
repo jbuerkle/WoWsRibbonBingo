@@ -169,8 +169,10 @@ public class PlayerRegistrationUserInterface {
     }
 
     private void transitionToMainScene(BingoGame bingoGame) {
+        primaryStage.hide();
         BingoGameUserInterface bingoGameUserInterface = new BingoGameUserInterface(bingoGame, primaryStage);
         bingoGameUserInterface.setScene();
+        primaryStage.show();
     }
 
     private void showWarning(String headerText, String messageText) {
