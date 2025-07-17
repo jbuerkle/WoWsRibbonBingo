@@ -2,11 +2,13 @@ package bingo.application.gui;
 
 import bingo.achievements.Achievement;
 import bingo.achievements.AchievementResult;
+import bingo.achievements.division.DivisionAchievement;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
 import bingo.game.input.UserInputException;
 import bingo.game.results.BingoResult;
+import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.game.util.BingoGameOutputSplitter;
 import bingo.game.util.BingoGameSerializer;
 import bingo.players.Player;
@@ -34,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -51,6 +54,7 @@ public class BingoGameUserInterface {
     private final UserInterfaceUtility userInterfaceUtility;
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final Map<Achievement, TextField> textFieldsByAchievement;
+    private final Map<DivisionAchievement, TextField> textFieldsByDivisionAchievement;
     private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
@@ -72,6 +76,7 @@ public class BingoGameUserInterface {
         this.userInterfaceUtility = new UserInterfaceUtility();
         this.textFieldsByRibbon = new HashMap<>();
         this.textFieldsByAchievement = new HashMap<>();
+        this.textFieldsByDivisionAchievement = new HashMap<>();
         this.checkBoxesByRetryRule = new HashMap<>();
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
@@ -82,7 +87,7 @@ public class BingoGameUserInterface {
         this.mainGrid = new GridPane();
         this.mainGrid.setPadding(new Insets(5));
         this.mainGridRow = 0;
-        setUpGridWithSevenInputFieldsPerRow();
+        setUpGridWithEightInputFieldsPerRow();
         setUpGridWithComboBoxesAndCheckBoxes();
         setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
@@ -95,26 +100,58 @@ public class BingoGameUserInterface {
         primaryStage.setScene(scene);
     }
 
-    private void setUpGridWithSevenInputFieldsPerRow() {
-        setUpGridWithSevenInputFieldsPerRow(Ribbon.values(), Ribbon::getDisplayText, textFieldsByRibbon);
-        setUpGridWithSevenInputFieldsPerRow(Achievement.values(), Achievement::getDisplayText, textFieldsByAchievement);
+    private void setUpGridWithEightInputFieldsPerRow() {
+        AtomicInteger columnCounter = new AtomicInteger(0);
+        setUpGridWithEightInputFieldsPerRow(Ribbon.values(), Ribbon::getDisplayText, textFieldsByRibbon, columnCounter);
+        goToNextMainGridRow();
+        GridPane reusedGridPane = setUpGridWithEightInputFieldsPerRow(
+                Achievement.values(),
+                Achievement::getDisplayText,
+                textFieldsByAchievement,
+                columnCounter);
+        setUpGridWithEightInputFieldsPerRow(
+                DivisionAchievement.values(),
+                DivisionAchievement::getDisplayText,
+                textFieldsByDivisionAchievement,
+                columnCounter,
+                reusedGridPane);
+        goToNextMainGridRow();
     }
 
-    private <T> void setUpGridWithSevenInputFieldsPerRow(
-            T[] obtainableValues, Function<T, String> displayTextGetter, Map<T, TextField> textFieldsByObtainable) {
-        GridPane gridPane = createNewGridPane();
-        int column = 0;
-        for (T obtainable : obtainableValues) {
-            if (column > 6) {
-                mainGridRow++;
-                gridPane = createNewGridPane();
-                column = 0;
-            }
-            TextField textField = createInputFieldWithLabel(displayTextGetter.apply(obtainable), gridPane, column);
-            textFieldsByObtainable.put(obtainable, textField);
-            column++;
+    private <T> GridPane setUpGridWithEightInputFieldsPerRow(
+            T[] obtainableValues, Function<T, String> displayTextGetter, Map<T, TextField> textFieldsByObtainable,
+            AtomicInteger columnCounter) {
+        return setUpGridWithEightInputFieldsPerRow(
+                obtainableValues,
+                displayTextGetter,
+                textFieldsByObtainable,
+                columnCounter,
+                null);
+    }
+
+    private <T> GridPane setUpGridWithEightInputFieldsPerRow(
+            T[] obtainableValues, Function<T, String> displayTextGetter, Map<T, TextField> textFieldsByObtainable,
+            AtomicInteger columnCounter, GridPane reusedGridPane) {
+        GridPane gridPane;
+        if (reusedGridPane != null) {
+            gridPane = reusedGridPane;
+        } else {
+            gridPane = createNewGridPane();
+            columnCounter.set(0);
         }
-        mainGridRow++;
+        for (T obtainable : obtainableValues) {
+            if (columnCounter.get() > 7) {
+                goToNextMainGridRow();
+                gridPane = createNewGridPane();
+                columnCounter.set(0);
+            }
+            TextField textField = createInputFieldWithLabel(
+                    displayTextGetter.apply(obtainable),
+                    gridPane,
+                    columnCounter.getAndIncrement());
+            textFieldsByObtainable.put(obtainable, textField);
+        }
+        return gridPane;
     }
 
     private void setUpGridWithComboBoxesAndCheckBoxes() {
@@ -128,7 +165,7 @@ public class BingoGameUserInterface {
         gridPane.add(mainArmamentTypeLabel, 1, 0);
         gridPane.add(mainArmamentTypeComboBox, 1, 1);
         setUpCheckBoxesForRetryRules(gridPane);
-        mainGridRow++;
+        goToNextMainGridRow();
     }
 
     private void setUpGridWithButtons() {
@@ -149,7 +186,7 @@ public class BingoGameUserInterface {
         gridPane.add(resetButton, 3, 0);
         gridPane.add(clearInputButton, 4, 0);
         gridPane.add(lastAutosaveLabel, 5, 0);
-        mainGridRow++;
+        goToNextMainGridRow();
     }
 
     private void setUpGridWithLargeTextAreaAndTableView() {
@@ -164,11 +201,14 @@ public class BingoGameUserInterface {
         gridPane.add(textArea, 0, 0);
         gridPane.add(tableView, 1, 0);
         gridPane.add(tableInputGrid, 2, 0);
+        goToNextMainGridRow();
+    }
+
+    private void goToNextMainGridRow() {
         mainGridRow++;
     }
 
     private void setUpPlayerComboBox() {
-        List<Player> registeredPlayers = bingoGame.getPlayers();
         playerComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Player player) {
@@ -180,7 +220,7 @@ public class BingoGameUserInterface {
 
             @Override
             public Player fromString(String string) {
-                for (Player player : registeredPlayers) {
+                for (Player player : bingoGame.getPlayers()) {
                     if (player.name().equals(string)) {
                         return player;
                     }
@@ -188,9 +228,13 @@ public class BingoGameUserInterface {
                 return null;
             }
         });
-        playerComboBox.getItems().addAll(registeredPlayers);
+        playerComboBox.getItems().addAll(bingoGame.getPlayers());
         playerComboBox.setOnAction(this::onPlayerSelectionChange);
-        playerComboBox.setValue(registeredPlayers.getFirst());
+        selectFirstPlayerInComboBox();
+    }
+
+    private void selectFirstPlayerInComboBox() {
+        playerComboBox.setValue(bingoGame.getPlayers().getFirst());
     }
 
     private void setUpMainArmamentTypeComboBox() {
@@ -293,7 +337,9 @@ public class BingoGameUserInterface {
     }
 
     private void submitResult(InputEvent ignoredEvent) {
+        int numberOfPlayers = bingoGame.getPlayers().size();
         BingoResult bingoResult = new BingoResult(mainArmamentTypeComboBox.getValue());
+        SharedDivisionAchievements divisionAchievements = new SharedDivisionAchievements(numberOfPlayers);
         try {
             for (Map.Entry<Ribbon, TextField> entry : textFieldsByRibbon.entrySet()) {
                 Ribbon ribbon = entry.getKey();
@@ -305,19 +351,31 @@ public class BingoGameUserInterface {
                 int amount = getAmountFromUserInput(entry.getValue(), achievement.getDisplayText());
                 bingoResult.addAchievementResult(achievement, amount);
             }
-            List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().isSelected())
-                    .map(Map.Entry::getKey)
-                    .toList();
-            bingoGame.setActiveRetryRules(activeRetryRules);
-            boolean stateChangeSuccessful = bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
-            if (stateChangeSuccessful) {
+            for (Map.Entry<DivisionAchievement, TextField> entry : textFieldsByDivisionAchievement.entrySet()) {
+                DivisionAchievement achievement = entry.getKey();
+                int amount = getAmountFromUserInput(entry.getValue(), achievement.getDisplayText());
+                divisionAchievements.addAchievementResult(achievement, amount);
+            }
+            boolean playerResultSubmittedSuccessfully =
+                    bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
+            boolean sharedResultSubmittedSuccessfully =
+                    bingoGame.submitSharedDivisionAchievements(divisionAchievements);
+            if (playerResultSubmittedSuccessfully || sharedResultSubmittedSuccessfully) {
+                setActiveRetryRules();
                 setTextInTextArea();
             }
         } catch (UserInputException exception) {
             textArea.setText(exception.getMessage());
         }
+    }
+
+    private void setActiveRetryRules() {
+        List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().isSelected())
+                .map(Map.Entry::getKey)
+                .toList();
+        bingoGame.setActiveRetryRules(activeRetryRules);
     }
 
     private int getAmountFromUserInput(TextField textField, String displayText) throws UserInputException {
@@ -388,6 +446,7 @@ public class BingoGameUserInterface {
     }
 
     private void performResetOnUserInterface() {
+        selectFirstPlayerInComboBox();
         resetCheckBoxes();
         clearAllInputFields();
         setTextInTextArea();
@@ -412,7 +471,7 @@ public class BingoGameUserInterface {
     }
 
     private void clearInputFieldsForDivisionAchievements() {
-        // TODO: add implementation
+        textFieldsByDivisionAchievement.values().forEach(this::clearInput);
     }
 
     private void clearInput(TextField textField) {
