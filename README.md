@@ -10,21 +10,22 @@ file. It contains a fully-tested build, packaged as a `.jar` file with all neces
 to run the application, which can be downloaded for free
 from [Oracle's official website.](https://www.oracle.com/java/technologies/downloads/)
 
-## Rules for the challenge
+## Rules for the solo streamer challenge (classic)
 
 1. You have to start the challenge on level 1.
-2. You cannot skip any levels, but you can choose to end the challenge early. You cannot do this while in a match, or in
-   case the challenge already ended for a different reason.
+2. You cannot skip any levels, but you can choose to end the challenge early. You cannot do this while in a match.
 3. You have to play the challenge in "Random" matches, with any T6 - T10 ship of your choice. **Exception:** Hybrid
    ships which have player-controllable, carrier-like planes are banned from use for the main participant.
-4. You may invite any number of players into your division.
+4. You may invite any number of players into your division. However, they will join you as supporters, and any ribbons
+   or achievements collected by them will **not** award any points.
 5. If you play in a division, you and the players in your division may use every ship only **once** per challenge. Your
    ship pool will be shared between players, rather than each player having their own ship pool. However, only ships
    used in successful matches as per rule 7 are counted.
 6. Once you start the challenge, every match counts. If you need an exception or want to pause the challenge, you have
    to announce this **before starting the match**.
 7. After every match played, your point result is calculated and compared to the result bar of the current level:
-    - If your result meets the point requirement, you unlock the reward for the current level.
+    - If your result meets the point requirement, you unlock the reward for the current level. You automatically go to
+      the next level (unless you unlocked the final reward).
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
 8. Exceptions to rule 7 which allow you to retry and keep your unlocked rewards:
     - 8a: The match was less than 14 minutes long, **and** you were alive at the end of the match.
@@ -42,9 +43,26 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
       is automatically consumed, and you keep any unlocked rewards (rule 8d).
     - 9e: You do not gain any tokens for completing the final level of the challenge.
     - 9f: Unused extra lives are converted to 6 subs each at the end of the challenge. Unused tokens are not converted.
-10. The challenge is "double or nothing" style. After every successful match, you can choose to either:
-    - Go to the next level and attempt to double your current reward, or:
-    - End the challenge and immediately receive your current reward.
+10. The challenge is "double or nothing" style. Every successful match doubles your current reward, but as long as you
+    do not have any extra lives, you are at risk of losing your unlocked rewards to an unsuccessful match. While not in
+    a match, you can always choose to receive your current reward instead of continuing the challenge.
+
+## Rules for the duo/trio streamer challenge
+
+1. All rules of the solo streamer challenge also apply to this variant of the challenge, unless specified otherwise.
+2. All participants **must** stream for the entire duration of the challenge.
+3. Extends classic rule 3: Hybrid ships are banned from use for **all** participants.
+4. Replaces classic rule 4:
+    - All players in your division join as participants in the challenge.
+    - Players **cannot** join your division as supporters.
+    - Participating streamers cannot be switched out for other streamers.
+    - All ribbons and achievements unlocked by any of the players in your division award points.
+    - Each player's result will be calculated separately, then combined into one result.
+5. Extends classic rule 8: Any of the retry rules apply to the division as a whole **if:**
+    - In a duo, the classic retry rule applies to at least **one** of the two players.
+    - In a trio, the classic retry rule applies to at least **two** of the three players.
+6. Some additional rules apply to the result bars and rewards. Please check
+   [the section below](#result-bars-and-their-respective-rewards) for details.
 
 ## Point values per ribbon
 
@@ -96,6 +114,21 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 
 Note: Bonus points for the same ribbon stack additively, **not** multiplicatively.
 
+## Point values per division achievement
+
+- General Offensive: 100 points (+50% bonus points for duos)
+- Brothers-in-Arms: 150 points
+- Strike Team: 250 points (+50% bonus points for duos)
+- Coordinated Attack: 200 points (+50% bonus points for duos)
+- Shoulder to Shoulder: 250 points (+50% bonus points for duos)
+
+Note:
+
+- As division achievements are awarded to all members of a division at the same time, the points are shared between
+  players (so they only award points once).
+- This section applies to the duo/trio streamer challenge only. In the solo streamer challenge, division achievements
+  will **not** award any points.
+
 ## Result bars and their respective rewards
 
 | Level | Points required | Number of subs as reward: 2^(Level) |
@@ -109,8 +142,15 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 | 6     |            1500 |                    2^6 = 64 subs 🎁 |
 | 7     |            1800 |                   2^7 = 128 subs 🎁 |
 
-The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock any
-higher reward.
+Note:
+
+- The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock
+  any higher reward.
+- The point requirements listed here apply to the solo streamer challenge. In the duo/trio streamer challenge, the point
+  requirements for each level increase by 40% for every additional player (duo +40%, trio +80%).
+- In the duo/trio streamer challenge, the reward **must** be shared between the participating streamers. Every streamer
+  must receive at least a 25% share of the total reward. The only exception are small rewards (1 sub cannot be split).
+- As the reward is paid in gift subs, all participating streamers **must** have a monetized stream on Twitch.
 
 ## Optional ship restrictions (not part of the main rule set)
 
@@ -134,6 +174,8 @@ the number picked by the streamer.
 
 ## Hall of Fame
 
+### Solo streamer challenge (classic)
+
 | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
 |-----------------|--------------------------|---------------------------|-------------:|
 | OverLordBou     | 21.02.2025               | Your_SAT_Score            |  140 subs 🎁 |
@@ -145,3 +187,8 @@ the number picked by the streamer.
 | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
 | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
 | Hyf1re          | 03.07.2025               | ArmoredGuppy              |  128 subs 🎁 |
+
+### Duo/trio streamer challenge
+
+| Twitch streamers | Date played (dd.mm.yyyy) | Total reward |
+|------------------|--------------------------|-------------:|
