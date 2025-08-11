@@ -498,6 +498,7 @@ class BingoGameTest {
             assertSubmitBingoResultIsSuccessful();
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_IMBALANCED_MATCHMAKING + DUMMY_TOKEN_TEXT, bingoGame.toString());
             assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsFirstResultBar();
         }
 
@@ -516,6 +517,7 @@ class BingoGameTest {
             assertSubmitBingoResultIsSuccessful();
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_UNFAIR_DISADVANTAGE + DUMMY_TOKEN_TEXT, bingoGame.toString());
             assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsFirstResultBar();
         }
 
@@ -533,6 +535,7 @@ class BingoGameTest {
             assertSubmitBingoResultIsSuccessful();
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_EXTRA_LIFE + DUMMY_TOKEN_TEXT, bingoGame.toString());
             assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsFirstResultBar();
         }
 
@@ -558,6 +561,7 @@ class BingoGameTest {
             mockSufficientBingoResult();
             assertSubmitBingoResultIsSuccessful();
             assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsSecondResultBar();
         }
 
@@ -574,6 +578,7 @@ class BingoGameTest {
             assertSetShipRestrictionIsSuccessful();
             assertSubmitBingoResultIsSuccessful();
             assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsSecondResultBar();
         }
 
@@ -679,7 +684,7 @@ class BingoGameTest {
 
         @Test
         void shouldUpdateStepByStepForMultiplayer() {
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            mockCurrentBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             mockBingoResultToString();
@@ -709,11 +714,13 @@ class BingoGameTest {
             bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult);
             assertEquals(MULTIPLAYER_RESULT_AB, bingoGame.toString());
             bingoGame.submitBingoResultForPlayer(PLAYER_C, mockedBingoResult);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             assertEquals(MULTIPLAYER_RESULT_ABC, bingoGame.toString());
         }
 
         private void submitDivisionAchievementsAndCheckResults() {
             bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             assertEquals(MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS, bingoGame.toString());
         }
     }

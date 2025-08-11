@@ -326,17 +326,16 @@ public class BingoGame implements Serializable {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         BingoGameState bingoGameState = bingoGameStateMachine.getCurrentState();
-        if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) ||
-                bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY)) {
+        if (bingoGameIsInChallengeEndedVoluntarilyState(bingoGameState)) {
             appendTextForVoluntaryEndOfChallenge(stringBuilder);
         } else {
             appendTextForBingoResults(stringBuilder);
             appendTextForSharedDivisionAchievements(stringBuilder);
             appendTextForTotalResult(stringBuilder);
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
-            if (requirementOfCurrentResultBarIsMet()) {
+            if (bingoGameIsInChallengeEndedSuccessfullyState(bingoGameState)) {
                 appendTextForSuccessfulMatch(stringBuilder);
-            } else if (bingoResultIsSubmittedForAllPlayers()) {
+            } else if (bingoGameIsInChallengeEndedUnsuccessfullyState(bingoGameState)) {
                 appendTextForUnsuccessfulMatch(stringBuilder);
             } else {
                 appendTextForShipRestrictions(stringBuilder);
@@ -345,6 +344,21 @@ public class BingoGame implements Serializable {
         }
         appendTextIfBingoGameIsInFinalState(stringBuilder);
         return stringBuilder.toString();
+    }
+
+    private boolean bingoGameIsInChallengeEndedVoluntarilyState(BingoGameState bingoGameState) {
+        return bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) ||
+                bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
+    }
+
+    private boolean bingoGameIsInChallengeEndedSuccessfullyState(BingoGameState bingoGameState) {
+        return bingoGameState.equals(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH) ||
+                bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY);
+    }
+
+    private boolean bingoGameIsInChallengeEndedUnsuccessfullyState(BingoGameState bingoGameState) {
+        return bingoGameState.equals(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH) ||
+                bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY);
     }
 
     private void appendTextForBingoResults(StringBuilder stringBuilder) {
