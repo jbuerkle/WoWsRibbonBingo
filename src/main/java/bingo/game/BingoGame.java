@@ -24,135 +24,50 @@ public class BingoGame implements Serializable {
     private static final String SENTENCE_END = ". ";
 
     private final TokenCounter tokenCounter;
+    private final BingoGameStateMachine bingoGameStateMachine;
     private final List<BingoResultBar> resultBars;
     private final List<Ship> shipsUsed;
     private final List<Player> players;
     private final List<RetryRule> activeRetryRules;
     private final Map<Player, ShipRestriction> shipRestrictionByPlayer;
     private final Map<Player, BingoResult> bingoResultByPlayer;
-    private boolean challengeEndedVoluntarily;
     private SharedDivisionAchievements sharedDivisionAchievements;
-    private BingoGameState bingoGameState;
     private int currentLevel;
 
-    BingoGame(List<Player> players, TokenCounter tokenCounter) {
+    BingoGame(List<Player> players, TokenCounter tokenCounter, BingoGameStateMachine bingoGameStateMachine) {
         if (players.isEmpty() || players.size() > 3) {
             throw new IllegalArgumentException("The number of players must be between 1 and 3");
         }
         this.tokenCounter = tokenCounter;
+        this.bingoGameStateMachine = bingoGameStateMachine;
         this.resultBars = new LinkedList<>();
         this.shipsUsed = new LinkedList<>();
         this.players = new LinkedList<>(players);
         this.activeRetryRules = new LinkedList<>();
         this.shipRestrictionByPlayer = new HashMap<>();
         this.bingoResultByPlayer = new HashMap<>();
-        this.challengeEndedVoluntarily = false;
         for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
             resultBars.add(new BingoResultBar(level));
         }
-        this.bingoGameState = BingoGameState.LEVEL_INITIALIZED;
         this.currentLevel = START_LEVEL;
     }
 
     public BingoGame(List<Player> players) {
-        this(players, new TokenCounter());
+        this(players, new TokenCounter(), new BingoGameStateMachine());
     }
 
-    private boolean processBingoGameAction(BingoGameAction selectedAction) {
-        return switch (bingoGameState) {
-            case LEVEL_INITIALIZED -> processActionForLevelInitializedState(selectedAction);
-            case UNCONFIRMED_RESULT -> processActionForUnconfirmedResultState(selectedAction);
-            case UNCONFIRMED_VOLUNTARY_END -> {
-                processActionForUnconfirmedVoluntaryEndState(selectedAction);
-                yield true;
-            }
-            case CHALLENGE_ENDED -> false;
-        };
-    }
-
-    private boolean processActionForLevelInitializedState(BingoGameAction selectedAction) {
-        return switch (selectedAction) {
-            case SUBMIT_RESULT -> {
-                bingoGameState = BingoGameState.UNCONFIRMED_RESULT;
-                yield true;
-            }
-            case CONFIRM_RESULT -> false;
-            case RESET_WITHOUT_CONFIRMING -> true;
-            case END_CHALLENGE_VOLUNTARILY -> {
-                bingoGameState = BingoGameState.UNCONFIRMED_VOLUNTARY_END;
-                yield true;
-            }
-        };
-    }
-
-    private boolean processActionForUnconfirmedResultState(BingoGameAction selectedAction) {
-        return switch (selectedAction) {
-            case SUBMIT_RESULT -> true;
-            case CONFIRM_RESULT -> {
-                if (bingoResultIsSubmittedForAllPlayers()) {
-                    processConfirmationWhenAllResultsAreSubmitted();
-                    yield true;
-                } else {
-                    yield false;
-                }
-            }
-            case RESET_WITHOUT_CONFIRMING -> {
-                bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-                yield true;
-            }
-            case END_CHALLENGE_VOLUNTARILY -> false;
-        };
-    }
-
-    private void processConfirmationWhenAllResultsAreSubmitted() {
-        if (requirementOfCurrentResultBarIsMet()) {
-            processConfirmationForSuccessfulMatch();
-        } else {
-            processConfirmationForUnsuccessfulMatch();
-        }
-        tokenCounter.confirmMatchResult();
-    }
-
-    private void processConfirmationForSuccessfulMatch() {
-        if (hasNextLevel()) {
-            bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-            removeAllShipRestrictions();
-            removeSubmittedMatchResults();
-            currentLevel++;
-        } else {
-            bingoGameState = BingoGameState.CHALLENGE_ENDED;
-        }
-    }
-
-    private void processConfirmationForUnsuccessfulMatch() {
-        if (retryingIsAllowed()) {
-            bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-            removeSubmittedMatchResults();
-        } else {
-            bingoGameState = BingoGameState.CHALLENGE_ENDED;
-        }
-    }
-
-    private void processActionForUnconfirmedVoluntaryEndState(BingoGameAction selectedAction) {
-        switch (selectedAction) {
-            case SUBMIT_RESULT -> bingoGameState = BingoGameState.UNCONFIRMED_RESULT;
-            case CONFIRM_RESULT -> {
-                bingoGameState = BingoGameState.CHALLENGE_ENDED;
-                challengeEndedVoluntarily = true;
-            }
-            case RESET_WITHOUT_CONFIRMING -> bingoGameState = BingoGameState.LEVEL_INITIALIZED;
-            case END_CHALLENGE_VOLUNTARILY -> {
-            }
-        }
+    public boolean actionIsAllowed(BingoGameAction action) {
+        return bingoGameStateMachine.actionIsAllowed(action);
     }
 
     public boolean doResetForCurrentLevel() {
-        boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.RESET_WITHOUT_CONFIRMING);
-        if (stateChangeSuccessful) {
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.PERFORM_RESET);
+        if (actionIsAllowed) {
             removeSubmittedMatchResults();
             tokenCounter.cancelMatchResult();
+            bingoGameStateMachine.processPerformResetAction();
         }
-        return stateChangeSuccessful;
+        return actionIsAllowed;
     }
 
     private void removeSubmittedMatchResults() {
@@ -170,12 +85,13 @@ public class BingoGame implements Serializable {
     }
 
     public boolean submitSharedDivisionAchievements(SharedDivisionAchievements sharedDivisionAchievements) {
-        boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.SUBMIT_RESULT);
-        if (stateChangeSuccessful) {
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+        if (actionIsAllowed) {
             this.sharedDivisionAchievements = sharedDivisionAchievements;
             updateTokenCounterWithCurrentResults();
+            submitResultActionToBingoGameStateMachine();
         }
-        return stateChangeSuccessful;
+        return actionIsAllowed;
     }
 
     public Optional<SharedDivisionAchievements> getSharedDivisionAchievements() {
@@ -190,18 +106,25 @@ public class BingoGame implements Serializable {
         tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), activeRetryRules);
     }
 
+    private void submitResultActionToBingoGameStateMachine() {
+        bingoGameStateMachine.processSubmitResultAction(
+                bingoResultIsSubmittedForAllPlayers(),
+                requirementOfCurrentResultBarIsMet());
+    }
+
     private boolean bingoResultIsSubmittedForAllPlayers() {
         return bingoResultByPlayer.size() == players.size();
     }
 
     public boolean submitBingoResultForPlayer(Player player, BingoResult bingoResult) {
-        ensurePlayerIsPartOfTheGame(player);
-        boolean stateChangeSuccessful = processBingoGameAction(BingoGameAction.SUBMIT_RESULT);
-        if (stateChangeSuccessful) {
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+        if (actionIsAllowed) {
+            ensurePlayerIsPartOfTheGame(player);
             bingoResultByPlayer.put(player, bingoResult);
             updateTokenCounterWithCurrentResults();
+            submitResultActionToBingoGameStateMachine();
         }
-        return stateChangeSuccessful;
+        return actionIsAllowed;
     }
 
     public Optional<BingoResult> getBingoResultForPlayer(Player player) {
@@ -220,11 +143,29 @@ public class BingoGame implements Serializable {
     }
 
     public boolean confirmCurrentResult() {
-        return processBingoGameAction(BingoGameAction.CONFIRM_RESULT);
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.CONFIRM_RESULT);
+        if (actionIsAllowed) {
+            BingoGameState previousState = bingoGameStateMachine.getCurrentState();
+            bingoGameStateMachine.processConfirmResultAction(hasNextLevel(), retryingIsAllowed());
+            BingoGameState newState = bingoGameStateMachine.getCurrentState();
+            if (newState.equals(BingoGameState.LEVEL_INITIALIZED)) {
+                if (previousState.equals(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH)) {
+                    removeAllShipRestrictions();
+                    currentLevel++;
+                }
+                removeSubmittedMatchResults();
+            }
+            tokenCounter.confirmMatchResult();
+        }
+        return actionIsAllowed;
     }
 
     public boolean endChallenge() {
-        return processBingoGameAction(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
+        if (actionIsAllowed) {
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+        }
+        return actionIsAllowed;
     }
 
     private boolean retryingIsAllowed() {
@@ -274,14 +215,22 @@ public class BingoGame implements Serializable {
         return "Requirement of level %s: %s points".formatted(level, getPointRequirementOfLevel(level));
     }
 
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
     private boolean hasNextLevel() {
         return currentLevel < MAX_LEVEL;
     }
 
-    public void setActiveRetryRules(List<RetryRule> activeRetryRules) {
-        removeActiveRetryRules();
-        this.activeRetryRules.addAll(activeRetryRules);
-        updateTokenCounterWithCurrentResults();
+    public boolean setActiveRetryRules(List<RetryRule> activeRetryRules) {
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        if (actionIsAllowed) {
+            removeActiveRetryRules();
+            this.activeRetryRules.addAll(activeRetryRules);
+            updateTokenCounterWithCurrentResults();
+        }
+        return actionIsAllowed;
     }
 
     public List<RetryRule> getActiveRetryRules() {
@@ -297,12 +246,15 @@ public class BingoGame implements Serializable {
     }
 
     public boolean setShipRestrictionForPlayer(Player player, ShipRestriction shipRestriction) {
-        ensurePlayerIsPartOfTheGame(player);
-        if (shipRestrictionIsSetForPlayer(player)) {
-            return false;
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        if (actionIsAllowed) {
+            ensurePlayerIsPartOfTheGame(player);
+            if (shipRestrictionIsSetForPlayer(player)) {
+                return false;
+            }
+            shipRestrictionByPlayer.put(player, shipRestriction);
         }
-        shipRestrictionByPlayer.put(player, shipRestriction);
-        return true;
+        return actionIsAllowed;
     }
 
     public Optional<ShipRestriction> getShipRestrictionForPlayer(Player player) {
@@ -310,9 +262,13 @@ public class BingoGame implements Serializable {
         return Optional.ofNullable(shipRestrictionByPlayer.get(player));
     }
 
-    public void removeShipRestrictionForPlayer(Player player) {
-        ensurePlayerIsPartOfTheGame(player);
-        shipRestrictionByPlayer.remove(player);
+    public boolean removeShipRestrictionForPlayer(Player player) {
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        if (actionIsAllowed) {
+            ensurePlayerIsPartOfTheGame(player);
+            shipRestrictionByPlayer.remove(player);
+        }
+        return actionIsAllowed;
     }
 
     private void removeAllShipRestrictions() {
@@ -320,14 +276,17 @@ public class BingoGame implements Serializable {
     }
 
     public boolean addShipUsed(Ship shipUsed) {
-        String nameOfShipUsed = shipUsed.name();
-        for (Ship previouslyUsedShip : shipsUsed) {
-            if (nameOfShipUsed.equalsIgnoreCase(previouslyUsedShip.name())) {
-                return false;
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        if (actionIsAllowed) {
+            String nameOfShipUsed = shipUsed.name();
+            for (Ship previouslyUsedShip : shipsUsed) {
+                if (nameOfShipUsed.equalsIgnoreCase(previouslyUsedShip.name())) {
+                    return false;
+                }
             }
+            shipsUsed.add(shipUsed);
         }
-        shipsUsed.add(shipUsed);
-        return true;
+        return actionIsAllowed;
     }
 
     public List<Ship> getShipsUsed() {
@@ -335,7 +294,10 @@ public class BingoGame implements Serializable {
     }
 
     public boolean removeShipUsed(Ship shipUsed) {
-        return shipsUsed.remove(shipUsed);
+        if (actionIsAllowed(BingoGameAction.OTHER_ACTION)) {
+            return shipsUsed.remove(shipUsed);
+        }
+        return false;
     }
 
     private boolean moreThanOnePlayerIsRegistered() {
@@ -363,7 +325,9 @@ public class BingoGame implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) || challengeEndedVoluntarily) {
+        BingoGameState bingoGameState = bingoGameStateMachine.getCurrentState();
+        if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) ||
+                bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY)) {
             appendTextForVoluntaryEndOfChallenge(stringBuilder);
         } else {
             appendTextForBingoResults(stringBuilder);
@@ -379,7 +343,7 @@ public class BingoGame implements Serializable {
                 appendTextForTokenCounter(stringBuilder);
             }
         }
-        appendTextIfBingoGameIsInChallengeEndedState(stringBuilder);
+        appendTextIfBingoGameIsInFinalState(stringBuilder);
         return stringBuilder.toString();
     }
 
@@ -487,8 +451,8 @@ public class BingoGame implements Serializable {
         stringBuilder.append(SENTENCE_END).append(tokenCounter);
     }
 
-    private void appendTextIfBingoGameIsInChallengeEndedState(StringBuilder stringBuilder) {
-        if (bingoGameState.equals(BingoGameState.CHALLENGE_ENDED)) {
+    private void appendTextIfBingoGameIsInFinalState(StringBuilder stringBuilder) {
+        if (bingoGameStateMachine.getCurrentState().isFinal()) {
             stringBuilder.append("\n\nEnd of challenge confirmed. Changes are no longer allowed.");
         }
     }
