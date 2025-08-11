@@ -326,16 +326,16 @@ public class BingoGame implements Serializable {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         BingoGameState bingoGameState = bingoGameStateMachine.getCurrentState();
-        if (bingoGameIsInChallengeEndedVoluntarilyState(bingoGameState)) {
+        if (bingoGameIsInVoluntaryEndState(bingoGameState)) {
             appendTextForVoluntaryEndOfChallenge(stringBuilder);
         } else {
             appendTextForBingoResults(stringBuilder);
             appendTextForSharedDivisionAchievements(stringBuilder);
             appendTextForTotalResult(stringBuilder);
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel));
-            if (bingoGameIsInChallengeEndedSuccessfullyState(bingoGameState)) {
+            if (bingoGameIsInSuccessfulMatchState(bingoGameState)) {
                 appendTextForSuccessfulMatch(stringBuilder);
-            } else if (bingoGameIsInChallengeEndedUnsuccessfullyState(bingoGameState)) {
+            } else if (bingoGameIsInUnsuccessfulMatchState(bingoGameState)) {
                 appendTextForUnsuccessfulMatch(stringBuilder);
             } else {
                 appendTextForShipRestrictions(stringBuilder);
@@ -346,17 +346,17 @@ public class BingoGame implements Serializable {
         return stringBuilder.toString();
     }
 
-    private boolean bingoGameIsInChallengeEndedVoluntarilyState(BingoGameState bingoGameState) {
+    private boolean bingoGameIsInVoluntaryEndState(BingoGameState bingoGameState) {
         return bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END) ||
                 bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
     }
 
-    private boolean bingoGameIsInChallengeEndedSuccessfullyState(BingoGameState bingoGameState) {
+    private boolean bingoGameIsInSuccessfulMatchState(BingoGameState bingoGameState) {
         return bingoGameState.equals(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH) ||
                 bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY);
     }
 
-    private boolean bingoGameIsInChallengeEndedUnsuccessfullyState(BingoGameState bingoGameState) {
+    private boolean bingoGameIsInUnsuccessfulMatchState(BingoGameState bingoGameState) {
         return bingoGameState.equals(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH) ||
                 bingoGameState.equals(BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY);
     }
