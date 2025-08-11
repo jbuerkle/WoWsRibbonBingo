@@ -3,7 +3,7 @@ package bingo.application.gui;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
-import bingo.game.util.BingoGameSerializer;
+import bingo.game.utility.BingoGameSerializer;
 import bingo.players.Player;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

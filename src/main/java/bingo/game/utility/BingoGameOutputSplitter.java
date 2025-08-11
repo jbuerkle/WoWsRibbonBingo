@@ -1,4 +1,4 @@
-package bingo.game.util;
+package bingo.game.utility;
 
 import java.util.LinkedList;
 import java.util.List;

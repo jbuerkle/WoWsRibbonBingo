@@ -1,4 +1,4 @@
-package bingo.game.util;
+package bingo.game.utility;
 
 import org.junit.jupiter.api.Test;
 
