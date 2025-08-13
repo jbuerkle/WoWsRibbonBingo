@@ -6,6 +6,7 @@ import bingo.achievements.division.DivisionAchievement;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
+import bingo.game.BingoGameAction;
 import bingo.game.input.UserInputException;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
@@ -58,6 +59,15 @@ public class BingoGameUserInterface {
     private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
+    private final Button submitButton;
+    private final Button confirmButton;
+    private final Button endChallengeButton;
+    private final Button resetButton;
+    private final Button clearInputButton;
+    private final Button addShipButton;
+    private final Button removeShipButton;
+    private final Button setRestrictionButton;
+    private final Button removeRestrictionButton;
     private final Label lastAutosaveLabel;
     private final TextField shipInputField;
     private final TextField numberInputField;
@@ -80,6 +90,15 @@ public class BingoGameUserInterface {
         this.checkBoxesByRetryRule = new HashMap<>();
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
+        this.submitButton = new Button("Submit result");
+        this.confirmButton = new Button("Confirm result");
+        this.endChallengeButton = new Button("End challenge");
+        this.resetButton = new Button("Reset current level");
+        this.clearInputButton = new Button("Clear input fields");
+        this.addShipButton = new Button("Add ship from input field");
+        this.removeShipButton = new Button("Remove ship selected in table");
+        this.setRestrictionButton = new Button("Get ship restriction for chosen number");
+        this.removeRestrictionButton = new Button("Remove current ship restriction");
         this.lastAutosaveLabel = new Label("Game not autosaved yet");
         this.shipInputField = new TextField();
         this.numberInputField = new TextField();
@@ -169,11 +188,6 @@ public class BingoGameUserInterface {
     }
 
     private void setUpGridWithButtons() {
-        Button submitButton = new Button("Submit result");
-        Button confirmButton = new Button("Confirm result");
-        Button endChallengeButton = new Button("End challenge");
-        Button resetButton = new Button("Reset current level");
-        Button clearInputButton = new Button("Clear input fields");
         userInterfaceUtility.setEventHandlers(submitButton, this::submitResult);
         userInterfaceUtility.setEventHandlers(confirmButton, this::confirmResult);
         userInterfaceUtility.setEventHandlers(endChallengeButton, this::endChallenge);
@@ -277,6 +291,22 @@ public class BingoGameUserInterface {
         mainArmamentTypeComboBox.setValue(allowedMainArmamentTypes.getFirst());
     }
 
+    private void updateButtonVisibility() {
+        boolean submitActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+        boolean confirmActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.CONFIRM_RESULT);
+        boolean endChallengeActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
+        boolean resetActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.PERFORM_RESET);
+        boolean otherActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        submitButton.setDisable(submitActionIsProhibited);
+        confirmButton.setDisable(confirmActionIsProhibited);
+        endChallengeButton.setDisable(endChallengeActionIsProhibited);
+        resetButton.setDisable(resetActionIsProhibited);
+        addShipButton.setDisable(otherActionIsProhibited);
+        removeShipButton.setDisable(otherActionIsProhibited);
+        setRestrictionButton.setDisable(otherActionIsProhibited);
+        removeRestrictionButton.setDisable(otherActionIsProhibited);
+    }
+
     private void setUpCheckBoxesForRetryRules(GridPane gridPane) {
         int column = 2;
         for (RetryRule retryRule : RetryRule.values()) {
@@ -290,10 +320,6 @@ public class BingoGameUserInterface {
     private GridPane createGridPaneForTableInputFieldAndButtons() {
         Label shipInputFieldLabel = new Label("Name of ship used");
         Label numberInputFieldLabel = new Label("Any positive integer chosen by player");
-        Button addShipButton = new Button("Add ship from input field");
-        Button removeShipButton = new Button("Remove ship selected in table");
-        Button setRestrictionButton = new Button("Get ship restriction for chosen number");
-        Button removeRestrictionButton = new Button("Remove current ship restriction");
         userInterfaceUtility.setEventHandlers(addShipButton, this::addShip);
         userInterfaceUtility.setEventHandlers(removeShipButton, this::removeShip);
         userInterfaceUtility.setEventHandlers(setRestrictionButton, this::setRestriction);
@@ -363,6 +389,7 @@ public class BingoGameUserInterface {
             if (playerResultSubmittedSuccessfully || sharedResultSubmittedSuccessfully) {
                 setActiveRetryRules();
                 setTextInTextArea();
+                updateButtonVisibility();
             }
         } catch (UserInputException exception) {
             textArea.setText(exception.getMessage());
@@ -450,6 +477,7 @@ public class BingoGameUserInterface {
         resetCheckBoxes();
         clearAllInputFields();
         setTextInTextArea();
+        updateButtonVisibility();
     }
 
     private void resetCheckBoxes() {
@@ -482,6 +510,7 @@ public class BingoGameUserInterface {
         boolean stateChangeSuccessful = bingoGame.endChallenge();
         if (stateChangeSuccessful) {
             setTextInTextArea();
+            updateButtonVisibility();
         }
     }
 
@@ -530,9 +559,11 @@ public class BingoGameUserInterface {
     }
 
     private void removeRestriction(InputEvent ignoredEvent) {
-        bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
-        updateComboBoxWithAllowedMainArmamentTypes();
-        setTextInTextArea();
+        boolean restrictionSuccessfullyRemoved = bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
+        if (restrictionSuccessfullyRemoved) {
+            updateComboBoxWithAllowedMainArmamentTypes();
+            setTextInTextArea();
+        }
     }
 
     private void onPlayerSelectionChange(ActionEvent ignoredEvent) {
