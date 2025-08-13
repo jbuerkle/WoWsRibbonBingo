@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BingoGameTest {
-    private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 7;
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
@@ -174,6 +172,14 @@ class BingoGameTest {
             assertTrue(returnedDivisionAchievements.isPresent());
             assertEquals(mockedDivisionAchievements, returnedDivisionAchievements.get());
         }
+
+        private void assertSubmitSharedDivisionAchievementsIsSuccessful() {
+            assertTrue(bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements));
+        }
+
+        private void assertSubmitSharedDivisionAchievementsIsNotSuccessful() {
+            assertFalse(bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements));
+        }
     }
 
     @Nested
@@ -224,6 +230,14 @@ class BingoGameTest {
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             assertSetActiveRetryRulesIsSuccessful(activeRetryRules);
             assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
+        }
+
+        private void assertSetActiveRetryRulesIsSuccessful(List<RetryRule> activeRetryRules) {
+            assertTrue(bingoGame.setActiveRetryRules(activeRetryRules));
+        }
+
+        private void assertSetActiveRetryRulesIsNotSuccessful(List<RetryRule> activeRetryRules) {
+            assertFalse(bingoGame.setActiveRetryRules(activeRetryRules));
         }
     }
 
@@ -312,6 +326,22 @@ class BingoGameTest {
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
                     () -> bingoGame.removeShipRestrictionForPlayer(PLAYER_D));
+        }
+
+        private void assertSetShipRestrictionIsSuccessful() {
+            assertTrue(bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction));
+        }
+
+        private void assertSetShipRestrictionIsNotSuccessful() {
+            assertFalse(bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction));
+        }
+
+        private void assertRemoveShipRestrictionIsSuccessful() {
+            assertTrue(bingoGame.removeShipRestrictionForPlayer(SINGLE_PLAYER));
+        }
+
+        private void assertRemoveShipRestrictionIsNotSuccessful() {
+            assertFalse(bingoGame.removeShipRestrictionForPlayer(SINGLE_PLAYER));
         }
     }
 
@@ -464,79 +494,58 @@ class BingoGameTest {
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             mockTokenCounterToString();
             mockShipRestrictionGetDisplayText();
-            assertSetShipRestrictionIsSuccessful();
+            bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
             assertEquals(LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION, bingoGame.toString());
         }
 
         @Test
         void shouldReturnGameOverWhenSubmittedResultIsInsufficient() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH,
-                    BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
             mockBingoResultToString();
             mockInsufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
         }
 
         @Test
         void shouldReturnRetryAllowedDueToImbalancedMatchmaking() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockInsufficientBingoResult();
-            assertSetActiveRetryRulesIsSuccessful(List.of(RetryRule.IMBALANCED_MATCHMAKING));
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_IMBALANCED_MATCHMAKING + DUMMY_TOKEN_TEXT, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            assertToStringMethodReturnsFirstResultBar();
         }
 
         @Test
         void shouldReturnRetryAllowedDueToAnUnfairDisadvantage() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockInsufficientBingoResult();
-            assertSetActiveRetryRulesIsSuccessful(List.of(RetryRule.UNFAIR_DISADVANTAGE));
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.setActiveRetryRules(List.of(RetryRule.UNFAIR_DISADVANTAGE));
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_UNFAIR_DISADVANTAGE + DUMMY_TOKEN_TEXT, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            assertToStringMethodReturnsFirstResultBar();
         }
 
         @Test
         void shouldReturnRetryAllowedBecauseOfAnExtraLife() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockTokenCounterHasExtraLife();
             mockInsufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_EXTRA_LIFE + DUMMY_TOKEN_TEXT, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            assertToStringMethodReturnsFirstResultBar();
         }
 
         @Test
@@ -546,123 +555,66 @@ class BingoGameTest {
             mockBingoResultToString();
             mockTokenCounterToString();
             mockSufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_TRANSITION_TO_TWO, bingoGame.toString());
         }
 
         @Test
         void shouldReturnSecondResultBarWhenNoResultWasSubmitted() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-            mockTokenCounterToString();
-            mockSufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
-            assertConfirmCurrentResultIsSuccessful();
+            skipLevelsUntilReachingLevel(2);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            assertToStringMethodReturnsSecondResultBar();
-        }
-
-        @Test
-        void shouldReturnSecondResultBarWithoutShipRestrictionWhenNoResultWasSubmitted() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             mockTokenCounterToString();
-            mockSufficientBingoResult();
-            assertSetShipRestrictionIsSuccessful();
-            assertSubmitBingoResultIsSuccessful();
-            assertConfirmCurrentResultIsSuccessful();
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             assertToStringMethodReturnsSecondResultBar();
         }
 
         @Test
         void shouldReturnLevelThreeNextWhenSubmittedResultIsSufficient() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
+            skipLevelsUntilReachingLevel(2);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockSufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
-            assertConfirmCurrentResultIsSuccessful();
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_TWO_TRANSITION_TO_THREE, bingoGame.toString());
         }
 
         @Test
         void shouldReturnCongratulationsForLevelSevenWhenSubmittedResultIsSufficient() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
+            skipLevelsUntilReachingLevel(7);
             mockBingoResultToString();
             mockTokenCounterHasExtraLife();
             mockExtraLivesInTokenCounterAre(2);
-            mockSufficientBingoResult();
-            for (int level = START_LEVEL; level < MAX_LEVEL; level++) {
-                assertSubmitBingoResultIsSuccessful();
-                assertConfirmCurrentResultIsSuccessful();
-            }
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY);
-            assertSubmitBingoResultIsSuccessful();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY);
             assertEquals(
                     DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS + END_OF_CHALLENGE_CONFIRMED,
                     bingoGame.toString());
             verify(mockedTokenCounter, times(MAX_LEVEL - 1)).calculateMatchResult(true, true, Collections.emptyList());
             verify(mockedTokenCounter, times(1)).calculateMatchResult(true, false, Collections.emptyList());
-            verify(mockedTokenCounter, times(MAX_LEVEL)).confirmMatchResult();
+            verify(mockedTokenCounter, times(MAX_LEVEL - 1)).confirmMatchResult();
         }
 
         @Test
         void shouldReturnLevelTwoVoluntaryEnd() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
-                    BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-            mockSufficientBingoResult();
-            assertSubmitBingoResultIsSuccessful();
-            assertConfirmCurrentResultIsSuccessful();
-            assertEndChallengeIsSuccessful();
+            skipLevelsUntilReachingLevel(2);
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_TWO_VOLUNTARY_END, bingoGame.toString());
         }
 
         @Test
         void shouldReturnLevelOneVoluntaryEnd() {
-            mockBingoGameActionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-            assertEndChallengeIsSuccessful();
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_ONE_VOLUNTARY_END, bingoGame.toString());
         }
 
         @Test
         void shouldReturnLevelOneVoluntaryEndWithExtraLife() {
-            mockBingoGameStateMachineForConfirmAction(
-                    BingoGameState.UNCONFIRMED_VOLUNTARY_END,
-                    BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
-            mockBingoGameActionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
             mockTokenCounterHasExtraLife();
             mockExtraLivesInTokenCounterAre(1);
-            assertEndChallengeIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE, bingoGame.toString());
-            assertConfirmCurrentResultIsSuccessful();
+            mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
         }
 
@@ -723,6 +675,62 @@ class BingoGameTest {
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             assertEquals(MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS, bingoGame.toString());
         }
+
+        private void skipLevelsUntilReachingLevel(int levelToReach) {
+            if (levelToReach < 2 || levelToReach > MAX_LEVEL) {
+                fail("Parameter 'levelToReach' must not be lower than 2 or greater than MAX_LEVEL");
+            }
+            mockSufficientBingoResult();
+            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+            mockBingoGameActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
+            mockBingoGameStateMachineForConfirmAction(
+                    BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,
+                    BingoGameState.LEVEL_INITIALIZED);
+            while (bingoGame.getCurrentLevel() < levelToReach) {
+                bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
+                bingoGame.confirmCurrentResult();
+            }
+        }
+
+        private void mockCurrentBingoGameStateIs(BingoGameState currentState) {
+            when(mockedBingoGameStateMachine.getCurrentState()).thenReturn(currentState);
+        }
+
+        private void mockShipRestrictionGetDisplayText() {
+            when(mockedShipRestriction.getDisplayText()).thenReturn(DUMMY_SHIP_RESTRICTION_TEXT);
+        }
+
+        private void mockSharedDivisionAchievementsToString() {
+            when(mockedDivisionAchievements.toString()).thenReturn(DUMMY_DIVISION_TEXT);
+        }
+
+        private void mockSharedDivisionAchievementsGetPointValue() {
+            when(mockedDivisionAchievements.getPointValue()).thenReturn(600L);
+        }
+
+        private void mockBingoResultToString() {
+            when(mockedBingoResult.toString()).thenReturn(DUMMY_RESULT_TEXT);
+        }
+
+        private void mockTokenCounterToString() {
+            when(mockedTokenCounter.toString()).thenReturn(DUMMY_TOKEN_TEXT);
+        }
+
+        private void mockTokenCounterHasExtraLife() {
+            when(mockedTokenCounter.hasExtraLife()).thenReturn(true);
+        }
+
+        private void mockExtraLivesInTokenCounterAre(int extraLives) {
+            when(mockedTokenCounter.getCurrentExtraLives()).thenReturn(extraLives);
+        }
+
+        private void assertToStringMethodReturnsFirstResultBar() {
+            assertEquals(LEVEL_ONE_REQUIREMENT, bingoGame.toString());
+        }
+
+        private void assertToStringMethodReturnsSecondResultBar() {
+            assertEquals(LEVEL_TWO_REQUIREMENT, bingoGame.toString());
+        }
     }
 
     @Nested
@@ -740,6 +748,14 @@ class BingoGameTest {
             mockBingoGameActionIsNotAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
             assertEndChallengeIsNotSuccessful();
             verify(mockedBingoGameStateMachine, never()).processEndChallengeVoluntarilyAction();
+        }
+
+        private void assertEndChallengeIsSuccessful() {
+            assertTrue(bingoGame.endChallenge());
+        }
+
+        private void assertEndChallengeIsNotSuccessful() {
+            assertFalse(bingoGame.endChallenge());
         }
     }
 
@@ -769,7 +785,7 @@ class BingoGameTest {
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            assertSetActiveRetryRulesIsSuccessful(activeRetryRules);
+            bingoGame.setActiveRetryRules(activeRetryRules);
             assertSubmitBingoResultIsSuccessful();
             verify(mockedTokenCounter, times(2)).calculateMatchResult(false, true, activeRetryRules);
             verify(mockedBingoGameStateMachine).processSubmitResultAction(true, false);
@@ -833,6 +849,14 @@ class BingoGameTest {
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
                     () -> bingoGame.getBingoResultForPlayer(PLAYER_D));
+        }
+
+        private void assertSubmitBingoResultIsSuccessful() {
+            assertTrue(bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult));
+        }
+
+        private void assertSubmitBingoResultIsNotSuccessful() {
+            assertFalse(bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult));
         }
     }
 
@@ -907,8 +931,38 @@ class BingoGameTest {
         private void setupMatchResultsBeforeConfirmation(List<RetryRule> activeRetryRules) {
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
-            assertSubmitMatchResultsIsSuccessful(activeRetryRules);
-            assertSetShipRestrictionIsSuccessful();
+            bingoGame.setActiveRetryRules(activeRetryRules);
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
+            bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
+            bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
+        }
+
+        private void assertConfirmCurrentResultIsSuccessful() {
+            assertTrue(bingoGame.confirmCurrentResult());
+        }
+
+        private void assertConfirmCurrentResultIsNotSuccessful() {
+            assertFalse(bingoGame.confirmCurrentResult());
+        }
+
+        private void assertPreviouslySubmittedMatchResultsAreRemoved() {
+            assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
+            assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
+            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+        }
+
+        private void assertPreviouslySubmittedMatchResultsAreNotRemoved(List<RetryRule> activeRetryRules) {
+            assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isPresent());
+            assertTrue(bingoGame.getSharedDivisionAchievements().isPresent());
+            assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
+        }
+
+        private void assertPreviouslySetShipRestrictionIsRemoved() {
+            assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
+        }
+
+        private void assertPreviouslySetShipRestrictionIsNotRemoved() {
+            assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isPresent());
         }
     }
 
@@ -933,14 +987,37 @@ class BingoGameTest {
 
         @Test
         void shouldRemoveAllPreviouslySubmittedMatchResults() {
-            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
             mockBingoGameActionIsAllowed(BingoGameAction.PERFORM_RESET);
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            assertSubmitMatchResultsIsSuccessful(activeRetryRules);
+            setupMatchResultsBeforeReset();
             assertResetForCurrentLevelIsSuccessful();
             assertPreviouslySubmittedMatchResultsAreRemoved();
         }
+
+        private void setupMatchResultsBeforeReset() {
+            mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE));
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
+            bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
+        }
+
+        private void assertResetForCurrentLevelIsSuccessful() {
+            assertTrue(bingoGame.doResetForCurrentLevel());
+        }
+
+        private void assertResetForCurrentLevelIsNotSuccessful() {
+            assertFalse(bingoGame.doResetForCurrentLevel());
+        }
+
+        private void assertPreviouslySubmittedMatchResultsAreRemoved() {
+            assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
+            assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
+            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+        }
+    }
+
+    private void setupBingoGameWithPlayers(List<Player> players) {
+        bingoGame = new BingoGame(players, mockedTokenCounter, mockedBingoGameStateMachine);
     }
 
     private void mockBingoGameActionIsAllowed(BingoGameAction action) {
@@ -953,37 +1030,17 @@ class BingoGameTest {
 
     private void mockBingoGameStateMachineForConfirmAction(BingoGameState previousState, BingoGameState newState) {
         AtomicBoolean isConfirmed = new AtomicBoolean(false);
-        doAnswer((Answer<BingoGameState>) _ -> {
+        when(mockedBingoGameStateMachine.getCurrentState()).thenAnswer(_ -> {
             BingoGameState stateToReturn = isConfirmed.get() ? newState : previousState;
             if (!stateToReturn.isFinal()) {
                 isConfirmed.set(false);
             }
             return stateToReturn;
-        }).when(mockedBingoGameStateMachine).getCurrentState();
-        doAnswer((Answer<Void>) _ -> {
+        });
+        doAnswer(_ -> {
             isConfirmed.set(true);
             return null;
         }).when(mockedBingoGameStateMachine).processConfirmResultAction(anyBoolean(), anyBoolean());
-    }
-
-    private void mockCurrentBingoGameStateIs(BingoGameState currentState) {
-        when(mockedBingoGameStateMachine.getCurrentState()).thenReturn(currentState);
-    }
-
-    private void mockShipRestrictionGetDisplayText() {
-        when(mockedShipRestriction.getDisplayText()).thenReturn(DUMMY_SHIP_RESTRICTION_TEXT);
-    }
-
-    private void mockSharedDivisionAchievementsToString() {
-        when(mockedDivisionAchievements.toString()).thenReturn(DUMMY_DIVISION_TEXT);
-    }
-
-    private void mockSharedDivisionAchievementsGetPointValue() {
-        when(mockedDivisionAchievements.getPointValue()).thenReturn(600L);
-    }
-
-    private void mockBingoResultToString() {
-        when(mockedBingoResult.toString()).thenReturn(DUMMY_RESULT_TEXT);
     }
 
     private void mockInsufficientBingoResult() {
@@ -992,120 +1049,6 @@ class BingoGameTest {
 
     private void mockSufficientBingoResult() {
         when(mockedBingoResult.getPointValue()).thenReturn(3000L);
-    }
-
-    private void mockTokenCounterToString() {
-        when(mockedTokenCounter.toString()).thenReturn(DUMMY_TOKEN_TEXT);
-    }
-
-    private void mockTokenCounterHasExtraLife() {
-        when(mockedTokenCounter.hasExtraLife()).thenReturn(true);
-    }
-
-    private void mockExtraLivesInTokenCounterAre(int extraLives) {
-        when(mockedTokenCounter.getCurrentExtraLives()).thenReturn(extraLives);
-    }
-
-    private void setupBingoGameWithPlayers(List<Player> players) {
-        bingoGame = new BingoGame(players, mockedTokenCounter, mockedBingoGameStateMachine);
-    }
-
-    private void assertSubmitSharedDivisionAchievementsIsSuccessful() {
-        assertTrue(bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements));
-    }
-
-    private void assertSubmitSharedDivisionAchievementsIsNotSuccessful() {
-        assertFalse(bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements));
-    }
-
-    private void assertSubmitBingoResultIsSuccessful() {
-        assertTrue(bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult));
-    }
-
-    private void assertSubmitBingoResultIsNotSuccessful() {
-        assertFalse(bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult));
-    }
-
-    private void assertSetActiveRetryRulesIsSuccessful(List<RetryRule> activeRetryRules) {
-        assertTrue(bingoGame.setActiveRetryRules(activeRetryRules));
-    }
-
-    private void assertSetActiveRetryRulesIsNotSuccessful(List<RetryRule> activeRetryRules) {
-        assertFalse(bingoGame.setActiveRetryRules(activeRetryRules));
-    }
-
-    private void assertSetShipRestrictionIsSuccessful() {
-        assertTrue(bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction));
-    }
-
-    private void assertSetShipRestrictionIsNotSuccessful() {
-        assertFalse(bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction));
-    }
-
-    private void assertRemoveShipRestrictionIsSuccessful() {
-        assertTrue(bingoGame.removeShipRestrictionForPlayer(SINGLE_PLAYER));
-    }
-
-    private void assertRemoveShipRestrictionIsNotSuccessful() {
-        assertFalse(bingoGame.removeShipRestrictionForPlayer(SINGLE_PLAYER));
-    }
-
-    private void assertConfirmCurrentResultIsSuccessful() {
-        assertTrue(bingoGame.confirmCurrentResult());
-    }
-
-    private void assertConfirmCurrentResultIsNotSuccessful() {
-        assertFalse(bingoGame.confirmCurrentResult());
-    }
-
-    private void assertResetForCurrentLevelIsSuccessful() {
-        assertTrue(bingoGame.doResetForCurrentLevel());
-    }
-
-    private void assertResetForCurrentLevelIsNotSuccessful() {
-        assertFalse(bingoGame.doResetForCurrentLevel());
-    }
-
-    private void assertEndChallengeIsSuccessful() {
-        assertTrue(bingoGame.endChallenge());
-    }
-
-    private void assertEndChallengeIsNotSuccessful() {
-        assertFalse(bingoGame.endChallenge());
-    }
-
-    private void assertSubmitMatchResultsIsSuccessful(List<RetryRule> activeRetryRules) {
-        assertSetActiveRetryRulesIsSuccessful(activeRetryRules);
-        assertSubmitBingoResultIsSuccessful();
-        assertSubmitSharedDivisionAchievementsIsSuccessful();
-    }
-
-    private void assertPreviouslySubmittedMatchResultsAreRemoved() {
-        assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
-        assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
-        assertTrue(bingoGame.getActiveRetryRules().isEmpty());
-    }
-
-    private void assertPreviouslySubmittedMatchResultsAreNotRemoved(List<RetryRule> activeRetryRules) {
-        assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isPresent());
-        assertTrue(bingoGame.getSharedDivisionAchievements().isPresent());
-        assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
-    }
-
-    private void assertPreviouslySetShipRestrictionIsRemoved() {
-        assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
-    }
-
-    private void assertPreviouslySetShipRestrictionIsNotRemoved() {
-        assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isPresent());
-    }
-
-    private void assertToStringMethodReturnsFirstResultBar() {
-        assertEquals(LEVEL_ONE_REQUIREMENT, bingoGame.toString());
-    }
-
-    private void assertToStringMethodReturnsSecondResultBar() {
-        assertEquals(LEVEL_TWO_REQUIREMENT, bingoGame.toString());
     }
 
     private void assertIllegalArgumentExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
