@@ -64,9 +64,10 @@ public class BingoGameUserInterface {
     private final Button endChallengeButton;
     private final Button resetButton;
     private final Button clearInputButton;
-    private final Button resetTextButton;
+    private final Button resetTextAreaButton;
     private final Button addShipButton;
     private final Button removeShipButton;
+    private final Button listShipsAsTextButton;
     private final Button setRestrictionButton;
     private final Button removeRestrictionButton;
     private final Label lastAutosaveLabel;
@@ -96,9 +97,10 @@ public class BingoGameUserInterface {
         this.endChallengeButton = new Button("End challenge");
         this.resetButton = new Button("Reset current level");
         this.clearInputButton = new Button("Clear input fields");
-        this.resetTextButton = new Button("Reset challenge text");
+        this.resetTextAreaButton = new Button("Reset text area");
         this.addShipButton = new Button("Add ship from input field");
         this.removeShipButton = new Button("Remove ship selected in table");
+        this.listShipsAsTextButton = new Button("List ships in text area");
         this.setRestrictionButton = new Button("Get ship restriction for chosen number");
         this.removeRestrictionButton = new Button("Remove current ship restriction");
         this.lastAutosaveLabel = new Label("Game not autosaved yet");
@@ -196,14 +198,14 @@ public class BingoGameUserInterface {
         userInterfaceUtility.setEventHandlers(endChallengeButton, this::endChallenge);
         userInterfaceUtility.setEventHandlers(resetButton, this::resetCurrentLevel);
         userInterfaceUtility.setEventHandlers(clearInputButton, this::clearAllInputFields);
-        userInterfaceUtility.setEventHandlers(resetTextButton, this::resetChallengeText);
+        userInterfaceUtility.setEventHandlers(resetTextAreaButton, this::resetTextArea);
         GridPane gridPane = createNewGridPane();
         gridPane.add(submitButton, 0, 0);
         gridPane.add(confirmButton, 1, 0);
         gridPane.add(endChallengeButton, 2, 0);
         gridPane.add(resetButton, 3, 0);
         gridPane.add(clearInputButton, 4, 0);
-        gridPane.add(resetTextButton, 5, 0);
+        gridPane.add(resetTextAreaButton, 5, 0);
         goToNextMainGridRow();
     }
 
@@ -328,12 +330,14 @@ public class BingoGameUserInterface {
         Label shipInputFieldLabel = new Label("Name of ship used");
         userInterfaceUtility.setEventHandlers(addShipButton, this::addShip);
         userInterfaceUtility.setEventHandlers(removeShipButton, this::removeShip);
+        userInterfaceUtility.setEventHandlers(listShipsAsTextButton, this::listShipsAsText);
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.add(shipInputFieldLabel, 0, 0);
         gridPane.add(shipInputField, 0, 1);
         gridPane.add(addShipButton, 0, 2);
         gridPane.add(removeShipButton, 0, 3);
+        gridPane.add(listShipsAsTextButton, 0, 4);
         return gridPane;
     }
 
@@ -519,7 +523,7 @@ public class BingoGameUserInterface {
         textField.setText(UserInterfaceConstants.EMPTY_STRING);
     }
 
-    private void resetChallengeText(InputEvent ignoredEvent) {
+    private void resetTextArea(InputEvent ignoredEvent) {
         setTextInTextArea();
     }
 
@@ -555,6 +559,15 @@ public class BingoGameUserInterface {
         if (shipSuccessfullyRemoved) {
             tableView.getItems().remove(ship);
         }
+    }
+
+    private void listShipsAsText(InputEvent ignoredEvent) {
+        String shipsUsedAsText = bingoGame.getShipsUsed()
+                .stream()
+                .map(Ship::name)
+                .reduce((shipNameA, shipNameB) -> shipNameA.concat(", ").concat(shipNameB))
+                .orElse("none");
+        textArea.setText("Ships used: " + shipsUsedAsText);
     }
 
     private void setRestriction(InputEvent ignoredEvent) {
