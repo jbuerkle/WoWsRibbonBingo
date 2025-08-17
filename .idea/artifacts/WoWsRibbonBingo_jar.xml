@@ -1,9 +1,9 @@
 <component name="ArtifactManager">
-  <artifact build-on-make="true" name="WoWsRibbonBingo:jar">
+  <artifact build-on-make="true" name="WoWsRibbonBingo_jar">
     <output-path>$PROJECT_DIR$/out/artifacts/WoWsRibbonBingo_jar</output-path>
     <root id="root">
       <element id="archive" name="WoWsRibbonBingo.jar">
-        <element id="module-output" name="WoWsRibbonBingo" />
+        <element id="module-output" name="wows-ribbon-bingo" />
       </element>
       <element id="directory" name="dependencies">
         <element id="library" level="project" name="Maven: org.openjfx:javafx-base:23.0.2" />
