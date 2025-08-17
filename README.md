@@ -191,5 +191,6 @@ the number picked by the streamer.
 
 ### Duo/trio streamer challenge
 
-| Twitch streamers | Date played (dd.mm.yyyy) | Total reward |
-|------------------|--------------------------|-------------:|
+| Twitch streamers     | Date played (dd.mm.yyyy) | Total reward |
+|----------------------|--------------------------|-------------:|
+| Hyf1re, ArmoredGuppy | 17.08.2025               |  158 subs 🎁 |
