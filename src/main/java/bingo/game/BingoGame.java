@@ -452,7 +452,7 @@ public class BingoGame implements Serializable {
             int conversionFactorForExtraLives = 6;
             int totalReward = unlockedReward + extraLives * conversionFactorForExtraLives;
             String calculationAsText =
-                    " Total reward: %s + (unused extra lives: %s) * %s = %s subs \uD83C\uDF81".formatted(
+                    " Total reward: %s sub(s) + (unused extra lives: %s) * %s subs = %s subs \uD83C\uDF81".formatted(
                             unlockedReward,
                             extraLives,
                             conversionFactorForExtraLives,

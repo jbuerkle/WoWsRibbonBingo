@@ -30,7 +30,7 @@ class BingoGameTest {
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
-            ". Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 + (unused extra lives: 2) * 6 = 140 subs \uD83C\uDF81";
+            ". Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 sub(s) + (unused extra lives: 2) * 6 subs = 140 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_GAME_OVER =
             ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
@@ -42,7 +42,7 @@ class BingoGameTest {
     private static final String LEVEL_ONE_VOLUNTARY_END =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 + (unused extra lives: 1) * 6 = 7 subs \uD83C\uDF81";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 sub(s) + (unused extra lives: 1) * 6 subs = 7 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_REQUIREMENT_FOR_TWO_PLAYERS =
