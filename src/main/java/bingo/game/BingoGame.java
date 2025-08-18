@@ -173,8 +173,7 @@ public class BingoGame implements Serializable {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return bingoResultIsSubmittedForAllPlayers() &&
-                getPointValueOfTotalResult() >= getPointRequirementOfLevel(currentLevel);
+        return getPointValueOfTotalResult() >= getPointRequirementOfLevel(currentLevel);
     }
 
     private long getPointValueOfTotalResult() {

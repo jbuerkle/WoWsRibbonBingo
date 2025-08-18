@@ -799,9 +799,8 @@ class BingoGameTest {
             assertTrue(bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult));
             assertTrue(bingoGame.submitBingoResultForPlayer(PLAYER_B, mockedBingoResult));
             assertTrue(bingoGame.submitBingoResultForPlayer(PLAYER_C, mockedBingoResult));
-            verify(mockedTokenCounter, times(2)).calculateMatchResult(false, true, Collections.emptyList());
-            verify(mockedTokenCounter, times(1)).calculateMatchResult(true, true, Collections.emptyList());
-            verify(mockedBingoGameStateMachine, times(2)).processSubmitResultAction(false, false);
+            verify(mockedTokenCounter, times(3)).calculateMatchResult(true, true, Collections.emptyList());
+            verify(mockedBingoGameStateMachine, times(2)).processSubmitResultAction(false, true);
             verify(mockedBingoGameStateMachine, times(1)).processSubmitResultAction(true, true);
         }
 
