@@ -188,6 +188,7 @@ the number picked by the streamer.
 | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
 | Hyf1re          | 03.07.2025               | ArmoredGuppy              |  128 subs 🎁 |
 | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
+| OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
 
 ### Duo/trio streamer challenge
 
