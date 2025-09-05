@@ -3,6 +3,7 @@ package bingo.achievements.division;
 import bingo.math.terms.impl.LabeledTerm;
 import bingo.math.terms.impl.Literal;
 import bingo.math.terms.impl.TermWithPoints;
+import bingo.text.TextUtility;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -51,7 +52,8 @@ public enum DivisionAchievement implements Serializable {
                 new LabeledTerm(displayText, new TermWithPoints(new Literal(pointValue))).getAsString();
         if (bonusModifierForDuos != 0) {
             achievementAsString =
-                    achievementAsString.concat(" (+%s bonus points for duos)".formatted(getBonusModifierAsPercentage()));
+                    achievementAsString.concat(" (+%s bonus points for duos)".formatted(TextUtility.getAsPercentage(
+                            bonusModifierForDuos)));
         }
         return achievementAsString;
     }
@@ -62,9 +64,5 @@ public enum DivisionAchievement implements Serializable {
             stringBuilder.append("- ").append(achievement.toString()).append("\n");
         }
         return stringBuilder.toString();
-    }
-
-    private String getBonusModifierAsPercentage() {
-        return Math.round(bonusModifierForDuos * 100) + "%";
     }
 }
