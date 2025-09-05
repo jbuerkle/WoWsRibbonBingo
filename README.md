@@ -152,11 +152,10 @@ Note:
   must receive at least a 25% share of the total reward. The only exception are small rewards (1 sub cannot be split).
 - As the reward is paid in gift subs, all participating streamers **must** have a monetized stream on Twitch.
 
-## Optional ship restrictions (not part of the main rule set)
+## Optional ship restrictions
 
-For streamers who participated frequently in the challenge, additional ship restrictions may apply. At the start of
-every level, all possible ship restrictions are put into a random order. The streamer picks any positive integer
-(including 0), which corresponds to one of these restrictions:
+At the start of every level, all participating streamers pick a positive integer (including 0), which corresponds to one
+of the following restrictions:
 
 - 50% chance for ships with a certain type of main armament to be banned from use in the current level
 - 50% chance to be forced to use a ship with a certain type of main armament in the current level
@@ -170,7 +169,8 @@ The types of main armaments which can occur are:
 
 Each of these categories has an equal chance to occur (25%). A perfectly equal distribution is **always** guaranteed on
 every level, which means the chance for any particular combination to be picked is 12.5%. The main deciding factor is
-the number picked by the streamer.
+the number picked by the streamer. Note that all possible ship restrictions are put into a random order every time a
+streamer has picked a number, which means the result of a given number will never be predictable.
 
 ## Hall of Fame
 
