@@ -48,9 +48,8 @@ public enum ChallengeModifier implements Serializable {
 
     @Override
     public String toString() {
-        return displayName.concat(": ").concat(descriptionWithPlaceholder.replace(
-                "%reward%",
-                getTextForBonusModifier()));
+        return displayName.concat(": ")
+                .concat(descriptionWithPlaceholder.replace("%reward%", getTextForBonusModifier()));
     }
 
     private String getTextForBonusModifier() {
