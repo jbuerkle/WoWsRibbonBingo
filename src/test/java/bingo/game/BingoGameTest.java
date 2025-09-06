@@ -270,9 +270,7 @@ class BingoGameTest {
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
-                    () -> bingoGame.setShipRestrictionForPlayer(
-                            PLAYER_D,
-                            mockedShipRestriction));
+                    () -> bingoGame.setShipRestrictionForPlayer(PLAYER_D, mockedShipRestriction));
         }
 
         @Test
@@ -817,9 +815,7 @@ class BingoGameTest {
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
-                    () -> bingoGame.submitBingoResultForPlayer(
-                            PLAYER_D,
-                            mockedBingoResult));
+                    () -> bingoGame.submitBingoResultForPlayer(PLAYER_D, mockedBingoResult));
         }
 
         @Test
