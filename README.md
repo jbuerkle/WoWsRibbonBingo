@@ -172,6 +172,11 @@ every level, which means the chance for any particular combination to be picked 
 the number picked by the streamer. Note that all possible ship restrictions are put into a random order every time a
 streamer has picked a number, which means the result of a given number will never be predictable.
 
+The other two categories of main armaments (aircraft for aircraft carriers and torpedoes for submarines) will never
+occur here. This means you will never be forced to play aircraft carriers or submarines, but neither will they ever be
+**explicitly** banned. Despite that, if you were to pick a ship you want to play before picking a number, then the
+chances of you being allowed to play that ship are exactly 50/50, regardless of the type of ship you want to play.
+
 ## Hall of Fame
 
 ### Solo streamer challenge (classic)
