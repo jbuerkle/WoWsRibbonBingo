@@ -8,6 +8,7 @@ import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
 import bingo.game.BingoGameAction;
 import bingo.game.input.UserInputException;
+import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.game.utility.BingoGameOutputSplitter;
@@ -180,6 +181,7 @@ public class BingoGameUserInterface {
     private void setUpGridWithComboBoxesAndCheckBoxes() {
         Label playerLabel = new Label("Player");
         Label mainArmamentTypeLabel = new Label("Main armament of ship used");
+        Label challengeModifierLabel = new Label("Challenge modifiers: " + getChallengeModifiersAsString());
         setUpPlayerComboBox();
         setUpMainArmamentTypeComboBox();
         GridPane gridPane = createNewGridPane();
@@ -188,7 +190,7 @@ public class BingoGameUserInterface {
         gridPane.add(mainArmamentTypeLabel, 1, 0);
         gridPane.add(mainArmamentTypeComboBox, 1, 1);
         int column = setUpCheckBoxesForRetryRules(gridPane);
-        gridPane.add(lastAutosaveLabel, column, 1);
+        gridPane.add(challengeModifierLabel, column, 1);
         goToNextMainGridRow();
     }
 
@@ -206,6 +208,7 @@ public class BingoGameUserInterface {
         gridPane.add(resetButton, 3, 0);
         gridPane.add(clearInputButton, 4, 0);
         gridPane.add(resetTextAreaButton, 5, 0);
+        gridPane.add(lastAutosaveLabel, 6, 0);
         goToNextMainGridRow();
     }
 
@@ -469,6 +472,14 @@ public class BingoGameUserInterface {
                 .map(Player::name)
                 .reduce((playerNameA, playerNameB) -> playerNameA.concat("+").concat(playerNameB))
                 .orElseThrow();
+    }
+
+    private String getChallengeModifiersAsString() {
+        return bingoGame.getChallengeModifiers()
+                .stream()
+                .map(ChallengeModifier::getDisplayName)
+                .reduce((modifierA, modifierB) -> modifierA.concat(", ").concat(modifierB))
+                .orElse("none");
     }
 
     private void updateLastAutosaveLabel() {
