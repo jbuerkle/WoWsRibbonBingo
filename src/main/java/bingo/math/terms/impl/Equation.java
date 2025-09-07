@@ -9,8 +9,13 @@ public final class Equation extends DelegateTerm {
     }
 
     @Override
+    public double getValue() {
+        return getRoundedValue();
+    }
+
+    @Override
     public String getAsString() {
-        String valueAsString = getValueAsString();
+        String valueAsString = Long.toString(getRoundedValue());
         if (term.isLiteral()) {
             return valueAsString;
         } else {
@@ -18,8 +23,8 @@ public final class Equation extends DelegateTerm {
         }
     }
 
-    private String getValueAsString() {
-        return Long.toString(Math.round(term.getValue()));
+    private long getRoundedValue() {
+        return Math.round(term.getValue());
     }
 
     private String formattedAsEquation(String valueAsString) {
