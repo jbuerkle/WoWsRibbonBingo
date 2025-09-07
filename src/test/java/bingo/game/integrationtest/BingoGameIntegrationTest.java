@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +42,7 @@ class BingoGameIntegrationTest {
 
         @BeforeEach
         void setup() {
-            bingoGame = new BingoGame(List.of(SINGLE_PLAYER));
+            bingoGame = new BingoGame(List.of(SINGLE_PLAYER), Collections.emptyList());
         }
 
         @Test
@@ -126,7 +127,7 @@ class BingoGameIntegrationTest {
 
         @BeforeEach
         void setup() {
-            bingoGame = new BingoGame(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
+            bingoGame = new BingoGame(List.of(PLAYER_A, PLAYER_B, PLAYER_C), Collections.emptyList());
         }
 
         @Test

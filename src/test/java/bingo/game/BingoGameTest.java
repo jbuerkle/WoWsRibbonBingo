@@ -1,5 +1,6 @@
 package bingo.game;
 
+import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.players.Player;
@@ -433,6 +434,7 @@ class BingoGameTest {
 
     @Nested
     class Constructor {
+        private final List<ChallengeModifier> allModifiers = List.of(ChallengeModifier.values());
 
         @Test
         void shouldSetCurrentLevelToOne() {
@@ -452,6 +454,22 @@ class BingoGameTest {
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_NUMBER_OF_PLAYERS,
                     () -> setupBingoGameWithPlayers(players));
+        }
+
+        @Test
+        void shouldFilterCorrectChallengeModifiersForSoloStreamerChallenge() {
+            setupBingoGame(List.of(SINGLE_PLAYER), allModifiers);
+            List<ChallengeModifier> allowedModifiers = bingoGame.getChallengeModifiers();
+            assertEquals(allModifiers.size() - 1, allowedModifiers.size());
+            assertFalse(allowedModifiers.contains(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE));
+        }
+
+        @Test
+        void shouldFilterCorrectChallengeModifiersForDuoTrioStreamerChallenge() {
+            setupBingoGame(List.of(PLAYER_A, PLAYER_B, PLAYER_C), allModifiers);
+            List<ChallengeModifier> allowedModifiers = bingoGame.getChallengeModifiers();
+            assertEquals(allModifiers.size() - 1, allowedModifiers.size());
+            assertFalse(allowedModifiers.contains(ChallengeModifier.NO_HELP));
         }
     }
 
@@ -1012,7 +1030,11 @@ class BingoGameTest {
     }
 
     private void setupBingoGameWithPlayers(List<Player> players) {
-        bingoGame = new BingoGame(players, mockedTokenCounter, mockedBingoGameStateMachine);
+        setupBingoGame(players, Collections.emptyList());
+    }
+
+    private void setupBingoGame(List<Player> players, List<ChallengeModifier> challengeModifiers) {
+        bingoGame = new BingoGame(players, challengeModifiers, mockedTokenCounter, mockedBingoGameStateMachine);
     }
 
     private void mockBingoGameActionIsAllowed(BingoGameAction action) {

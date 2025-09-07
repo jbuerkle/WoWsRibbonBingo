@@ -1,5 +1,6 @@
 package bingo.game;
 
+import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBar;
 import bingo.game.results.division.SharedDivisionAchievements;
@@ -30,12 +31,15 @@ public class BingoGame implements Serializable {
     private final List<Ship> shipsUsed;
     private final List<Player> players;
     private final List<RetryRule> activeRetryRules;
+    private final List<ChallengeModifier> challengeModifiers;
     private final Map<Player, ShipRestriction> shipRestrictionByPlayer;
     private final Map<Player, BingoResult> bingoResultByPlayer;
     private SharedDivisionAchievements sharedDivisionAchievements;
     private int currentLevel;
 
-    BingoGame(List<Player> players, TokenCounter tokenCounter, BingoGameStateMachine bingoGameStateMachine) {
+    BingoGame(
+            List<Player> players, List<ChallengeModifier> challengeModifiers, TokenCounter tokenCounter,
+            BingoGameStateMachine bingoGameStateMachine) {
         if (players.isEmpty() || players.size() > 3) {
             throw new IllegalArgumentException("The number of players must be between 1 and 3");
         }
@@ -45,6 +49,7 @@ public class BingoGame implements Serializable {
         this.shipsUsed = new LinkedList<>();
         this.players = new LinkedList<>(players);
         this.activeRetryRules = new LinkedList<>();
+        this.challengeModifiers = filterDisallowedModifiers(challengeModifiers, players);
         this.shipRestrictionByPlayer = new HashMap<>();
         this.bingoResultByPlayer = new HashMap<>();
         for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
@@ -53,8 +58,27 @@ public class BingoGame implements Serializable {
         this.currentLevel = START_LEVEL;
     }
 
-    public BingoGame(List<Player> players) {
-        this(players, new TokenCounter(), new BingoGameStateMachine());
+    public BingoGame(List<Player> players, List<ChallengeModifier> challengeModifiers) {
+        this(players, challengeModifiers, new TokenCounter(), new BingoGameStateMachine());
+    }
+
+    private List<ChallengeModifier> filterDisallowedModifiers(
+            List<ChallengeModifier> challengeModifiers, List<Player> players) {
+        final List<ChallengeModifier> filteredChallengeModifiers;
+        if (players.size() == 1) {
+            filteredChallengeModifiers =
+                    filterDisallowedModifier(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE, challengeModifiers);
+        } else {
+            filteredChallengeModifiers = filterDisallowedModifier(ChallengeModifier.NO_HELP, challengeModifiers);
+        }
+        return filteredChallengeModifiers;
+    }
+
+    private List<ChallengeModifier> filterDisallowedModifier(
+            ChallengeModifier disallowedModifier, List<ChallengeModifier> challengeModifiers) {
+        return challengeModifiers.stream()
+                .filter(challengeModifier -> !challengeModifier.equals(disallowedModifier))
+                .toList();
     }
 
     public boolean actionIsAllowed(BingoGameAction action) {
@@ -306,6 +330,10 @@ public class BingoGame implements Serializable {
 
     public List<Player> getPlayers() {
         return new LinkedList<>(players);
+    }
+
+    public List<ChallengeModifier> getChallengeModifiers() {
+        return new LinkedList<>(challengeModifiers);
     }
 
     public String getAllResultBarsAndRewardsInTableFormat() {

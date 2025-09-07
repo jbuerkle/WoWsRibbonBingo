@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Optional;
 
 public class PlayerRegistrationUserInterface {
@@ -143,7 +144,7 @@ public class PlayerRegistrationUserInterface {
     }
 
     private void startNewGame(InputEvent ignoredEvent) {
-        BingoGame bingoGame = new BingoGame(tableView.getItems());
+        BingoGame bingoGame = new BingoGame(tableView.getItems(), Collections.emptyList());
         transitionToMainScene(bingoGame);
     }
 
