@@ -1,5 +1,7 @@
 package bingo.game.results;
 
+import bingo.text.TextUtility;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -31,6 +33,6 @@ public record BingoResultBar(int level) implements Serializable {
 
     public String getNumberOfSubsAsString() {
         int numberOfSubs = getNumberOfSubsAsReward();
-        return numberOfSubs + (numberOfSubs == 1 ? " sub" : " subs") + " \uD83C\uDF81";
+        return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs) + " \uD83C\uDF81";
     }
 }

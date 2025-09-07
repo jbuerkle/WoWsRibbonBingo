@@ -1,6 +1,7 @@
 package bingo.math.terms.impl;
 
 import bingo.math.terms.Term;
+import bingo.text.TextUtility;
 
 public final class TermWithPoints extends DelegateTerm {
 
@@ -10,10 +11,6 @@ public final class TermWithPoints extends DelegateTerm {
 
     @Override
     public String getAsString() {
-        return term.getAsString() + getPointSuffix(term.getValue());
-    }
-
-    private String getPointSuffix(double pointValue) {
-        return pointValue == 1 ? " point" : " points";
+        return term.getAsString() + TextUtility.getSuffixForPoints(term.getValue());
     }
 }

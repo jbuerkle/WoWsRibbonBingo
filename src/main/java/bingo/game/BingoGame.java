@@ -9,6 +9,7 @@ import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
 import bingo.ships.Ship;
+import bingo.text.TextUtility;
 import bingo.tokens.TokenCounter;
 
 import java.io.Serial;
@@ -450,14 +451,20 @@ public class BingoGame implements Serializable {
             int extraLives = tokenCounter.getCurrentExtraLives();
             int conversionFactorForExtraLives = 6;
             int totalReward = unlockedReward + extraLives * conversionFactorForExtraLives;
-            String calculationAsText =
-                    " Total reward: %s sub(s) + (unused extra lives: %s) * %s subs = %s subs \uD83C\uDF81".formatted(
-                            unlockedReward,
-                            extraLives,
-                            conversionFactorForExtraLives,
-                            totalReward);
+            String unlockedRewardAsString = getSubsAsString(unlockedReward);
+            String conversionFactorAsString = getSubsAsString(conversionFactorForExtraLives);
+            String totalRewardAsString = getSubsAsString(totalReward);
+            String calculationAsText = " Total reward: %s + (unused extra lives: %s) * %s = %s \uD83C\uDF81".formatted(
+                    unlockedRewardAsString,
+                    extraLives,
+                    conversionFactorAsString,
+                    totalRewardAsString);
             stringBuilder.append(calculationAsText);
         }
+    }
+
+    private String getSubsAsString(int numberOfSubs) {
+        return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs);
     }
 
     private void appendTextForTokenCounter(StringBuilder stringBuilder) {

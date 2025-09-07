@@ -30,7 +30,7 @@ class BingoGameIntegrationTest {
         private static final String LEVEL_FIVE_VOLUNTARY_END =
                 "Challenge ended voluntarily on level 5. Your reward from the previous level: 16 subs \uD83C\uDF81";
         private static final String LEVEL_SEVEN_SUCCESSFUL_END =
-                "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 sub(s) + (unused extra lives: 1) * 6 subs = 134 subs \uD83C\uDF81";
+                "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 subs + (unused extra lives: 1) * 6 subs = 134 subs \uD83C\uDF81";
         private static final String LEVEL_FOUR_WITH_ZERO_TOKENS =
                 "Requirement of level 4: 900 points. Token counter: Now 0 tokens \uD83E\uDE99 total.";
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
