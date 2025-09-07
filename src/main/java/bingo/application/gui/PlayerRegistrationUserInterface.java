@@ -3,6 +3,7 @@ package bingo.application.gui;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
+import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.utility.BingoGameSerializer;
 import bingo.players.Player;
 import javafx.geometry.Insets;
@@ -18,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class PlayerRegistrationUserInterface {
@@ -30,6 +33,7 @@ public class PlayerRegistrationUserInterface {
             "The save file may be from a previous version of the game. Either start a new game, or try loading the save file with a previous version of the application.";
 
     private final Stage primaryStage;
+    private final Map<ChallengeModifier, CheckBox> checkBoxesByChallengeModifier;
     private final UserInterfaceUtility userInterfaceUtility;
     private final BingoGameSerializer bingoGameSerializer;
     private final TableView<Player> tableView;
@@ -42,6 +46,7 @@ public class PlayerRegistrationUserInterface {
 
     public PlayerRegistrationUserInterface(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.checkBoxesByChallengeModifier = new LinkedHashMap<>();
         this.userInterfaceUtility = new UserInterfaceUtility();
         this.bingoGameSerializer = new BingoGameSerializer();
         this.tableView = new TableView<>();
@@ -53,6 +58,7 @@ public class PlayerRegistrationUserInterface {
         this.mainGrid = createMainGridPane();
         setUpTableView();
         setUpInputFieldAndButtons();
+        setUpCheckBoxesForChallengeModifiers();
         updateButtonVisibility();
     }
 
@@ -87,9 +93,23 @@ public class PlayerRegistrationUserInterface {
         mainGrid.add(gridPane, 1, 0);
     }
 
+    private void setUpCheckBoxesForChallengeModifiers() {
+        Label challengeModifierLabel = new Label("Challenge modifiers");
+        GridPane gridPane = createGridPaneWithVerticalGap();
+        gridPane.add(challengeModifierLabel, 0, 0);
+        int row = 1;
+        for (ChallengeModifier challengeModifier : ChallengeModifier.values()) {
+            CheckBox checkBox = new CheckBox(challengeModifier.getDisplayName());
+            checkBoxesByChallengeModifier.put(challengeModifier, checkBox);
+            gridPane.add(checkBox, 0, row);
+            row++;
+        }
+        mainGrid.add(gridPane, 2, 0);
+    }
+
     private GridPane createGridPaneWithVerticalGap() {
         GridPane gridPane = new GridPane();
-        gridPane.setVgap(10);
+        gridPane.setVgap(15);
         return gridPane;
     }
 
@@ -144,8 +164,18 @@ public class PlayerRegistrationUserInterface {
     }
 
     private void startNewGame(InputEvent ignoredEvent) {
-        BingoGame bingoGame = new BingoGame(tableView.getItems(), Collections.emptyList());
+        List<Player> players = tableView.getItems();
+        List<ChallengeModifier> challengeModifiers = getSelectedChallengeModifiers();
+        BingoGame bingoGame = new BingoGame(players, challengeModifiers);
         transitionToMainScene(bingoGame);
+    }
+
+    private List<ChallengeModifier> getSelectedChallengeModifiers() {
+        return checkBoxesByChallengeModifier.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().isSelected())
+                .map(Map.Entry::getKey)
+                .toList();
     }
 
     private void loadFromSaveFile(InputEvent ignoredEvent) {
