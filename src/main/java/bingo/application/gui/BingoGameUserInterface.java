@@ -303,21 +303,18 @@ public class BingoGameUserInterface {
     }
 
     private void updateButtonVisibility() {
-        boolean submitActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-        boolean confirmActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-        boolean endChallengeActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-        boolean resetActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.PERFORM_RESET);
-        boolean otherActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.OTHER_ACTION);
-        boolean changingShipRestrictionsIsProhibited =
-                !bingoGame.actionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
-        submitButton.setDisable(submitActionIsProhibited);
-        confirmButton.setDisable(confirmActionIsProhibited);
-        endChallengeButton.setDisable(endChallengeActionIsProhibited);
-        resetButton.setDisable(resetActionIsProhibited);
-        addShipButton.setDisable(otherActionIsProhibited);
-        removeShipButton.setDisable(otherActionIsProhibited);
-        setRestrictionButton.setDisable(changingShipRestrictionsIsProhibited);
-        removeRestrictionButton.setDisable(changingShipRestrictionsIsProhibited);
+        submitButton.setDisable(actionIsProhibited(BingoGameAction.SUBMIT_RESULT));
+        confirmButton.setDisable(actionIsProhibited(BingoGameAction.CONFIRM_RESULT));
+        endChallengeButton.setDisable(actionIsProhibited(BingoGameAction.END_CHALLENGE_VOLUNTARILY));
+        resetButton.setDisable(actionIsProhibited(BingoGameAction.PERFORM_RESET));
+        addShipButton.setDisable(actionIsProhibited(BingoGameAction.OTHER_ACTION));
+        removeShipButton.setDisable(actionIsProhibited(BingoGameAction.OTHER_ACTION));
+        setRestrictionButton.setDisable(actionIsProhibited(BingoGameAction.CHANGE_SHIP_RESTRICTION));
+        removeRestrictionButton.setDisable(actionIsProhibited(BingoGameAction.CHANGE_SHIP_RESTRICTION));
+    }
+
+    private boolean actionIsProhibited(BingoGameAction action) {
+        return !bingoGame.actionIsAllowed(action);
     }
 
     private int setUpCheckBoxesForRetryRules(GridPane gridPane) {
