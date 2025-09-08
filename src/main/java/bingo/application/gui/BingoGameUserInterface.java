@@ -16,8 +16,6 @@ import bingo.game.utility.BingoGameSerializer;
 import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.restrictions.generator.RandomShipRestrictionGenerator;
-import bingo.restrictions.impl.BannedMainArmamentType;
-import bingo.restrictions.impl.ForcedMainArmamentType;
 import bingo.ribbons.Ribbon;
 import bingo.ribbons.RibbonResult;
 import bingo.rules.RetryRule;
@@ -286,14 +284,12 @@ public class BingoGameUserInterface {
     }
 
     private void updateComboBoxWithAllowedMainArmamentTypes() {
-        ShipRestriction shipRestriction = bingoGame.getShipRestrictionForPlayer(getSelectedPlayer()).orElse(null);
+        Optional<ShipRestriction> optionalRestriction = bingoGame.getShipRestrictionForPlayer(getSelectedPlayer());
         final List<MainArmamentType> allowedMainArmamentTypes;
-        if (shipRestriction instanceof BannedMainArmamentType(MainArmamentType bannedMainArmamentType)) {
-            allowedMainArmamentTypes = Stream.of(MainArmamentType.values())
-                    .filter(mainArmamentType -> !mainArmamentType.equals(bannedMainArmamentType))
-                    .toList();
-        } else if (shipRestriction instanceof ForcedMainArmamentType(MainArmamentType forcedMainArmamentType)) {
-            allowedMainArmamentTypes = List.of(forcedMainArmamentType);
+        if (optionalRestriction.isPresent()) {
+            ShipRestriction shipRestriction = optionalRestriction.get();
+            allowedMainArmamentTypes =
+                    Stream.of(MainArmamentType.values()).filter(shipRestriction::allowsMainArmamentType).toList();
         } else {
             allowedMainArmamentTypes = List.of(MainArmamentType.values());
         }
