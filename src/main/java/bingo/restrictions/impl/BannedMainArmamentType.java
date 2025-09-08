@@ -14,4 +14,9 @@ public record BannedMainArmamentType(MainArmamentType mainArmamentType) implemen
         String mainArmamentText = mainArmamentType.getDisplayText().toLowerCase();
         return "Ships with %s as main armament are banned from use in the current level".formatted(mainArmamentText);
     }
+
+    @Override
+    public boolean allowsMainArmamentType(MainArmamentType mainArmamentType) {
+        return !mainArmamentType.equals(this.mainArmamentType);
+    }
 }

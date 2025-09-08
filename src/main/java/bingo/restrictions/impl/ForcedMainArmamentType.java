@@ -14,4 +14,9 @@ public record ForcedMainArmamentType(MainArmamentType mainArmamentType) implemen
         String mainArmamentText = mainArmamentType.getDisplayText().toLowerCase();
         return "You are forced to use a ship with %s as main armament in the current level".formatted(mainArmamentText);
     }
+
+    @Override
+    public boolean allowsMainArmamentType(MainArmamentType mainArmamentType) {
+        return mainArmamentType.equals(this.mainArmamentType);
+    }
 }
