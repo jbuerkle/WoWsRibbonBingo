@@ -104,4 +104,18 @@ public class BingoGameStateMachine implements Serializable {
         ensureActionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
         bingoGameState = BingoGameState.UNCONFIRMED_VOLUNTARY_END;
     }
+
+    /**
+     * Action: {@link BingoGameAction#CHANGE_SHIP_RESTRICTION}
+     */
+    public void processChangeShipRestrictionAction() {
+        ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
+    }
+
+    /**
+     * Action: {@link BingoGameAction#OTHER_ACTION}
+     */
+    public void processOtherAction() {
+        ensureActionIsAllowed(BingoGameAction.OTHER_ACTION);
+    }
 }

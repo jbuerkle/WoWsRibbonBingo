@@ -31,8 +31,20 @@ class BingoGameStateMachineTest {
     class ProcessAction {
 
         @Test
-        void shouldStayInLevelInitializedState() {
+        void shouldStayInLevelInitializedStateWhenPerformingReset() {
             bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+        }
+
+        @Test
+        void shouldStayInLevelInitializedStateWhenChangingShipRestriction() {
+            bingoGameStateMachine.processChangeShipRestrictionAction();
+            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+        }
+
+        @Test
+        void shouldStayInLevelInitializedStateWhenPerformingOtherAction() {
+            bingoGameStateMachine.processOtherAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
@@ -250,6 +262,22 @@ class BingoGameStateMachineTest {
             assertIllegalStateExceptionIsThrownWithMessage(
                     "Action END_CHALLENGE_VOLUNTARILY is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
                     () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
+        }
+
+        @Test
+        void shouldThrowIllegalStateExceptionWhenChangingShipRestrictionInUnconfirmedVoluntaryEndState() {
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+            assertIllegalStateExceptionIsThrownWithMessage(
+                    "Action CHANGE_SHIP_RESTRICTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
+                    () -> bingoGameStateMachine.processChangeShipRestrictionAction());
+        }
+
+        @Test
+        void shouldThrowIllegalStateExceptionWhenPerformingOtherActionInUnconfirmedVoluntaryEndState() {
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+            assertIllegalStateExceptionIsThrownWithMessage(
+                    "Action OTHER_ACTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
+                    () -> bingoGameStateMachine.processOtherAction());
         }
 
         private void assertIllegalStateExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
