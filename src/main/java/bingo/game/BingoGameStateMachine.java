@@ -21,17 +21,31 @@ public class BingoGameStateMachine implements Serializable {
         return switch (bingoGameState) {
             case LEVEL_INITIALIZED -> !action.equals(BingoGameAction.CONFIRM_RESULT);
             case PARTIAL_RESULT_SUBMITTED -> actionIsAllowedForPartialResultSubmittedState(action);
-            case UNCONFIRMED_VOLUNTARY_END -> true;
+            case UNCONFIRMED_VOLUNTARY_END -> actionIsAllowedForUnconfirmedVoluntaryEndState(action);
             case UNCONFIRMED_SUCCESSFUL_MATCH, UNCONFIRMED_UNSUCCESSFUL_MATCH ->
-                    !action.equals(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
+                    actionIsAllowedForUnconfirmedMatchResultState(action);
             case CHALLENGE_ENDED_VOLUNTARILY, CHALLENGE_ENDED_SUCCESSFULLY, CHALLENGE_ENDED_UNSUCCESSFULLY -> false;
         };
     }
 
     private boolean actionIsAllowedForPartialResultSubmittedState(BingoGameAction action) {
         return switch (action) {
-            case CONFIRM_RESULT, END_CHALLENGE_VOLUNTARILY -> false;
+            case CONFIRM_RESULT, END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION -> false;
             case SUBMIT_RESULT, PERFORM_RESET, OTHER_ACTION -> true;
+        };
+    }
+
+    private boolean actionIsAllowedForUnconfirmedVoluntaryEndState(BingoGameAction action) {
+        return switch (action) {
+            case END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION, OTHER_ACTION -> false;
+            case SUBMIT_RESULT, CONFIRM_RESULT, PERFORM_RESET -> true;
+        };
+    }
+
+    private boolean actionIsAllowedForUnconfirmedMatchResultState(BingoGameAction action) {
+        return switch (action) {
+            case END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION -> false;
+            case SUBMIT_RESULT, CONFIRM_RESULT, PERFORM_RESET, OTHER_ACTION -> true;
         };
     }
 

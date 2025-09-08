@@ -168,8 +168,6 @@ class BingoGameStateMachineTest {
         void shouldTransitionToUnconfirmedVoluntaryEndState() {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
-            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
         }
 
         @Test
@@ -246,6 +244,14 @@ class BingoGameStateMachineTest {
                     () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
         }
 
+        @Test
+        void shouldThrowIllegalStateExceptionWhenEndingChallengeInUnconfirmedVoluntaryEndState() {
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+            assertIllegalStateExceptionIsThrownWithMessage(
+                    "Action END_CHALLENGE_VOLUNTARILY is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
+                    () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
+        }
+
         private void assertIllegalStateExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
             IllegalStateException exception = assertThrows(IllegalStateException.class, executable);
             assertEquals(expectedMessage, exception.getMessage());
@@ -277,30 +283,38 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldAlwaysReturnTrueWhenInUnconfirmedVoluntaryEndState() {
+        void shouldReturnFalseForActionsWhichDoNotAffectStateWhenInUnconfirmedVoluntaryEndState() {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertReturnsTrueForAllActions();
+            List<BingoGameAction> disallowedActions = List.of(
+                    BingoGameAction.END_CHALLENGE_VOLUNTARILY,
+                    BingoGameAction.UPDATE_SHIP_RESTRICTION,
+                    BingoGameAction.OTHER_ACTION);
+            assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyWhenInUnconfirmedSuccessfulMatchState() {
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndUpdateShipRestrictionWhenInUnconfirmedSuccessfulMatchState() {
             bingoGameStateMachine.processSubmitResultAction(true, true);
-            List<BingoGameAction> disallowedActions = List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-            assertReturnsTrueForAllActionsExcept(disallowedActions);
-        }
-
-        @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyWhenInUnconfirmedUnsuccessfulMatchState() {
-            bingoGameStateMachine.processSubmitResultAction(true, false);
-            List<BingoGameAction> disallowedActions = List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
-            assertReturnsTrueForAllActionsExcept(disallowedActions);
-        }
-
-        @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndConfirmResultWhenInPartialResultSubmittedState() {
-            bingoGameStateMachine.processSubmitResultAction(false, false);
             List<BingoGameAction> disallowedActions =
-                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.CONFIRM_RESULT);
+                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.UPDATE_SHIP_RESTRICTION);
+            assertReturnsTrueForAllActionsExcept(disallowedActions);
+        }
+
+        @Test
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndUpdateShipRestrictionWhenInUnconfirmedUnsuccessfulMatchState() {
+            bingoGameStateMachine.processSubmitResultAction(true, false);
+            List<BingoGameAction> disallowedActions =
+                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.UPDATE_SHIP_RESTRICTION);
+            assertReturnsTrueForAllActionsExcept(disallowedActions);
+        }
+
+        @Test
+        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPartialResultSubmittedState() {
+            bingoGameStateMachine.processSubmitResultAction(false, false);
+            List<BingoGameAction> disallowedActions = List.of(
+                    BingoGameAction.END_CHALLENGE_VOLUNTARILY,
+                    BingoGameAction.CONFIRM_RESULT,
+                    BingoGameAction.UPDATE_SHIP_RESTRICTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
@@ -313,12 +327,6 @@ class BingoGameStateMachineTest {
         private void assertReturnsFalseForAllActions() {
             for (BingoGameAction action : BingoGameAction.values()) {
                 assertFalse(bingoGameStateMachine.actionIsAllowed(action));
-            }
-        }
-
-        private void assertReturnsTrueForAllActions() {
-            for (BingoGameAction action : BingoGameAction.values()) {
-                assertTrue(bingoGameStateMachine.actionIsAllowed(action));
             }
         }
 
