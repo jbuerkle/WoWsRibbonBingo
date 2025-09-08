@@ -308,14 +308,16 @@ public class BingoGameUserInterface {
         boolean endChallengeActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
         boolean resetActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.PERFORM_RESET);
         boolean otherActionIsProhibited = !bingoGame.actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        boolean changingShipRestrictionsIsProhibited =
+                !bingoGame.actionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
         submitButton.setDisable(submitActionIsProhibited);
         confirmButton.setDisable(confirmActionIsProhibited);
         endChallengeButton.setDisable(endChallengeActionIsProhibited);
         resetButton.setDisable(resetActionIsProhibited);
         addShipButton.setDisable(otherActionIsProhibited);
         removeShipButton.setDisable(otherActionIsProhibited);
-        setRestrictionButton.setDisable(otherActionIsProhibited);
-        removeRestrictionButton.setDisable(otherActionIsProhibited);
+        setRestrictionButton.setDisable(changingShipRestrictionsIsProhibited);
+        removeRestrictionButton.setDisable(changingShipRestrictionsIsProhibited);
     }
 
     private int setUpCheckBoxesForRetryRules(GridPane gridPane) {
