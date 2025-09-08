@@ -247,13 +247,13 @@ class BingoGameTest {
 
         @Test
         void setShouldBeSuccessfulWhenNoShipRestrictionIsSet() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
         }
 
         @Test
         void setShouldBeSuccessfulWhenThePreviousShipRestrictionIsRemoved() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
             assertRemoveShipRestrictionIsSuccessful();
             assertSetShipRestrictionIsSuccessful();
@@ -261,14 +261,14 @@ class BingoGameTest {
 
         @Test
         void setShouldNotBeSuccessfulWhenAShipRestrictionIsAlreadySet() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
             assertSetShipRestrictionIsNotSuccessful();
         }
 
         @Test
         void setShouldThrowIllegalArgumentException() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
                     () -> bingoGame.setShipRestrictionForPlayer(PLAYER_D, mockedShipRestriction));
@@ -281,14 +281,14 @@ class BingoGameTest {
 
         @Test
         void getShouldReturnEmptyOptionalWhenSetIsNotAllowed() {
-            mockBingoGameActionIsNotAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsNotAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsNotSuccessful();
             assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
         }
 
         @Test
         void getShouldReturnTheShipRestrictionWhichWasSet() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
             Optional<ShipRestriction> returnedShipRestriction = bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER);
             assertTrue(returnedShipRestriction.isPresent());
@@ -304,7 +304,7 @@ class BingoGameTest {
 
         @Test
         void removeShouldRemoveTheShipRestrictionWhichWasPreviouslySet() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
             assertRemoveShipRestrictionIsSuccessful();
             assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isEmpty());
@@ -312,16 +312,16 @@ class BingoGameTest {
 
         @Test
         void removeShouldNotBeSuccessfulWhenNotAllowed() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertSetShipRestrictionIsSuccessful();
-            mockBingoGameActionIsNotAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsNotAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertRemoveShipRestrictionIsNotSuccessful();
             assertTrue(bingoGame.getShipRestrictionForPlayer(SINGLE_PLAYER).isPresent());
         }
 
         @Test
         void removeShouldThrowIllegalArgumentException() {
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertIllegalArgumentExceptionIsThrownWithMessage(
                     INCORRECT_PLAYER,
                     () -> bingoGame.removeShipRestrictionForPlayer(PLAYER_D));
@@ -507,7 +507,7 @@ class BingoGameTest {
         @Test
         void shouldReturnFirstResultBarWithShipRestrictionWhenNoResultWasSubmitted() {
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             mockTokenCounterToString();
             mockShipRestrictionGetDisplayText();
             bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
@@ -654,7 +654,7 @@ class BingoGameTest {
         void shouldUpdateStepByStepForMultiplayer() {
             mockCurrentBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
-            mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockShipRestrictionGetDisplayText();
@@ -943,6 +943,7 @@ class BingoGameTest {
 
         private void setupMatchResultsBeforeConfirmation(List<RetryRule> activeRetryRules) {
             mockBingoGameActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
+            mockBingoGameActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
             mockBingoGameActionIsAllowed(BingoGameAction.OTHER_ACTION);
             bingoGame.setActiveRetryRules(activeRetryRules);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);

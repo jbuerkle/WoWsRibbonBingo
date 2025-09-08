@@ -270,7 +270,7 @@ public class BingoGame implements Serializable {
     }
 
     public boolean setShipRestrictionForPlayer(Player player, ShipRestriction shipRestriction) {
-        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
         if (actionIsAllowed) {
             ensurePlayerIsPartOfTheGame(player);
             if (shipRestrictionIsSetForPlayer(player)) {
@@ -287,7 +287,7 @@ public class BingoGame implements Serializable {
     }
 
     public boolean removeShipRestrictionForPlayer(Player player) {
-        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.OTHER_ACTION);
+        boolean actionIsAllowed = actionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
         if (actionIsAllowed) {
             ensurePlayerIsPartOfTheGame(player);
             shipRestrictionByPlayer.remove(player);
