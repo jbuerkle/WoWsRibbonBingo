@@ -287,24 +287,24 @@ class BingoGameStateMachineTest {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             List<BingoGameAction> disallowedActions = List.of(
                     BingoGameAction.END_CHALLENGE_VOLUNTARILY,
-                    BingoGameAction.UPDATE_SHIP_RESTRICTION,
+                    BingoGameAction.CHANGE_SHIP_RESTRICTION,
                     BingoGameAction.OTHER_ACTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndUpdateShipRestrictionWhenInUnconfirmedSuccessfulMatchState() {
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedSuccessfulMatchState() {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             List<BingoGameAction> disallowedActions =
-                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.UPDATE_SHIP_RESTRICTION);
+                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndUpdateShipRestrictionWhenInUnconfirmedUnsuccessfulMatchState() {
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedUnsuccessfulMatchState() {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             List<BingoGameAction> disallowedActions =
-                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.UPDATE_SHIP_RESTRICTION);
+                    List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
@@ -314,7 +314,7 @@ class BingoGameStateMachineTest {
             List<BingoGameAction> disallowedActions = List.of(
                     BingoGameAction.END_CHALLENGE_VOLUNTARILY,
                     BingoGameAction.CONFIRM_RESULT,
-                    BingoGameAction.UPDATE_SHIP_RESTRICTION);
+                    BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 

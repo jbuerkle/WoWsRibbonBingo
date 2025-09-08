@@ -30,21 +30,21 @@ public class BingoGameStateMachine implements Serializable {
 
     private boolean actionIsAllowedForPartialResultSubmittedState(BingoGameAction action) {
         return switch (action) {
-            case CONFIRM_RESULT, END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION -> false;
+            case CONFIRM_RESULT, END_CHALLENGE_VOLUNTARILY, CHANGE_SHIP_RESTRICTION -> false;
             case SUBMIT_RESULT, PERFORM_RESET, OTHER_ACTION -> true;
         };
     }
 
     private boolean actionIsAllowedForUnconfirmedVoluntaryEndState(BingoGameAction action) {
         return switch (action) {
-            case END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION, OTHER_ACTION -> false;
+            case END_CHALLENGE_VOLUNTARILY, CHANGE_SHIP_RESTRICTION, OTHER_ACTION -> false;
             case SUBMIT_RESULT, CONFIRM_RESULT, PERFORM_RESET -> true;
         };
     }
 
     private boolean actionIsAllowedForUnconfirmedMatchResultState(BingoGameAction action) {
         return switch (action) {
-            case END_CHALLENGE_VOLUNTARILY, UPDATE_SHIP_RESTRICTION -> false;
+            case END_CHALLENGE_VOLUNTARILY, CHANGE_SHIP_RESTRICTION -> false;
             case SUBMIT_RESULT, CONFIRM_RESULT, PERFORM_RESET, OTHER_ACTION -> true;
         };
     }
