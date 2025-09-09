@@ -12,19 +12,19 @@ import bingo.ships.MainArmamentType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 
 public record AchievementResult(Achievement achievement, int amount) implements Serializable {
     @Serial
     private static final long serialVersionUID = -4822147319230201720L;
 
-    public Term getAsTerm(Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
+    public Term getAsTerm(List<RibbonResult> ribbonResultList, MainArmamentType mainArmamentType) {
         Term flatPointValueTerm = new TermWithPoints(new Literal(achievement.getFlatPointValue()));
         Term singleAchievementValueTerm = achievement.getPointValueModifiers()
                 .stream()
-                .map(pointValueModifierToTerm(ribbonResultSet, mainArmamentType))
+                .map(pointValueModifierToTerm(ribbonResultList, mainArmamentType))
                 .reduce(Addition::new)
                 .map(modifiersTermToFullTerm(flatPointValueTerm))
                 .orElse(flatPointValueTerm);
@@ -33,16 +33,16 @@ public record AchievementResult(Achievement achievement, int amount) implements 
     }
 
     private Function<PointValueModifier, Term> pointValueModifierToTerm(
-            Set<RibbonResult> ribbonResultSet, MainArmamentType mainArmamentType) {
-        return pointValueModifier -> findMatchingRibbonResult(ribbonResultSet, pointValueModifier).map(
+            List<RibbonResult> ribbonResultList, MainArmamentType mainArmamentType) {
+        return pointValueModifier -> findMatchingRibbonResult(ribbonResultList, pointValueModifier).map(
                         ribbonResultToTerm(mainArmamentType))
                 .map(ribbonResultTermToMultiplicationTerm(pointValueModifier))
                 .orElse(new Literal(0));
     }
 
     private Optional<RibbonResult> findMatchingRibbonResult(
-            Set<RibbonResult> ribbonResultSet, PointValueModifier pointValueModifier) {
-        return ribbonResultSet.stream()
+            List<RibbonResult> ribbonResultList, PointValueModifier pointValueModifier) {
+        return ribbonResultList.stream()
                 .filter(ribbonResult -> pointValueModifier.ribbon().equals(ribbonResult.ribbon()))
                 .findAny();
     }

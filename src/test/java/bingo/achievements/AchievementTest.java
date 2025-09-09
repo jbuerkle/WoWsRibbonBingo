@@ -5,7 +5,7 @@ import bingo.ribbons.Ribbon;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,34 +37,34 @@ class AchievementTest {
 
     @Test
     void getPointValueModifiersShouldReturnCorrectListForArsonist() {
-        Set<PointValueModifier> arsonistModifiers = Achievement.ARSONIST.getPointValueModifiers();
+        List<PointValueModifier> arsonistModifiers = Achievement.ARSONIST.getPointValueModifiers();
         assertEquals(1, arsonistModifiers.size());
-        PointValueModifier setOnFireModifier = arsonistModifiers.iterator().next();
+        PointValueModifier setOnFireModifier = arsonistModifiers.getFirst();
         assertEquals(Ribbon.SET_ON_FIRE, setOnFireModifier.ribbon());
         assertEquals(0.1, setOnFireModifier.bonusModifier());
     }
 
     @Test
     void getPointValueModifiersShouldReturnCorrectListForKrakenUnleashed() {
-        Set<PointValueModifier> krakenUnleashedModifiers = Achievement.KRAKEN_UNLEASHED.getPointValueModifiers();
+        List<PointValueModifier> krakenUnleashedModifiers = Achievement.KRAKEN_UNLEASHED.getPointValueModifiers();
         assertEquals(1, krakenUnleashedModifiers.size());
-        PointValueModifier destroyedModifier = krakenUnleashedModifiers.iterator().next();
+        PointValueModifier destroyedModifier = krakenUnleashedModifiers.getFirst();
         assertEquals(Ribbon.DESTROYED, destroyedModifier.ribbon());
         assertEquals(0.2, destroyedModifier.bonusModifier());
     }
 
     @Test
     void getPointValueModifiersShouldReturnCorrectListForCombatScout() {
-        Set<PointValueModifier> combatScoutModifiers = Achievement.COMBAT_SCOUT.getPointValueModifiers();
+        List<PointValueModifier> combatScoutModifiers = Achievement.COMBAT_SCOUT.getPointValueModifiers();
         assertEquals(1, combatScoutModifiers.size());
-        PointValueModifier spottedModifier = combatScoutModifiers.iterator().next();
+        PointValueModifier spottedModifier = combatScoutModifiers.getFirst();
         assertEquals(Ribbon.SPOTTED, spottedModifier.ribbon());
         assertEquals(0.6, spottedModifier.bonusModifier());
     }
 
     @Test
     void getPointValueModifiersShouldReturnCorrectListForAntiAirDefenseExpert() {
-        Set<PointValueModifier> antiAirDefenseExpertModifiers = Achievement.AA_DEFENSE_EXPERT.getPointValueModifiers();
+        List<PointValueModifier> antiAirDefenseExpertModifiers = Achievement.AA_DEFENSE_EXPERT.getPointValueModifiers();
         assertEquals(2, antiAirDefenseExpertModifiers.size());
         Iterator<PointValueModifier> iterator = antiAirDefenseExpertModifiers.iterator();
         PointValueModifier aircraftShotDownModifier = iterator.next();
@@ -77,7 +77,7 @@ class AchievementTest {
 
     @Test
     void getPointValueModifiersShouldReturnCorrectListForWitherer() {
-        Set<PointValueModifier> withererModifiers = Achievement.WITHERER.getPointValueModifiers();
+        List<PointValueModifier> withererModifiers = Achievement.WITHERER.getPointValueModifiers();
         assertEquals(2, withererModifiers.size());
         Iterator<PointValueModifier> iterator = withererModifiers.iterator();
         PointValueModifier setOnFireModifier = iterator.next();

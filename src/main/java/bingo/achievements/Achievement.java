@@ -9,9 +9,9 @@ import bingo.ribbons.Ribbon;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public enum Achievement implements Serializable {
     ARSONIST("Arsonist", 30),
@@ -34,7 +34,7 @@ public enum Achievement implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 8667639193335488476L;
-    private static final Map<Achievement, Set<PointValueModifier>> POINT_VALUE_MODIFIERS = setUpModifiers();
+    private static final Map<Achievement, List<PointValueModifier>> POINT_VALUE_MODIFIERS = setUpModifiers();
 
     private final String displayText;
     private final int flatPointValue;
@@ -52,8 +52,8 @@ public enum Achievement implements Serializable {
         return flatPointValue;
     }
 
-    public Set<PointValueModifier> getPointValueModifiers() {
-        return new LinkedHashSet<>(POINT_VALUE_MODIFIERS.get(this));
+    public List<PointValueModifier> getPointValueModifiers() {
+        return new LinkedList<>(POINT_VALUE_MODIFIERS.get(this));
     }
 
     @Override
@@ -74,10 +74,10 @@ public enum Achievement implements Serializable {
         return stringBuilder.toString();
     }
 
-    private static Map<Achievement, Set<PointValueModifier>> setUpModifiers() {
-        Map<Achievement, Set<PointValueModifier>> pointValueModifiers = new HashMap<>();
+    private static Map<Achievement, List<PointValueModifier>> setUpModifiers() {
+        Map<Achievement, List<PointValueModifier>> pointValueModifiers = new HashMap<>();
         for (Achievement achievement : Achievement.values()) {
-            pointValueModifiers.put(achievement, new LinkedHashSet<>());
+            pointValueModifiers.put(achievement, new LinkedList<>());
         }
         pointValueModifiers.get(ARSONIST).add(new PointValueModifier(Ribbon.SET_ON_FIRE, 0.1));
         pointValueModifiers.get(AA_DEFENSE_EXPERT).add(new PointValueModifier(Ribbon.AIRCRAFT_SHOT_DOWN, 0.3));

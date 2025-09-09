@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -638,23 +637,23 @@ public class BingoGameUserInterface {
             if (optionalBingoResult.isPresent()) {
                 BingoResult bingoResult = optionalBingoResult.get();
                 mainArmamentTypeComboBox.setValue(bingoResult.getMainArmamentType());
-                updateRibbonAmountsFromPlayerData(bingoResult.getRibbonResultSet());
-                updateAchievementAmountsFromPlayerData(bingoResult.getAchievementResultSet());
+                updateRibbonAmountsFromPlayerData(bingoResult.getRibbonResultList());
+                updateAchievementAmountsFromPlayerData(bingoResult.getAchievementResultList());
             }
         } catch (UserInputException exception) {
             showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
-    private void updateRibbonAmountsFromPlayerData(Set<RibbonResult> ribbonResultSet) {
-        for (RibbonResult ribbonResult : ribbonResultSet) {
+    private void updateRibbonAmountsFromPlayerData(List<RibbonResult> ribbonResultList) {
+        for (RibbonResult ribbonResult : ribbonResultList) {
             TextField textField = textFieldsByRibbon.get(ribbonResult.ribbon());
             textField.setText(String.valueOf(ribbonResult.amount()));
         }
     }
 
-    private void updateAchievementAmountsFromPlayerData(Set<AchievementResult> achievementResultSet) {
-        for (AchievementResult achievementResult : achievementResultSet) {
+    private void updateAchievementAmountsFromPlayerData(List<AchievementResult> achievementResultList) {
+        for (AchievementResult achievementResult : achievementResultList) {
             TextField textField = textFieldsByAchievement.get(achievementResult.achievement());
             textField.setText(String.valueOf(achievementResult.amount()));
         }

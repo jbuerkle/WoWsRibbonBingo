@@ -15,9 +15,9 @@ import bingo.ships.MainArmamentType;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 
 public class BingoResult implements Serializable {
@@ -25,49 +25,49 @@ public class BingoResult implements Serializable {
     private static final long serialVersionUID = -4747703773714476437L;
 
     private final MainArmamentType mainArmamentType;
-    private final Set<RibbonResult> ribbonResultSet;
-    private final Set<AchievementResult> achievementResultSet;
+    private final List<RibbonResult> ribbonResultList;
+    private final List<AchievementResult> achievementResultList;
 
     public BingoResult(MainArmamentType mainArmamentType) {
         this.mainArmamentType = mainArmamentType;
-        this.ribbonResultSet = new HashSet<>();
-        this.achievementResultSet = new HashSet<>();
+        this.ribbonResultList = new LinkedList<>();
+        this.achievementResultList = new LinkedList<>();
     }
 
     public void addRibbonResult(Ribbon ribbon, int amount) {
         RibbonResult ribbonResult = new RibbonResult(ribbon, amount);
-        addResult(ribbonResult, amount, ribbonResultSet, RibbonResult::ribbon);
+        addResult(ribbonResult, amount, ribbonResultList, RibbonResult::ribbon);
     }
 
     public void addAchievementResult(Achievement achievement, int amount) {
         AchievementResult achievementResult = new AchievementResult(achievement, amount);
-        addResult(achievementResult, amount, achievementResultSet, AchievementResult::achievement);
+        addResult(achievementResult, amount, achievementResultList, AchievementResult::achievement);
     }
 
-    private <T, R> void addResult(T result, int amount, Set<T> resultSet, Function<T, R> keyGetter) {
-        removeExistingResultIfPresent(result, resultSet, keyGetter);
+    private <T, R> void addResult(T result, int amount, List<T> resultList, Function<T, R> keyGetter) {
+        removeExistingResultIfPresent(result, resultList, keyGetter);
         if (amount > 0) {
-            resultSet.add(result);
+            resultList.add(result);
         }
     }
 
-    private <T, R> void removeExistingResultIfPresent(T result, Set<T> resultSet, Function<T, R> keyGetter) {
+    private <T, R> void removeExistingResultIfPresent(T result, List<T> resultList, Function<T, R> keyGetter) {
         R key = keyGetter.apply(result);
         Optional<T> matchingResult =
-                resultSet.stream().filter(existingResult -> keyGetter.apply(existingResult).equals(key)).findAny();
-        matchingResult.ifPresent(resultSet::remove);
+                resultList.stream().filter(existingResult -> keyGetter.apply(existingResult).equals(key)).findAny();
+        matchingResult.ifPresent(resultList::remove);
     }
 
     public MainArmamentType getMainArmamentType() {
         return mainArmamentType;
     }
 
-    public Set<RibbonResult> getRibbonResultSet() {
-        return new HashSet<>(ribbonResultSet);
+    public List<RibbonResult> getRibbonResultList() {
+        return new LinkedList<>(ribbonResultList);
     }
 
-    public Set<AchievementResult> getAchievementResultSet() {
-        return new HashSet<>(achievementResultSet);
+    public List<AchievementResult> getAchievementResultList() {
+        return new LinkedList<>(achievementResultList);
     }
 
     public long getPointValue() {
@@ -91,13 +91,13 @@ public class BingoResult implements Serializable {
         return new LabeledTerm("Ribbon Bingo result", calculationAsEquation);
     }
 
-    private Set<Term> getAllResultsCombinedAsTerms() {
-        Set<Term> combinedResults = new HashSet<>();
-        ribbonResultSet.stream()
+    private List<Term> getAllResultsCombinedAsTerms() {
+        List<Term> combinedResults = new LinkedList<>();
+        ribbonResultList.stream()
                 .map(ribbonResult -> ribbonResult.getAsTerm(mainArmamentType))
                 .forEach(combinedResults::add);
-        achievementResultSet.stream()
-                .map(achievementResult -> achievementResult.getAsTerm(ribbonResultSet, mainArmamentType))
+        achievementResultList.stream()
+                .map(achievementResult -> achievementResult.getAsTerm(ribbonResultList, mainArmamentType))
                 .forEach(combinedResults::add);
         return combinedResults;
     }

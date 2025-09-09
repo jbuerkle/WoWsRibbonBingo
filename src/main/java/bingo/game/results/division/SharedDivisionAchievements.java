@@ -12,35 +12,35 @@ import bingo.math.terms.impl.TermWithPoints;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class SharedDivisionAchievements implements Serializable {
     @Serial
     private static final long serialVersionUID = -4604976196744982631L;
 
     private final int numberOfPlayers;
-    private final Set<DivisionAchievementResult> achievementResultSet;
+    private final List<DivisionAchievementResult> achievementResultList;
 
     public SharedDivisionAchievements(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
-        this.achievementResultSet = new HashSet<>();
+        this.achievementResultList = new LinkedList<>();
     }
 
     public void addAchievementResult(DivisionAchievement achievement, int amount) {
         DivisionAchievementResult achievementResult = new DivisionAchievementResult(achievement, amount);
         removeExistingResultIfPresent(achievement);
         if (amount > 0) {
-            achievementResultSet.add(achievementResult);
+            achievementResultList.add(achievementResult);
         }
     }
 
     private void removeExistingResultIfPresent(DivisionAchievement achievement) {
-        Optional<DivisionAchievementResult> matchingResult = achievementResultSet.stream()
+        Optional<DivisionAchievementResult> matchingResult = achievementResultList.stream()
                 .filter(existingResult -> existingResult.achievement().equals(achievement))
                 .findAny();
-        matchingResult.ifPresent(achievementResultSet::remove);
+        matchingResult.ifPresent(achievementResultList::remove);
     }
 
     public long getPointValue() {
@@ -53,7 +53,7 @@ public class SharedDivisionAchievements implements Serializable {
     }
 
     private Term getAsTerm() {
-        Term calculationTerm = achievementResultSet.stream()
+        Term calculationTerm = achievementResultList.stream()
                 .map(achievementResult -> achievementResult.getAsTerm(numberOfPlayers))
                 .sorted(Comparator.comparingDouble(Term::getValue))
                 .toList()

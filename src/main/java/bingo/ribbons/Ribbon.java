@@ -9,10 +9,10 @@ import bingo.ships.MainArmamentType;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public enum Ribbon implements Serializable {
@@ -38,7 +38,7 @@ public enum Ribbon implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6166813751001367167L;
-    private static final Map<Ribbon, Set<PointValueOverride>> POINT_VALUE_OVERRIDES = setUpOverrides();
+    private static final Map<Ribbon, List<PointValueOverride>> POINT_VALUE_OVERRIDES = setUpOverrides();
 
     private final String displayText;
     private final int pointValue;
@@ -87,10 +87,10 @@ public enum Ribbon implements Serializable {
         return allOverridesForRibbon -> stringBuilder.append(" (").append(allOverridesForRibbon).append(")");
     }
 
-    private static Map<Ribbon, Set<PointValueOverride>> setUpOverrides() {
-        Map<Ribbon, Set<PointValueOverride>> pointValueOverrides = new HashMap<>();
+    private static Map<Ribbon, List<PointValueOverride>> setUpOverrides() {
+        Map<Ribbon, List<PointValueOverride>> pointValueOverrides = new HashMap<>();
         for (Ribbon ribbon : Ribbon.values()) {
-            pointValueOverrides.put(ribbon, new LinkedHashSet<>());
+            pointValueOverrides.put(ribbon, new LinkedList<>());
         }
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.MEDIUM_CALIBER_GUNS, 2));
         pointValueOverrides.get(MAIN_GUN_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 3));
