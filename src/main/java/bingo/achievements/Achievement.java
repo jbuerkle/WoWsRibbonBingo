@@ -53,7 +53,7 @@ public enum Achievement implements Serializable {
     }
 
     public Set<PointValueModifier> getPointValueModifiers() {
-        return POINT_VALUE_MODIFIERS.get(this);
+        return new LinkedHashSet<>(POINT_VALUE_MODIFIERS.get(this));
     }
 
     @Override
