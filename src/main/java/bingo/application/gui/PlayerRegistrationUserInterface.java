@@ -3,6 +3,7 @@ package bingo.application.gui;
 import bingo.application.gui.constants.UserInterfaceConstants;
 import bingo.application.gui.utility.UserInterfaceUtility;
 import bingo.game.BingoGame;
+import bingo.game.input.UserInputException;
 import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.utility.BingoGameSerializer;
 import bingo.players.Player;
@@ -166,8 +167,12 @@ public class PlayerRegistrationUserInterface {
     private void startNewGame(InputEvent ignoredEvent) {
         List<Player> players = tableView.getItems();
         List<ChallengeModifier> challengeModifiers = getSelectedChallengeModifiers();
-        BingoGame bingoGame = new BingoGame(players, challengeModifiers);
-        transitionToMainScene(bingoGame);
+        try {
+            BingoGame bingoGame = new BingoGame(players, challengeModifiers);
+            transitionToMainScene(bingoGame);
+        } catch (UserInputException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
     private List<ChallengeModifier> getSelectedChallengeModifiers() {

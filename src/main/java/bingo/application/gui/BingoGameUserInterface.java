@@ -41,9 +41,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class BingoGameUserInterface {
-    private static final String SHIP_RESTRICTION_ALREADY_SET = "A ship restriction is already set!";
-    private static final String SHIP_ALREADY_USED = "This ship was already used!";
-
     private final BingoGame bingoGame;
     private final Stage primaryStage;
     private final RandomShipRestrictionGenerator randomShipRestrictionGenerator;
@@ -284,18 +281,22 @@ public class BingoGameUserInterface {
     }
 
     private void updateComboBoxWithAllowedMainArmamentTypes() {
-        Optional<ShipRestriction> optionalRestriction = bingoGame.getShipRestrictionForPlayer(getSelectedPlayer());
-        final List<MainArmamentType> allowedMainArmamentTypes;
-        if (optionalRestriction.isPresent()) {
-            ShipRestriction shipRestriction = optionalRestriction.get();
-            allowedMainArmamentTypes =
-                    Stream.of(MainArmamentType.values()).filter(shipRestriction::allowsMainArmamentType).toList();
-        } else {
-            allowedMainArmamentTypes = List.of(MainArmamentType.values());
+        try {
+            Optional<ShipRestriction> optionalRestriction = bingoGame.getShipRestrictionForPlayer(getSelectedPlayer());
+            final List<MainArmamentType> allowedMainArmamentTypes;
+            if (optionalRestriction.isPresent()) {
+                ShipRestriction shipRestriction = optionalRestriction.get();
+                allowedMainArmamentTypes =
+                        Stream.of(MainArmamentType.values()).filter(shipRestriction::allowsMainArmamentType).toList();
+            } else {
+                allowedMainArmamentTypes = List.of(MainArmamentType.values());
+            }
+            mainArmamentTypeComboBox.getItems().clear();
+            mainArmamentTypeComboBox.getItems().addAll(allowedMainArmamentTypes);
+            mainArmamentTypeComboBox.setValue(allowedMainArmamentTypes.getFirst());
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
-        mainArmamentTypeComboBox.getItems().clear();
-        mainArmamentTypeComboBox.getItems().addAll(allowedMainArmamentTypes);
-        mainArmamentTypeComboBox.setValue(allowedMainArmamentTypes.getFirst());
     }
 
     private void updateButtonVisibility() {
@@ -352,13 +353,6 @@ public class BingoGameUserInterface {
         return gridPane;
     }
 
-    private void setTextInTextArea() {
-        String bingoGameOutput = bingoGame.toString();
-        List<String> splitOutput = bingoGameOutputSplitter.process(bingoGameOutput);
-        String splitOutputAsString = bingoGameOutputSplitter.combineAsStringWithDoubleLineBreaks(splitOutput);
-        textArea.setText(splitOutputAsString);
-    }
-
     private GridPane createNewGridPane() {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
@@ -397,27 +391,27 @@ public class BingoGameUserInterface {
                 int amount = getAmountFromUserInput(entry.getValue(), achievement.getDisplayText());
                 divisionAchievements.addAchievementResult(achievement, amount);
             }
-            boolean playerResultSubmittedSuccessfully =
-                    bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
-            boolean sharedResultSubmittedSuccessfully =
-                    bingoGame.submitSharedDivisionAchievements(divisionAchievements);
-            if (playerResultSubmittedSuccessfully || sharedResultSubmittedSuccessfully) {
-                setActiveRetryRules();
-                setTextInTextArea();
-                updateButtonVisibility();
-            }
+            bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
+            bingoGame.submitSharedDivisionAchievements(divisionAchievements);
+            setActiveRetryRules();
+            setTextInTextArea();
+            updateButtonVisibility();
         } catch (UserInputException exception) {
-            textArea.setText(exception.getMessage());
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
     private void setActiveRetryRules() {
-        List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().isSelected())
-                .map(Map.Entry::getKey)
-                .toList();
-        bingoGame.setActiveRetryRules(activeRetryRules);
+        try {
+            List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().isSelected())
+                    .map(Map.Entry::getKey)
+                    .toList();
+            bingoGame.setActiveRetryRules(activeRetryRules);
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
+        }
     }
 
     private int getAmountFromUserInput(TextField textField, String displayText) throws UserInputException {
@@ -435,11 +429,13 @@ public class BingoGameUserInterface {
     }
 
     private void confirmResult(InputEvent ignoredEvent) {
-        boolean stateChangeSuccessful = bingoGame.confirmCurrentResult();
-        if (stateChangeSuccessful) {
+        try {
+            bingoGame.confirmCurrentResult();
             updateComboBoxWithAllowedMainArmamentTypes();
             performResetOnUserInterface();
             createAutosaveFile();
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
@@ -489,9 +485,11 @@ public class BingoGameUserInterface {
     }
 
     private void resetCurrentLevel() {
-        boolean stateChangeSuccessful = bingoGame.doResetForCurrentLevel();
-        if (stateChangeSuccessful) {
+        try {
+            bingoGame.doResetForCurrentLevel();
             performResetOnUserInterface();
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
@@ -533,24 +531,41 @@ public class BingoGameUserInterface {
         setTextInTextArea();
     }
 
+    private void setTextInTextArea() {
+        try {
+            String bingoGameOutput = bingoGame.toString();
+            List<String> splitOutput = bingoGameOutputSplitter.process(bingoGameOutput);
+            String splitOutputAsString = bingoGameOutputSplitter.combineAsStringWithDoubleLineBreaks(splitOutput);
+            textArea.setText(splitOutputAsString);
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
+        }
+    }
+
+    private void showMessageOfUserInputExceptionInTextArea(UserInputException exception) {
+        textArea.setText(exception.getMessage());
+    }
+
     private void endChallenge(InputEvent ignoredEvent) {
-        boolean stateChangeSuccessful = bingoGame.endChallenge();
-        if (stateChangeSuccessful) {
+        try {
+            bingoGame.endChallenge();
             setTextInTextArea();
             updateButtonVisibility();
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
     private void addShip(InputEvent ignoredEvent) {
         String trimmedUserInput = shipInputField.getText().trim();
         if (userInputIsNotBlank(trimmedUserInput)) {
-            Ship ship = new Ship(trimmedUserInput);
-            boolean shipSuccessfullyAdded = bingoGame.addShipUsed(ship);
-            if (shipSuccessfullyAdded) {
+            try {
+                Ship ship = new Ship(trimmedUserInput);
+                bingoGame.addShipUsed(ship);
                 tableView.getItems().add(ship);
                 clearInput(shipInputField);
-            } else {
-                textArea.setText(SHIP_ALREADY_USED);
+            } catch (UserInputException exception) {
+                showMessageOfUserInputExceptionInTextArea(exception);
             }
         }
     }
@@ -560,10 +575,15 @@ public class BingoGameUserInterface {
     }
 
     private void removeShip(InputEvent ignoredEvent) {
-        Ship ship = tableView.getSelectionModel().getSelectedItem();
-        boolean shipSuccessfullyRemoved = bingoGame.removeShipUsed(ship);
-        if (shipSuccessfullyRemoved) {
-            tableView.getItems().remove(ship);
+        try {
+            Optional<Ship> selectedShip = getSelectedShip();
+            if (selectedShip.isPresent()) {
+                Ship ship = selectedShip.get();
+                bingoGame.removeShipUsed(ship);
+                tableView.getItems().remove(ship);
+            }
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
@@ -580,37 +600,38 @@ public class BingoGameUserInterface {
         try {
             int number = getAmountFromUserInput(numberInputField, "Number chosen by player");
             ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
-            boolean restrictionSuccessfullySet =
-                    bingoGame.setShipRestrictionForPlayer(getSelectedPlayer(), shipRestriction);
-            if (restrictionSuccessfullySet) {
-                updateComboBoxWithAllowedMainArmamentTypes();
-                clearInput(numberInputField);
-                setTextInTextArea();
-            } else {
-                textArea.setText(SHIP_RESTRICTION_ALREADY_SET);
-            }
+            bingoGame.setShipRestrictionForPlayer(getSelectedPlayer(), shipRestriction);
+            updateComboBoxWithAllowedMainArmamentTypes();
+            clearInput(numberInputField);
+            setTextInTextArea();
         } catch (UserInputException exception) {
-            textArea.setText(exception.getMessage());
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
     private void removeRestriction(InputEvent ignoredEvent) {
-        boolean restrictionSuccessfullyRemoved = bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
-        if (restrictionSuccessfullyRemoved) {
+        try {
+            bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
             updateComboBoxWithAllowedMainArmamentTypes();
             setTextInTextArea();
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
     private void onPlayerSelectionChange(ActionEvent ignoredEvent) {
-        Optional<BingoResult> optionalBingoResult = bingoGame.getBingoResultForPlayer(getSelectedPlayer());
-        updateComboBoxWithAllowedMainArmamentTypes();
-        clearPlayerDependentInputFields();
-        if (optionalBingoResult.isPresent()) {
-            BingoResult bingoResult = optionalBingoResult.get();
-            mainArmamentTypeComboBox.setValue(bingoResult.getMainArmamentType());
-            updateRibbonAmountsFromPlayerData(bingoResult.getRibbonResultSet());
-            updateAchievementAmountsFromPlayerData(bingoResult.getAchievementResultSet());
+        try {
+            Optional<BingoResult> optionalBingoResult = bingoGame.getBingoResultForPlayer(getSelectedPlayer());
+            updateComboBoxWithAllowedMainArmamentTypes();
+            clearPlayerDependentInputFields();
+            if (optionalBingoResult.isPresent()) {
+                BingoResult bingoResult = optionalBingoResult.get();
+                mainArmamentTypeComboBox.setValue(bingoResult.getMainArmamentType());
+                updateRibbonAmountsFromPlayerData(bingoResult.getRibbonResultSet());
+                updateAchievementAmountsFromPlayerData(bingoResult.getAchievementResultSet());
+            }
+        } catch (UserInputException exception) {
+            showMessageOfUserInputExceptionInTextArea(exception);
         }
     }
 
@@ -630,5 +651,9 @@ public class BingoGameUserInterface {
 
     private Player getSelectedPlayer() {
         return playerComboBox.getSelectionModel().getSelectedItem();
+    }
+
+    private Optional<Ship> getSelectedShip() {
+        return Optional.ofNullable(tableView.getSelectionModel().getSelectedItem());
     }
 }

@@ -1,5 +1,7 @@
 package bingo.game;
 
+import bingo.game.input.UserInputException;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -49,11 +51,9 @@ public class BingoGameStateMachine implements Serializable {
         };
     }
 
-    private void ensureActionIsAllowed(BingoGameAction action) {
+    public void ensureActionIsAllowed(BingoGameAction action) throws UserInputException {
         if (!actionIsAllowed(action)) {
-            throw new IllegalStateException("Action %s is not allowed in the %s state".formatted(
-                    action,
-                    bingoGameState));
+            throw new UserInputException("Action %s is not allowed in the %s state".formatted(action, bingoGameState));
         }
     }
 
@@ -61,7 +61,8 @@ public class BingoGameStateMachine implements Serializable {
      * Action: {@link BingoGameAction#SUBMIT_RESULT}
      */
     public void processSubmitResultAction(
-            boolean bingoResultIsSubmittedForAllPlayers, boolean requirementOfCurrentResultBarIsMet) {
+            boolean bingoResultIsSubmittedForAllPlayers, boolean requirementOfCurrentResultBarIsMet)
+            throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
         if (bingoResultIsSubmittedForAllPlayers) {
             bingoGameState = requirementOfCurrentResultBarIsMet ?
@@ -75,7 +76,7 @@ public class BingoGameStateMachine implements Serializable {
     /**
      * Action: {@link BingoGameAction#CONFIRM_RESULT}
      */
-    public void processConfirmResultAction(boolean hasNextLevel, boolean retryingIsAllowed) {
+    public void processConfirmResultAction(boolean hasNextLevel, boolean retryingIsAllowed) throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
         if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END)) {
             bingoGameState = BingoGameState.CHALLENGE_ENDED_VOLUNTARILY;
@@ -92,7 +93,7 @@ public class BingoGameStateMachine implements Serializable {
     /**
      * Action: {@link BingoGameAction#PERFORM_RESET}
      */
-    public void processPerformResetAction() {
+    public void processPerformResetAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.PERFORM_RESET);
         bingoGameState = BingoGameState.LEVEL_INITIALIZED;
     }
@@ -100,7 +101,7 @@ public class BingoGameStateMachine implements Serializable {
     /**
      * Action: {@link BingoGameAction#END_CHALLENGE_VOLUNTARILY}
      */
-    public void processEndChallengeVoluntarilyAction() {
+    public void processEndChallengeVoluntarilyAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.END_CHALLENGE_VOLUNTARILY);
         bingoGameState = BingoGameState.UNCONFIRMED_VOLUNTARY_END;
     }
@@ -108,14 +109,14 @@ public class BingoGameStateMachine implements Serializable {
     /**
      * Action: {@link BingoGameAction#CHANGE_SHIP_RESTRICTION}
      */
-    public void processChangeShipRestrictionAction() {
+    public void processChangeShipRestrictionAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
     }
 
     /**
      * Action: {@link BingoGameAction#OTHER_ACTION}
      */
-    public void processOtherAction() {
+    public void processOtherAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.OTHER_ACTION);
     }
 }

@@ -1,5 +1,7 @@
 package bingo.game.utility;
 
+import bingo.game.input.UserInputException;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public class BingoGameOutputSplitter {
     private static final int CHAT_MESSAGE_MAX_LENGTH = 500;
     private static final String DOUBLE_LINE_BREAK = "\n\n";
 
-    public List<String> process(String bingoGameOutput) {
+    public List<String> process(String bingoGameOutput) throws UserInputException {
         List<String> firstResult = splitAtDoubleLineBreakIfFound(bingoGameOutput);
         if (!firstResult.isEmpty()) {
             return firstResult;
@@ -23,7 +25,7 @@ public class BingoGameOutputSplitter {
         if (!thirdResult.isEmpty()) {
             return thirdResult;
         }
-        throw new IllegalStateException("Could not find any appropriate index to split the output");
+        throw new UserInputException("Internal error: Could not find any appropriate index to split the output");
     }
 
     public String combineAsStringWithDoubleLineBreaks(List<String> splitOutput) {
@@ -32,7 +34,8 @@ public class BingoGameOutputSplitter {
                 .orElseThrow();
     }
 
-    private List<String> splitAtSearchStringIfFound(String bingoGameOutput, String searchString) {
+    private List<String> splitAtSearchStringIfFound(String bingoGameOutput, String searchString)
+            throws UserInputException {
         int indexOfSpace = searchString.indexOf(" ");
         List<String> splitOutput = new LinkedList<>();
         int lastIndexOfSearchString = bingoGameOutput.length();
@@ -46,7 +49,7 @@ public class BingoGameOutputSplitter {
         return splitOutput;
     }
 
-    private List<String> splitAtDoubleLineBreakIfFound(String bingoGameOutput) {
+    private List<String> splitAtDoubleLineBreakIfFound(String bingoGameOutput) throws UserInputException {
         List<String> splitOutput = new LinkedList<>();
         int lastIndexOfDoubleLineBreak = bingoGameOutput.lastIndexOf(DOUBLE_LINE_BREAK);
         if (lastIndexOfDoubleLineBreak != -1) {

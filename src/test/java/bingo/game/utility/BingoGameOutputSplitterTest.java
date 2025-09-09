@@ -1,5 +1,6 @@
 package bingo.game.utility;
 
+import bingo.game.input.UserInputException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -42,7 +43,7 @@ class BingoGameOutputSplitterTest {
     private final BingoGameOutputSplitter bingoGameOutputSplitter = new BingoGameOutputSplitter();
 
     @Test
-    void shouldAlwaysSplitAtDoubleLineBreakRegardlessOfLength() {
+    void shouldAlwaysSplitAtDoubleLineBreakRegardlessOfLength() throws UserInputException {
         String inputString = SHORT_STRING.concat(STRING_STARTING_WITH_DOUBLE_LINE_BREAK)
                 .concat(STRING_STARTING_WITH_DOUBLE_LINE_BREAK);
         List<String> splitOutput = bingoGameOutputSplitter.process(inputString);
@@ -53,7 +54,7 @@ class BingoGameOutputSplitterTest {
     }
 
     @Test
-    void shouldSplitLongInputAtSentenceEndIfPossible() {
+    void shouldSplitLongInputAtSentenceEndIfPossible() throws UserInputException {
         String inputString = PLAYER_A_RESULT_STRING.concat(PLAYER_B_RESULT_STRING)
                 .concat(PLAYER_C_RESULT_STRING)
                 .concat(REST_OF_RESULT_STRING);
@@ -66,7 +67,7 @@ class BingoGameOutputSplitterTest {
     }
 
     @Test
-    void shouldSplitLongCalculationAtPlusSign() {
+    void shouldSplitLongCalculationAtPlusSign() throws UserInputException {
         String inputString = LONG_CALCULATION_STRING_PART_1.concat(LONG_CALCULATION_STRING_PART_2)
                 .concat(LONG_CALCULATION_STRING_PART_3)
                 .concat(LONG_CALCULATION_STRING_PART_4);
@@ -79,7 +80,7 @@ class BingoGameOutputSplitterTest {
     }
 
     @Test
-    void shouldSplitInputAtSentenceEndWithExactlyFiveHundredCharacters() {
+    void shouldSplitInputAtSentenceEndWithExactlyFiveHundredCharacters() throws UserInputException {
         assertEquals(500, DUMMY_STRING_WITH_EXACTLY_500_CHARACTERS.length());
         String inputString = DUMMY_STRING_WITH_EXACTLY_500_CHARACTERS.concat(REST_OF_DUMMY_STRING);
         List<String> splitOutput = bingoGameOutputSplitter.process(inputString);
@@ -89,7 +90,7 @@ class BingoGameOutputSplitterTest {
     }
 
     @Test
-    void shouldSplitInputAtPlusSignWithExactlyFiveHundredCharacters() {
+    void shouldSplitInputAtPlusSignWithExactlyFiveHundredCharacters() throws UserInputException {
         assertEquals(500, CALCULATION_STRING_WITH_EXACTLY_500_CHARACTERS.length());
         String inputString = CALCULATION_STRING_WITH_EXACTLY_500_CHARACTERS.concat(REST_OF_CALCULATION_STRING);
         List<String> splitOutput = bingoGameOutputSplitter.process(inputString);
@@ -99,22 +100,24 @@ class BingoGameOutputSplitterTest {
     }
 
     @Test
-    void shouldThrowIllegalStateExceptionForUnexpectedInput() {
+    void shouldThrowUserInputExceptionForUnexpectedInput() {
         assertEquals(510, UNEXPECTED_INPUT.length());
-        IllegalStateException exception =
-                assertThrows(IllegalStateException.class, () -> bingoGameOutputSplitter.process(UNEXPECTED_INPUT));
-        assertEquals("Could not find any appropriate index to split the output", exception.getMessage());
+        UserInputException exception =
+                assertThrows(UserInputException.class, () -> bingoGameOutputSplitter.process(UNEXPECTED_INPUT));
+        assertEquals(
+                "Internal error: Could not find any appropriate index to split the output",
+                exception.getMessage());
     }
 
     @Test
-    void shouldNotSplitShortInputAtAll() {
+    void shouldNotSplitShortInputAtAll() throws UserInputException {
         List<String> splitOutput = bingoGameOutputSplitter.process(SHORT_STRING);
         assertEquals(1, splitOutput.size());
         assertEquals(SHORT_STRING, splitOutput.getFirst());
     }
 
     @Test
-    void shouldNotSplitInputIfExactlyFiveHundredCharactersLong() {
+    void shouldNotSplitInputIfExactlyFiveHundredCharactersLong() throws UserInputException {
         List<String> splitOutput = bingoGameOutputSplitter.process(DUMMY_STRING_WITH_EXACTLY_500_CHARACTERS);
         assertEquals(1, splitOutput.size());
         assertEquals(DUMMY_STRING_WITH_EXACTLY_500_CHARACTERS, splitOutput.getFirst());

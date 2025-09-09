@@ -1,5 +1,6 @@
 package bingo.game;
 
+import bingo.game.input.UserInputException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,25 +32,25 @@ class BingoGameStateMachineTest {
     class ProcessAction {
 
         @Test
-        void shouldStayInLevelInitializedStateWhenPerformingReset() {
+        void shouldStayInLevelInitializedStateWhenPerformingReset() throws UserInputException {
             bingoGameStateMachine.processPerformResetAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
         @Test
-        void shouldStayInLevelInitializedStateWhenChangingShipRestriction() {
+        void shouldStayInLevelInitializedStateWhenChangingShipRestriction() throws UserInputException {
             bingoGameStateMachine.processChangeShipRestrictionAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
         @Test
-        void shouldStayInLevelInitializedStateWhenPerformingOtherAction() {
+        void shouldStayInLevelInitializedStateWhenPerformingOtherAction() throws UserInputException {
             bingoGameStateMachine.processOtherAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
         @Test
-        void shouldTransitionFromPartialResultSubmittedStateToUnsuccessfulMatch() {
+        void shouldTransitionFromPartialResultSubmittedStateToUnsuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, false);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             bingoGameStateMachine.processSubmitResultAction(true, false);
@@ -57,7 +58,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromPartialResultSubmittedStateToSuccessfulMatch() {
+        void shouldTransitionFromPartialResultSubmittedStateToSuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, true);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             bingoGameStateMachine.processSubmitResultAction(true, true);
@@ -65,7 +66,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromPartialResultSubmittedStateToLevelInitializedState() {
+        void shouldTransitionFromPartialResultSubmittedStateToLevelInitializedState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, true);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             bingoGameStateMachine.processPerformResetAction();
@@ -73,7 +74,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnconfirmedVoluntaryEndStateToPartialResultSubmittedState() {
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToPartialResultSubmittedState() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processSubmitResultAction(false, false);
@@ -81,7 +82,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnconfirmedVoluntaryEndStateToUnsuccessfulMatch() {
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToUnsuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processSubmitResultAction(true, false);
@@ -89,7 +90,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnconfirmedVoluntaryEndStateToSuccessfulMatch() {
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToSuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processSubmitResultAction(true, true);
@@ -97,7 +98,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnconfirmedVoluntaryEndStateToLevelInitializedState() {
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToLevelInitializedState() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processPerformResetAction();
@@ -105,7 +106,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulMatchToPartialResultSubmittedState() {
+        void shouldTransitionFromUnsuccessfulMatchToPartialResultSubmittedState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(false, false);
@@ -113,7 +114,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenConfirmingResult() {
+        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenConfirmingResult()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(false, true);
@@ -121,7 +123,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenPerformingReset() {
+        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenPerformingReset()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processPerformResetAction();
@@ -129,7 +132,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulToSuccessfulMatch() {
+        void shouldTransitionFromUnsuccessfulToSuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(true, true);
@@ -137,7 +140,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulMatchToPartialResultSubmittedState() {
+        void shouldTransitionFromSuccessfulMatchToPartialResultSubmittedState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(false, true);
@@ -145,7 +148,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenConfirmingResult() {
+        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenConfirmingResult()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(true, false);
@@ -153,7 +157,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenPerformingReset() {
+        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenPerformingReset() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processPerformResetAction();
@@ -161,7 +165,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulToUnsuccessfulMatch() {
+        void shouldTransitionFromSuccessfulToUnsuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(true, false);
@@ -169,7 +173,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToPartialResultSubmittedState() {
+        void shouldTransitionToPartialResultSubmittedState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, false);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             bingoGameStateMachine.processSubmitResultAction(false, true);
@@ -177,13 +181,13 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToUnconfirmedVoluntaryEndState() {
+        void shouldTransitionToUnconfirmedVoluntaryEndState() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
         }
 
         @Test
-        void shouldTransitionToUnsuccessfulMatch() {
+        void shouldTransitionToUnsuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(true, false);
@@ -191,7 +195,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToSuccessfulMatch() {
+        void shouldTransitionToSuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processSubmitResultAction(true, true);
@@ -199,7 +203,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToChallengeEndedVoluntarilyState() {
+        void shouldTransitionToChallengeEndedVoluntarilyState() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processConfirmResultAction(false, false);
@@ -207,7 +211,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToChallengeEndedSuccessfullyState() {
+        void shouldTransitionToChallengeEndedSuccessfullyState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(false, false);
@@ -215,7 +219,7 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionToChallengeEndedUnsuccessfullyState() {
+        void shouldTransitionToChallengeEndedUnsuccessfullyState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(false, false);
@@ -223,65 +227,71 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenConfirmingResultInLevelInitializedState() {
-            assertIllegalStateExceptionIsThrownWithMessage(
+        void shouldThrowUserInputExceptionWhenConfirmingResultInLevelInitializedState() {
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action CONFIRM_RESULT is not allowed in the LEVEL_INITIALIZED state",
                     () -> bingoGameStateMachine.processConfirmResultAction(false, false));
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenSubmittingResultInChallengeEndedVoluntarilyState() {
+        void shouldThrowUserInputExceptionWhenSubmittingResultInChallengeEndedVoluntarilyState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             bingoGameStateMachine.processConfirmResultAction(false, false);
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action SUBMIT_RESULT is not allowed in the CHALLENGE_ENDED_VOLUNTARILY state",
                     () -> bingoGameStateMachine.processSubmitResultAction(false, false));
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenPerformingResetInChallengeEndedVoluntarilyState() {
+        void shouldThrowUserInputExceptionWhenPerformingResetInChallengeEndedVoluntarilyState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             bingoGameStateMachine.processConfirmResultAction(false, false);
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action PERFORM_RESET is not allowed in the CHALLENGE_ENDED_VOLUNTARILY state",
                     () -> bingoGameStateMachine.processPerformResetAction());
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenEndingChallengeInChallengeEndedVoluntarilyState() {
+        void shouldThrowUserInputExceptionWhenEndingChallengeInChallengeEndedVoluntarilyState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             bingoGameStateMachine.processConfirmResultAction(false, false);
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action END_CHALLENGE_VOLUNTARILY is not allowed in the CHALLENGE_ENDED_VOLUNTARILY state",
                     () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenEndingChallengeInUnconfirmedVoluntaryEndState() {
+        void shouldThrowUserInputExceptionWhenEndingChallengeInUnconfirmedVoluntaryEndState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action END_CHALLENGE_VOLUNTARILY is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
                     () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenChangingShipRestrictionInUnconfirmedVoluntaryEndState() {
+        void shouldThrowUserInputExceptionWhenChangingShipRestrictionInUnconfirmedVoluntaryEndState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action CHANGE_SHIP_RESTRICTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
                     () -> bingoGameStateMachine.processChangeShipRestrictionAction());
         }
 
         @Test
-        void shouldThrowIllegalStateExceptionWhenPerformingOtherActionInUnconfirmedVoluntaryEndState() {
+        void shouldThrowUserInputExceptionWhenPerformingOtherActionInUnconfirmedVoluntaryEndState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertIllegalStateExceptionIsThrownWithMessage(
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action OTHER_ACTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
                     () -> bingoGameStateMachine.processOtherAction());
         }
 
-        private void assertIllegalStateExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
-            IllegalStateException exception = assertThrows(IllegalStateException.class, executable);
+        private void assertUserInputExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
+            UserInputException exception = assertThrows(UserInputException.class, executable);
             assertEquals(expectedMessage, exception.getMessage());
         }
     }
@@ -290,28 +300,29 @@ class BingoGameStateMachineTest {
     class ActionIsAllowed {
 
         @Test
-        void shouldAlwaysReturnFalseWhenInChallengeEndedVoluntarilyState() {
+        void shouldAlwaysReturnFalseWhenInChallengeEndedVoluntarilyState() throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             bingoGameStateMachine.processConfirmResultAction(false, false);
             assertReturnsFalseForAllActions();
         }
 
         @Test
-        void shouldAlwaysReturnFalseWhenInChallengeEndedSuccessfullyState() {
+        void shouldAlwaysReturnFalseWhenInChallengeEndedSuccessfullyState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             bingoGameStateMachine.processConfirmResultAction(false, false);
             assertReturnsFalseForAllActions();
         }
 
         @Test
-        void shouldAlwaysReturnFalseWhenInChallengeEndedUnsuccessfullyState() {
+        void shouldAlwaysReturnFalseWhenInChallengeEndedUnsuccessfullyState() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             bingoGameStateMachine.processConfirmResultAction(false, false);
             assertReturnsFalseForAllActions();
         }
 
         @Test
-        void shouldReturnFalseForActionsWhichDoNotAffectStateWhenInUnconfirmedVoluntaryEndState() {
+        void shouldReturnFalseForActionsWhichDoNotAffectStateWhenInUnconfirmedVoluntaryEndState()
+                throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             List<BingoGameAction> disallowedActions = List.of(
                     BingoGameAction.END_CHALLENGE_VOLUNTARILY,
@@ -321,7 +332,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedSuccessfulMatchState() {
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedSuccessfulMatchState()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             List<BingoGameAction> disallowedActions =
                     List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.CHANGE_SHIP_RESTRICTION);
@@ -329,7 +341,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedUnsuccessfulMatchState() {
+        void shouldReturnTrueForAllActionsExceptEndChallengeVoluntarilyAndChangeShipRestrictionWhenInUnconfirmedUnsuccessfulMatchState()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             List<BingoGameAction> disallowedActions =
                     List.of(BingoGameAction.END_CHALLENGE_VOLUNTARILY, BingoGameAction.CHANGE_SHIP_RESTRICTION);
@@ -337,7 +350,8 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPartialResultSubmittedState() {
+        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPartialResultSubmittedState()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, false);
             List<BingoGameAction> disallowedActions = List.of(
                     BingoGameAction.END_CHALLENGE_VOLUNTARILY,

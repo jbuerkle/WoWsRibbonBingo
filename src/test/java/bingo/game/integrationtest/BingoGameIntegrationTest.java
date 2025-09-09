@@ -3,6 +3,7 @@ package bingo.game.integrationtest;
 import bingo.achievements.Achievement;
 import bingo.achievements.division.DivisionAchievement;
 import bingo.game.BingoGame;
+import bingo.game.input.UserInputException;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.players.Player;
@@ -12,11 +13,13 @@ import bingo.ships.MainArmamentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BingoGameIntegrationTest {
 
@@ -41,12 +44,12 @@ class BingoGameIntegrationTest {
         private BingoGame bingoGame;
 
         @BeforeEach
-        void setup() {
+        void setup() throws UserInputException {
             bingoGame = new BingoGame(List.of(SINGLE_PLAYER), Collections.emptyList());
         }
 
         @Test
-        void shouldProceedToLevelThreeThenEndTheChallengeUnsuccessfully() {
+        void shouldProceedToLevelThreeThenEndTheChallengeUnsuccessfully() throws UserInputException {
             submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
             bingoGame.confirmCurrentResult();
             submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
@@ -57,7 +60,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldProceedToLevelFiveThenEndTheChallengeVoluntarily() {
+        void shouldProceedToLevelFiveThenEndTheChallengeVoluntarily() throws UserInputException {
             for (int level = START_LEVEL; level < 5; level++) {
                 submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
                 bingoGame.confirmCurrentResult();
@@ -68,7 +71,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldProceedToLevelSevenThenEndTheChallengeSuccessfully() {
+        void shouldProceedToLevelSevenThenEndTheChallengeSuccessfully() throws UserInputException {
             for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
                 submitBingoResult(getBingoResultWithMoreThanTwoThousandPoints());
                 bingoGame.confirmCurrentResult();
@@ -77,7 +80,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldAddAnExtraLifeThenConsumeItToContinueAfterAnUnsuccessfulMatch() {
+        void shouldAddAnExtraLifeThenConsumeItToContinueAfterAnUnsuccessfulMatch() throws UserInputException {
             for (int level = START_LEVEL; level < 4; level++) {
                 submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
                 bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
@@ -89,7 +92,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldAllowRetryButNotAwardAnyTokens() {
+        void shouldAllowRetryButNotAwardAnyTokens() throws UserInputException {
             String initialBingoGameText = bingoGame.toString();
             submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
             bingoGame.setActiveRetryRules(List.of(RetryRule.UNFAIR_DISADVANTAGE));
@@ -98,13 +101,13 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldNotAwardPointsForDivisionAchievementsEvenIfAdded() {
+        void shouldNotAwardPointsForDivisionAchievementsEvenIfAdded() throws UserInputException {
             submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
             assertEquals(LEVEL_ONE_SUCCESSFUL_MATCH, bingoGame.toString());
         }
 
-        private void submitBingoResult(BingoResult bingoResult) {
+        private void submitBingoResult(BingoResult bingoResult) throws UserInputException {
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, bingoResult);
         }
     }
@@ -126,40 +129,48 @@ class BingoGameIntegrationTest {
         private BingoGame bingoGame;
 
         @BeforeEach
-        void setup() {
+        void setup() throws UserInputException {
             bingoGame = new BingoGame(List.of(PLAYER_A, PLAYER_B, PLAYER_C), Collections.emptyList());
         }
 
         @Test
-        void shouldShowCorrectlyUpdatedTokenCounterEvenWhenBingoResultsAreOnlyPartiallySubmitted() {
+        void shouldShowCorrectlyUpdatedTokenCounterEvenWhenBingoResultsAreOnlyPartiallySubmitted()
+                throws UserInputException {
             bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithLessThanThreeHundredPoints());
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
             assertEquals(LEVEL_ONE_SUCCESSFUL_MATCH, bingoGame.toString());
         }
 
         @Test
-        void shouldNotShowMatchOutcomeWhenBingoResultsAreOnlyPartiallySubmitted() {
+        void shouldNotShowMatchOutcomeWhenBingoResultsAreOnlyPartiallySubmitted() throws UserInputException {
             bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithLessThanThreeHundredPoints());
             assertEquals(LEVEL_ONE_WITH_BINGO_RESULT, bingoGame.toString());
         }
 
         @Test
-        void shouldNotShowMatchOutcomeWhenOnlyDivisionAchievementsAreSubmitted() {
+        void shouldNotShowMatchOutcomeWhenOnlyDivisionAchievementsAreSubmitted() throws UserInputException {
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
             assertEquals(LEVEL_ONE_WITH_DIVISION_ACHIEVEMENTS, bingoGame.toString());
         }
 
         @Test
-        void shouldNotAllowProceedingToLevelTwoBeforeResultsAreSubmittedForAllPlayers() {
+        void shouldNotAllowProceedingToLevelTwoBeforeResultsAreSubmittedForAllPlayers() throws UserInputException {
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
-            bingoGame.confirmCurrentResult();
+            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
             bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithMoreThanOneThousandPoints());
-            bingoGame.confirmCurrentResult();
+            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
             bingoGame.submitBingoResultForPlayer(PLAYER_B, getBingoResultWithMoreThanOneThousandPoints());
-            bingoGame.confirmCurrentResult();
+            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
             bingoGame.submitBingoResultForPlayer(PLAYER_C, getBingoResultWithMoreThanOneThousandPoints());
             bingoGame.confirmCurrentResult();
             assertEquals(LEVEL_TWO_WITH_ONE_TOKEN, bingoGame.toString());
+        }
+
+        private void assertUserInputExceptionIsThrownForPartialResult(Executable executable) {
+            UserInputException exception = assertThrows(UserInputException.class, executable);
+            assertEquals(
+                    "Action CONFIRM_RESULT is not allowed in the PARTIAL_RESULT_SUBMITTED state",
+                    exception.getMessage());
         }
     }
 
