@@ -2,7 +2,9 @@ package bingo.math.terms.impl;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EquationTest {
     private static final Equation fifty = new Equation(new Literal(50.0));

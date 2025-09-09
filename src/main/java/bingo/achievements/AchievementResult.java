@@ -2,7 +2,11 @@ package bingo.achievements;
 
 import bingo.achievements.modifiers.PointValueModifier;
 import bingo.math.terms.Term;
-import bingo.math.terms.impl.*;
+import bingo.math.terms.impl.Addition;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.Multiplication;
+import bingo.math.terms.impl.TermWithPoints;
 import bingo.ribbons.RibbonResult;
 import bingo.ships.MainArmamentType;
 

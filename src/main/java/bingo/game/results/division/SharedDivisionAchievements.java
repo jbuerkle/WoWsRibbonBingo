@@ -3,7 +3,11 @@ package bingo.game.results.division;
 import bingo.achievements.division.DivisionAchievement;
 import bingo.achievements.division.DivisionAchievementResult;
 import bingo.math.terms.Term;
-import bingo.math.terms.impl.*;
+import bingo.math.terms.impl.Addition;
+import bingo.math.terms.impl.Equation;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.TermWithPoints;
 
 import java.io.Serial;
 import java.io.Serializable;

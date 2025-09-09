@@ -6,7 +6,11 @@ import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBar;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.math.terms.Term;
-import bingo.math.terms.impl.*;
+import bingo.math.terms.impl.Addition;
+import bingo.math.terms.impl.Equation;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.TermWithPoints;
 import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
@@ -16,7 +20,11 @@ import bingo.tokens.TokenCounter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class BingoGame implements Serializable {
