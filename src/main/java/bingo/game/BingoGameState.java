@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 public enum BingoGameState implements Serializable {
     LEVEL_INITIALIZED(false),
+    PREREQUISITE_SETUP_DONE(false),
     PARTIAL_RESULT_SUBMITTED(false),
     UNCONFIRMED_VOLUNTARY_END(false),
     UNCONFIRMED_SUCCESSFUL_MATCH(false),

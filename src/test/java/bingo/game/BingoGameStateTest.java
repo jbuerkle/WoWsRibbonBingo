@@ -13,6 +13,7 @@ class BingoGameStateTest {
     void isFinalShouldReturnFalse() {
         List<BingoGameState> nonFinalStates = List.of(
                 BingoGameState.LEVEL_INITIALIZED,
+                BingoGameState.PREREQUISITE_SETUP_DONE,
                 BingoGameState.PARTIAL_RESULT_SUBMITTED,
                 BingoGameState.UNCONFIRMED_VOLUNTARY_END,
                 BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH,

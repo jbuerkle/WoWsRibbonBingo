@@ -21,7 +21,7 @@ public class BingoGameStateMachine implements Serializable {
 
     public boolean actionIsAllowed(BingoGameAction action) {
         return switch (bingoGameState) {
-            case LEVEL_INITIALIZED -> !action.equals(BingoGameAction.CONFIRM_RESULT);
+            case LEVEL_INITIALIZED, PREREQUISITE_SETUP_DONE -> !action.equals(BingoGameAction.CONFIRM_RESULT);
             case PARTIAL_RESULT_SUBMITTED -> actionIsAllowedForPartialResultSubmittedState(action);
             case UNCONFIRMED_VOLUNTARY_END -> actionIsAllowedForUnconfirmedVoluntaryEndState(action);
             case UNCONFIRMED_SUCCESSFUL_MATCH, UNCONFIRMED_UNSUCCESSFUL_MATCH ->
