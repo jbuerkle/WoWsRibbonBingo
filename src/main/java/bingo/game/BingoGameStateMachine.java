@@ -112,11 +112,4 @@ public class BingoGameStateMachine implements Serializable {
     public void processChangeShipRestrictionAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
     }
-
-    /**
-     * Action: {@link BingoGameAction#OTHER_ACTION}
-     */
-    public void processOtherAction() throws UserInputException {
-        ensureActionIsAllowed(BingoGameAction.OTHER_ACTION);
-    }
 }

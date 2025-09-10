@@ -47,12 +47,6 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldStayInLevelInitializedStateWhenPerformingOtherAction() throws UserInputException {
-            bingoGameStateMachine.processOtherAction();
-            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-        }
-
-        @Test
         void shouldTransitionFromPartialResultSubmittedStateToUnsuccessfulMatch() throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, false);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
@@ -282,15 +276,6 @@ class BingoGameStateMachineTest {
             assertUserInputExceptionIsThrownWithMessage(
                     "Action CHANGE_SHIP_RESTRICTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
                     () -> bingoGameStateMachine.processChangeShipRestrictionAction());
-        }
-
-        @Test
-        void shouldThrowUserInputExceptionWhenPerformingOtherActionInUnconfirmedVoluntaryEndState()
-                throws UserInputException {
-            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
-            assertUserInputExceptionIsThrownWithMessage(
-                    "Action OTHER_ACTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
-                    () -> bingoGameStateMachine.processOtherAction());
         }
 
         private void assertUserInputExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
