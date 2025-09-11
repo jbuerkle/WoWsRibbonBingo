@@ -9,10 +9,16 @@ public class BingoGameStateMachine implements Serializable {
     @Serial
     private static final long serialVersionUID = -2884018232777089835L;
 
+    private final boolean shipRestrictionsAreEnabled;
+    private final boolean endingVoluntarilyIsAllowed;
+    private boolean shipRestrictionIsSetForAllPlayers;
     private BingoGameState bingoGameState;
 
-    public BingoGameStateMachine() {
-        this.bingoGameState = BingoGameState.LEVEL_INITIALIZED;
+    public BingoGameStateMachine(boolean shipRestrictionsAreEnabled, boolean endingVoluntarilyIsAllowed) {
+        this.shipRestrictionsAreEnabled = shipRestrictionsAreEnabled;
+        this.endingVoluntarilyIsAllowed = endingVoluntarilyIsAllowed;
+        this.shipRestrictionIsSetForAllPlayers = false;
+        this.bingoGameState = determineInitialState();
     }
 
     public BingoGameState getCurrentState() {
@@ -21,12 +27,31 @@ public class BingoGameStateMachine implements Serializable {
 
     public boolean actionIsAllowed(BingoGameAction action) {
         return switch (bingoGameState) {
-            case LEVEL_INITIALIZED, PREREQUISITE_SETUP_DONE -> !action.equals(BingoGameAction.CONFIRM_RESULT);
+            case LEVEL_INITIALIZED -> actionIsAllowedForLevelInitializedState(action);
+            case PREREQUISITE_SETUP_DONE -> actionIsAllowedForPrerequisiteSetupDoneState(action);
             case PARTIAL_RESULT_SUBMITTED -> actionIsAllowedForPartialResultSubmittedState(action);
             case UNCONFIRMED_VOLUNTARY_END -> actionIsAllowedForUnconfirmedVoluntaryEndState(action);
             case UNCONFIRMED_SUCCESSFUL_MATCH, UNCONFIRMED_UNSUCCESSFUL_MATCH ->
                     actionIsAllowedForUnconfirmedMatchResultState(action);
             case CHALLENGE_ENDED_VOLUNTARILY, CHALLENGE_ENDED_SUCCESSFULLY, CHALLENGE_ENDED_UNSUCCESSFULLY -> false;
+        };
+    }
+
+    private boolean actionIsAllowedForLevelInitializedState(BingoGameAction action) {
+        return switch (action) {
+            case SUBMIT_RESULT, CONFIRM_RESULT -> false;
+            case END_CHALLENGE_VOLUNTARILY -> endingVoluntarilyIsAllowed;
+            case CHANGE_SHIP_RESTRICTION -> shipRestrictionsAreEnabled;
+            case PERFORM_RESET, OTHER_ACTION -> true;
+        };
+    }
+
+    private boolean actionIsAllowedForPrerequisiteSetupDoneState(BingoGameAction action) {
+        return switch (action) {
+            case CONFIRM_RESULT -> false;
+            case END_CHALLENGE_VOLUNTARILY -> endingVoluntarilyIsAllowed;
+            case CHANGE_SHIP_RESTRICTION -> shipRestrictionsAreEnabled;
+            case SUBMIT_RESULT, PERFORM_RESET, OTHER_ACTION -> true;
         };
     }
 
@@ -81,12 +106,11 @@ public class BingoGameStateMachine implements Serializable {
         if (bingoGameState.equals(BingoGameState.UNCONFIRMED_VOLUNTARY_END)) {
             bingoGameState = BingoGameState.CHALLENGE_ENDED_VOLUNTARILY;
         } else if (bingoGameState.equals(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH)) {
-            bingoGameState =
-                    hasNextLevel ? BingoGameState.LEVEL_INITIALIZED : BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY;
+            shipRestrictionIsSetForAllPlayers = false;
+            bingoGameState = hasNextLevel ? determineInitialState() : BingoGameState.CHALLENGE_ENDED_SUCCESSFULLY;
         } else if (bingoGameState.equals(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH)) {
-            bingoGameState = retryingIsAllowed ?
-                    BingoGameState.LEVEL_INITIALIZED :
-                    BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY;
+            bingoGameState =
+                    retryingIsAllowed ? determineInitialState() : BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY;
         }
     }
 
@@ -95,7 +119,7 @@ public class BingoGameStateMachine implements Serializable {
      */
     public void processPerformResetAction() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.PERFORM_RESET);
-        bingoGameState = BingoGameState.LEVEL_INITIALIZED;
+        bingoGameState = determineInitialState();
     }
 
     /**
@@ -109,7 +133,20 @@ public class BingoGameStateMachine implements Serializable {
     /**
      * Action: {@link BingoGameAction#CHANGE_SHIP_RESTRICTION}
      */
-    public void processChangeShipRestrictionAction() throws UserInputException {
+    public void processChangeShipRestrictionAction(boolean shipRestrictionIsSetForAllPlayers)
+            throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
+        this.shipRestrictionIsSetForAllPlayers = shipRestrictionIsSetForAllPlayers;
+        bingoGameState = determineStateBasedOnSetup();
+    }
+
+    private BingoGameState determineInitialState() {
+        return shipRestrictionsAreEnabled ? determineStateBasedOnSetup() : BingoGameState.PREREQUISITE_SETUP_DONE;
+    }
+
+    private BingoGameState determineStateBasedOnSetup() {
+        return shipRestrictionIsSetForAllPlayers ?
+                BingoGameState.PREREQUISITE_SETUP_DONE :
+                BingoGameState.LEVEL_INITIALIZED;
     }
 }

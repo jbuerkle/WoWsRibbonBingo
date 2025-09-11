@@ -19,14 +19,20 @@ class BingoGameStateMachineTest {
 
     @BeforeEach
     void setup() {
-        bingoGameStateMachine = new BingoGameStateMachine();
+        setupBingoGameStateMachineToDisableShipRestrictions();
     }
 
     @Nested
     class Constructor {
 
         @Test
-        void shouldSetStateToLevelInitialized() {
+        void shouldSetStateToPrerequisiteSetupDoneWhenShipRestrictionsAreDisabled() {
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldSetStateToLevelInitializedWhenShipRestrictionsAreEnabled() {
+            setupBingoGameStateMachineToEnableShipRestrictions();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
     }
@@ -35,14 +41,50 @@ class BingoGameStateMachineTest {
     class ProcessAction {
 
         @Test
-        void shouldStayInLevelInitializedStateWhenPerformingReset() throws UserInputException {
+        void shouldStayInPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreDisabled()
+                throws UserInputException {
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldStayInLevelInitializedStateWhenPerformingResetAndShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
             bingoGameStateMachine.processPerformResetAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
         @Test
-        void shouldStayInLevelInitializedStateWhenChangingShipRestriction() throws UserInputException {
-            bingoGameStateMachine.processChangeShipRestrictionAction();
+        void shouldStayInPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreAlreadySet()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldStayInLevelInitializedStateWhenSetupIsNotFinished() throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(false);
+            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+        }
+
+        @Test
+        void shouldTransitionFromLevelInitializedStateToPrerequisiteSetupDoneStateWhenSetupIsFinished()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromPrerequisiteSetupDoneStateToLevelInitializedStateWhenSetupIsNotFinished()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processChangeShipRestrictionAction(false);
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
         }
 
@@ -63,11 +105,23 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromPartialResultSubmittedStateToLevelInitializedState() throws UserInputException {
+        void shouldTransitionFromPartialResultSubmittedStateToPrerequisiteSetupDoneStateWhenShipRestrictionsAreDisabled()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(false, true);
             assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
             bingoGameStateMachine.processPerformResetAction();
-            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromPartialResultSubmittedStateToPrerequisiteSetupDoneStateWhenShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processSubmitResultAction(false, true);
+            assertBingoGameStateIs(BingoGameState.PARTIAL_RESULT_SUBMITTED);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
         }
 
         @Test
@@ -95,11 +149,33 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnconfirmedVoluntaryEndStateToLevelInitializedState() throws UserInputException {
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToPrerequisiteSetupDoneStateWhenShipRestrictionsAreDisabled()
+                throws UserInputException {
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToLevelInitializedStateWhenShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             bingoGameStateMachine.processPerformResetAction();
             assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+        }
+
+        @Test
+        void shouldTransitionFromUnconfirmedVoluntaryEndStateToPrerequisiteSetupDoneStateWhenShipRestrictionsAreAlreadySet()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processEndChallengeVoluntarilyAction();
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
         }
 
         @Test
@@ -111,21 +187,43 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenConfirmingResult()
+        void shouldTransitionFromUnsuccessfulMatchToPrerequisiteSetupDoneStateWhenConfirmingResultAndShipRestrictionsAreDisabled()
                 throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(false, true);
-            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
         }
 
         @Test
-        void shouldTransitionFromUnsuccessfulMatchToLevelInitializedStateWhenPerformingReset()
+        void shouldTransitionFromUnsuccessfulMatchToPrerequisiteSetupDoneStateWhenConfirmingResultAndShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processSubmitResultAction(true, false);
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
+            bingoGameStateMachine.processConfirmResultAction(false, true);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromUnsuccessfulMatchToPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreDisabled()
                 throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, false);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             bingoGameStateMachine.processPerformResetAction();
-            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromUnsuccessfulMatchToPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processSubmitResultAction(true, false);
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
         }
 
         @Test
@@ -145,8 +243,19 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenConfirmingResult()
+        void shouldTransitionFromSuccessfulMatchToPrerequisiteSetupDoneStateWhenConfirmingResultAndShipRestrictionsAreDisabled()
                 throws UserInputException {
+            bingoGameStateMachine.processSubmitResultAction(true, true);
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
+            bingoGameStateMachine.processConfirmResultAction(true, false);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenConfirmingResultAndShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processConfirmResultAction(true, false);
@@ -154,11 +263,23 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldTransitionFromSuccessfulMatchToLevelInitializedStateWhenPerformingReset() throws UserInputException {
+        void shouldTransitionFromSuccessfulMatchToPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreDisabled()
+                throws UserInputException {
             bingoGameStateMachine.processSubmitResultAction(true, true);
             assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             bingoGameStateMachine.processPerformResetAction();
-            assertBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+        }
+
+        @Test
+        void shouldTransitionFromSuccessfulMatchToPrerequisiteSetupDoneStateWhenPerformingResetAndShipRestrictionsAreEnabled()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
+            bingoGameStateMachine.processSubmitResultAction(true, true);
+            assertBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
+            bingoGameStateMachine.processPerformResetAction();
+            assertBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
         }
 
         @Test
@@ -225,9 +346,25 @@ class BingoGameStateMachineTest {
 
         @Test
         void shouldThrowUserInputExceptionWhenConfirmingResultInLevelInitializedState() {
+            setupBingoGameStateMachineToEnableShipRestrictions();
             assertUserInputExceptionIsThrownWithMessage(
                     "Action CONFIRM_RESULT is not allowed in the LEVEL_INITIALIZED state",
                     () -> bingoGameStateMachine.processConfirmResultAction(false, false));
+        }
+
+        @Test
+        void shouldThrowUserInputExceptionWhenConfirmingResultInPrerequisiteSetupDone() {
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action CONFIRM_RESULT is not allowed in the PREREQUISITE_SETUP_DONE state",
+                    () -> bingoGameStateMachine.processConfirmResultAction(false, false));
+        }
+
+        @Test
+        void shouldThrowUserInputExceptionWhenSubmittingResultInLevelInitializedState() {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action SUBMIT_RESULT is not allowed in the LEVEL_INITIALIZED state",
+                    () -> bingoGameStateMachine.processSubmitResultAction(false, false));
         }
 
         @Test
@@ -270,12 +407,35 @@ class BingoGameStateMachineTest {
         }
 
         @Test
+        void shouldThrowUserInputExceptionWhenEndingTheChallengeVoluntarilyIsProhibitedAndShipRestrictionsAreDisabled() {
+            setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarily();
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action END_CHALLENGE_VOLUNTARILY is not allowed in the PREREQUISITE_SETUP_DONE state",
+                    () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
+        }
+
+        @Test
+        void shouldThrowUserInputExceptionWhenEndingTheChallengeVoluntarilyIsProhibitedAndShipRestrictionsAreEnabled() {
+            setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarilyAndEnableShipRestrictions();
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action END_CHALLENGE_VOLUNTARILY is not allowed in the LEVEL_INITIALIZED state",
+                    () -> bingoGameStateMachine.processEndChallengeVoluntarilyAction());
+        }
+
+        @Test
         void shouldThrowUserInputExceptionWhenChangingShipRestrictionInUnconfirmedVoluntaryEndState()
                 throws UserInputException {
             bingoGameStateMachine.processEndChallengeVoluntarilyAction();
             assertUserInputExceptionIsThrownWithMessage(
                     "Action CHANGE_SHIP_RESTRICTION is not allowed in the UNCONFIRMED_VOLUNTARY_END state",
-                    () -> bingoGameStateMachine.processChangeShipRestrictionAction());
+                    () -> bingoGameStateMachine.processChangeShipRestrictionAction(true));
+        }
+
+        @Test
+        void shouldThrowUserInputExceptionWhenChangingShipRestrictionAndShipRestrictionsAreDisabled() {
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action CHANGE_SHIP_RESTRICTION is not allowed in the PREREQUISITE_SETUP_DONE state",
+                    () -> bingoGameStateMachine.processChangeShipRestrictionAction(true));
         }
 
         private void assertUserInputExceptionIsThrownWithMessage(String expectedMessage, Executable executable) {
@@ -338,24 +498,69 @@ class BingoGameStateMachineTest {
         }
 
         @Test
-        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPartialResultSubmittedState()
-                throws UserInputException {
-            bingoGameStateMachine.processSubmitResultAction(false, false);
-            List<BingoGameAction> disallowedActions = List.of(
-                    BingoGameAction.END_CHALLENGE_VOLUNTARILY,
-                    BingoGameAction.CONFIRM_RESULT,
-                    BingoGameAction.CHANGE_SHIP_RESTRICTION);
+        void shouldReturnTrueForAllActionsExceptConfirmResultAndChangeShipRestrictionWhenShipRestrictionsAreDisabled() {
+            List<BingoGameAction> disallowedActions =
+                    List.of(BingoGameAction.CONFIRM_RESULT, BingoGameAction.CHANGE_SHIP_RESTRICTION);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
         @Test
-        void shouldReturnTrueForAllActionsExceptConfirmResultWhenInLevelInitializedState() {
+        void shouldReturnTrueForAllActionsExceptSubmitResultAndConfirmResultWhenShipRestrictionsAreEnabled() {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            List<BingoGameAction> disallowedActions =
+                    List.of(BingoGameAction.SUBMIT_RESULT, BingoGameAction.CONFIRM_RESULT);
+            assertReturnsTrueForAllActionsExcept(disallowedActions);
+        }
+
+        @Test
+        void shouldReturnTrueForAllActionsExceptConfirmResultWhenShipRestrictionsAreAlreadySet()
+                throws UserInputException {
+            setupBingoGameStateMachineToEnableShipRestrictions();
+            bingoGameStateMachine.processChangeShipRestrictionAction(true);
             List<BingoGameAction> disallowedActions = List.of(BingoGameAction.CONFIRM_RESULT);
             assertReturnsTrueForAllActionsExcept(disallowedActions);
         }
 
+        @Test
+        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPrerequisiteSetupDoneState() {
+            setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarily();
+            List<BingoGameAction> allowedActions =
+                    List.of(BingoGameAction.PERFORM_RESET, BingoGameAction.SUBMIT_RESULT, BingoGameAction.OTHER_ACTION);
+            assertReturnsFalseForAllActionsExcept(allowedActions);
+        }
+
+        @Test
+        void shouldReturnTrueOnlyForPerformResetActionAndActionsWhichChangeTheMatchResultWhenInPartialResultSubmittedState()
+                throws UserInputException {
+            bingoGameStateMachine.processSubmitResultAction(false, false);
+            List<BingoGameAction> allowedActions =
+                    List.of(BingoGameAction.PERFORM_RESET, BingoGameAction.SUBMIT_RESULT, BingoGameAction.OTHER_ACTION);
+            assertReturnsFalseForAllActionsExcept(allowedActions);
+        }
+
+        @Test
+        void shouldReturnTrueOnlyForChangeShipRestrictionAndActionsWhichDoNotAffectStateWhenInLevelInitializedState() {
+            setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarilyAndEnableShipRestrictions();
+            List<BingoGameAction> allowedActions = List.of(
+                    BingoGameAction.CHANGE_SHIP_RESTRICTION,
+                    BingoGameAction.PERFORM_RESET,
+                    BingoGameAction.OTHER_ACTION);
+            assertReturnsFalseForAllActionsExcept(allowedActions);
+        }
+
         private void assertReturnsFalseForAllActions() {
             for (BingoGameAction action : BingoGameAction.values()) {
+                assertFalse(bingoGameStateMachine.actionIsAllowed(action));
+            }
+        }
+
+        private void assertReturnsFalseForAllActionsExcept(List<BingoGameAction> allowedActions) {
+            List<BingoGameAction> disallowedActions =
+                    Stream.of(BingoGameAction.values()).filter(action -> !allowedActions.contains(action)).toList();
+            for (BingoGameAction action : allowedActions) {
+                assertTrue(bingoGameStateMachine.actionIsAllowed(action));
+            }
+            for (BingoGameAction action : disallowedActions) {
                 assertFalse(bingoGameStateMachine.actionIsAllowed(action));
             }
         }
@@ -370,6 +575,22 @@ class BingoGameStateMachineTest {
                 assertFalse(bingoGameStateMachine.actionIsAllowed(action));
             }
         }
+    }
+
+    private void setupBingoGameStateMachineToDisableShipRestrictions() {
+        bingoGameStateMachine = new BingoGameStateMachine(false, true);
+    }
+
+    private void setupBingoGameStateMachineToEnableShipRestrictions() {
+        bingoGameStateMachine = new BingoGameStateMachine(true, true);
+    }
+
+    private void setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarily() {
+        bingoGameStateMachine = new BingoGameStateMachine(false, false);
+    }
+
+    private void setupBingoGameStateMachineToProhibitEndingTheChallengeVoluntarilyAndEnableShipRestrictions() {
+        bingoGameStateMachine = new BingoGameStateMachine(true, false);
     }
 
     private void assertBingoGameStateIs(BingoGameState expectedState) {

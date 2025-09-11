@@ -14,6 +14,7 @@ import bingo.math.terms.impl.TermWithPoints;
 import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
+import bingo.ships.MainArmamentType;
 import bingo.ships.Ship;
 import bingo.text.TextUtility;
 import bingo.tokens.TokenCounter;
@@ -50,7 +51,7 @@ public class BingoGame implements Serializable {
             List<Player> players, List<ChallengeModifier> challengeModifiers, TokenCounter tokenCounter,
             BingoGameStateMachine bingoGameStateMachine) throws UserInputException {
         if (players.isEmpty() || players.size() > 3) {
-            throw new UserInputException("The number of players must be between 1 and 3");
+            throw exceptionWithMessage("The number of players must be between 1 and 3");
         }
         this.tokenCounter = tokenCounter;
         this.bingoGameStateMachine = bingoGameStateMachine;
@@ -68,7 +69,13 @@ public class BingoGame implements Serializable {
     }
 
     public BingoGame(List<Player> players, List<ChallengeModifier> challengeModifiers) throws UserInputException {
-        this(players, challengeModifiers, new TokenCounter(), new BingoGameStateMachine());
+        this(
+                players,
+                challengeModifiers,
+                new TokenCounter(),
+                new BingoGameStateMachine(
+                        shipRestrictionsAreEnabled(challengeModifiers),
+                        endingVoluntarilyIsAllowed(challengeModifiers)));
     }
 
     private List<ChallengeModifier> filterDisallowedModifiers(
@@ -152,6 +159,12 @@ public class BingoGame implements Serializable {
     public void submitBingoResultForPlayer(Player player, BingoResult bingoResult) throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.SUBMIT_RESULT);
         ensurePlayerIsParticipatingInTheGame(player);
+        if (shipRestrictionForPlayerProhibitsMainArmamentType(bingoResult.getMainArmamentType(), player)) {
+            throw exceptionWithMessage(
+                    "Ships with %s as main armament are currently prohibited due to the ship restriction set for %s".formatted(
+                            bingoResult.getMainArmamentType().getDisplayText().toLowerCase(),
+                            player.name()));
+        }
         bingoResultByPlayer.put(player, bingoResult);
         updateTokenCounterWithCurrentResults();
         submitResultActionToBingoGameStateMachine();
@@ -172,17 +185,16 @@ public class BingoGame implements Serializable {
 
     private void ensurePlayerIsParticipatingInTheGame(Player player) throws UserInputException {
         if (!players.contains(player)) {
-            throw new UserInputException("%s is not participating in the game".formatted(player.name()));
+            throw exceptionWithMessage("%s is not participating in the game".formatted(player.name()));
         }
     }
 
     public void confirmCurrentResult() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-        BingoGameState previousState = bingoGameStateMachine.getCurrentState();
         bingoGameStateMachine.processConfirmResultAction(hasNextLevel(), retryingIsAllowed());
         BingoGameState newState = bingoGameStateMachine.getCurrentState();
-        if (newState.equals(BingoGameState.LEVEL_INITIALIZED)) {
-            if (previousState.equals(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH)) {
+        if (bingoGameIsInInitialState(newState)) {
+            if (requirementOfCurrentResultBarIsMet()) {
                 removeAllShipRestrictions();
                 currentLevel++;
             }
@@ -269,13 +281,24 @@ public class BingoGame implements Serializable {
         return internalGetShipRestrictionForPlayer(player).isPresent();
     }
 
+    private boolean shipRestrictionIsSetForAllPlayers() {
+        return shipRestrictionByPlayer.size() == players.size();
+    }
+
+    private boolean shipRestrictionForPlayerProhibitsMainArmamentType(
+            MainArmamentType mainArmamentType, Player player) {
+        Optional<ShipRestriction> shipRestriction = internalGetShipRestrictionForPlayer(player);
+        return shipRestriction.isPresent() && !shipRestriction.get().allowsMainArmamentType(mainArmamentType);
+    }
+
     public void setShipRestrictionForPlayer(Player player, ShipRestriction shipRestriction) throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
         ensurePlayerIsParticipatingInTheGame(player);
         if (shipRestrictionIsSetForPlayer(player)) {
-            throw new UserInputException("A ship restriction is already set for %s".formatted(player.name()));
+            throw exceptionWithMessage("A ship restriction is already set for %s".formatted(player.name()));
         }
         shipRestrictionByPlayer.put(player, shipRestriction);
+        bingoGameStateMachine.processChangeShipRestrictionAction(shipRestrictionIsSetForAllPlayers());
     }
 
     public Optional<ShipRestriction> getShipRestrictionForPlayer(Player player) throws UserInputException {
@@ -291,6 +314,7 @@ public class BingoGame implements Serializable {
         ensureActionIsAllowed(BingoGameAction.CHANGE_SHIP_RESTRICTION);
         ensurePlayerIsParticipatingInTheGame(player);
         shipRestrictionByPlayer.remove(player);
+        bingoGameStateMachine.processChangeShipRestrictionAction(shipRestrictionIsSetForAllPlayers());
     }
 
     private void removeAllShipRestrictions() {
@@ -302,7 +326,7 @@ public class BingoGame implements Serializable {
         String nameOfShipUsed = shipUsed.name();
         for (Ship previouslyUsedShip : shipsUsed) {
             if (nameOfShipUsed.equalsIgnoreCase(previouslyUsedShip.name())) {
-                throw new UserInputException("%s was already used".formatted(nameOfShipUsed));
+                throw exceptionWithMessage("%s was already used".formatted(nameOfShipUsed));
             }
         }
         shipsUsed.add(shipUsed);
@@ -316,9 +340,12 @@ public class BingoGame implements Serializable {
         ensureActionIsAllowed(BingoGameAction.OTHER_ACTION);
         boolean shipWasNotFound = !shipsUsed.remove(shipUsed);
         if (shipWasNotFound) {
-            String message = "%s is not in the list of ships used, so it cannot be removed".formatted(shipUsed.name());
-            throw new UserInputException(message);
+            throw exceptionWithMessage("%s is not in the list of ships used, so it cannot be removed".formatted(shipUsed.name()));
         }
+    }
+
+    private UserInputException exceptionWithMessage(String message) {
+        return new UserInputException(message);
     }
 
     private boolean moreThanOnePlayerIsRegistered() {
@@ -369,6 +396,11 @@ public class BingoGame implements Serializable {
         }
         appendTextIfBingoGameIsInFinalState(stringBuilder);
         return stringBuilder.toString();
+    }
+
+    private boolean bingoGameIsInInitialState(BingoGameState bingoGameState) {
+        return bingoGameState.equals(BingoGameState.LEVEL_INITIALIZED) ||
+                bingoGameState.equals(BingoGameState.PREREQUISITE_SETUP_DONE);
     }
 
     private boolean bingoGameIsInVoluntaryEndState(BingoGameState bingoGameState) {
@@ -500,5 +532,13 @@ public class BingoGame implements Serializable {
         if (bingoGameStateMachine.getCurrentState().isFinal()) {
             stringBuilder.append("\n\nEnd of challenge confirmed. Changes are no longer allowed.");
         }
+    }
+
+    private static boolean shipRestrictionsAreEnabled(List<ChallengeModifier> challengeModifiers) {
+        return challengeModifiers.contains(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS);
+    }
+
+    private static boolean endingVoluntarilyIsAllowed(List<ChallengeModifier> challengeModifiers) {
+        return !challengeModifiers.contains(ChallengeModifier.NO_GIVING_UP);
     }
 }
