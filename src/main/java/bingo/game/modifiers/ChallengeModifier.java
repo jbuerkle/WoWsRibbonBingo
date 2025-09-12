@@ -4,38 +4,63 @@ import bingo.text.TextUtility;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.function.Predicate;
 
 public enum ChallengeModifier implements Serializable {
     RANDOM_SHIP_RESTRICTIONS(
             "Random ship restrictions",
             0.4,
-            "All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), %reward%."),
+            0,
+            "All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), %reward%.",
+            ChallengeModifier::alwaysAllowed),
     INCREASED_DIFFICULTY(
             "Increased difficulty",
             0.2,
-            "The point requirements for each level increase by 20%, %reward%."),
+            0.2,
+            "The point requirements for each level increase by 20%, %reward%.",
+            ChallengeModifier::alwaysAllowed),
     DOUBLE_DIFFICULTY_INCREASE(
             "Double difficulty increase",
             0.2,
-            "The point requirements for each level increase by another 20%, %reward%. Duo/trio streamer challenge only."),
-    NO_HELP("No help", 0.2, "Supporters cannot join your division, %reward%. Solo streamer challenge only."),
+            0.2,
+            "The point requirements for each level increase by another 20%, %reward%. Duo/trio streamer challenge only.",
+            ChallengeModifier::onlyAllowedInDuoTrioStreamerChallenge),
+    NO_HELP(
+            "No help",
+            0.2,
+            0,
+            "Supporters cannot join your division, %reward%. Solo streamer challenge only.",
+            ChallengeModifier::onlyAllowedInSoloStreamerChallenge),
     NO_GIVING_UP(
             "No giving up",
             0.2,
-            "You cannot end the challenge early, %reward%. This does not affect your ability to pause the challenge."),
-    NO_SAFETY_NET("No safety net", 0.5, "You do not gain any extra lives, %reward%.");
+            0,
+            "You cannot end the challenge early, %reward%. This does not affect your ability to pause the challenge.",
+            ChallengeModifier::alwaysAllowed),
+    NO_SAFETY_NET(
+            "No safety net",
+            0.5,
+            0,
+            "You do not gain any extra lives, %reward%.",
+            ChallengeModifier::alwaysAllowed);
 
     @Serial
     private static final long serialVersionUID = -4027175656426943041L;
 
     private final String displayName;
     private final double bonusModifier;
+    private final double pointRequirementModifier;
     private final String descriptionWithPlaceholder;
+    private final Predicate<Integer> restrictionOnNumberOfPlayers;
 
-    ChallengeModifier(String displayName, double bonusModifier, String descriptionWithPlaceholder) {
+    ChallengeModifier(
+            String displayName, double bonusModifier, double pointRequirementModifier,
+            String descriptionWithPlaceholder, Predicate<Integer> restrictionOnNumberOfPlayers) {
         this.displayName = displayName;
         this.bonusModifier = bonusModifier;
+        this.pointRequirementModifier = pointRequirementModifier;
         this.descriptionWithPlaceholder = descriptionWithPlaceholder;
+        this.restrictionOnNumberOfPlayers = restrictionOnNumberOfPlayers;
     }
 
     public String getDisplayName() {
@@ -44,6 +69,14 @@ public enum ChallengeModifier implements Serializable {
 
     public double getBonusModifier() {
         return bonusModifier;
+    }
+
+    public double getPointRequirementModifier() {
+        return pointRequirementModifier;
+    }
+
+    public boolean allowsNumberOfPlayers(int numberOfPlayers) {
+        return restrictionOnNumberOfPlayers.test(numberOfPlayers);
     }
 
     @Override
@@ -62,5 +95,17 @@ public enum ChallengeModifier implements Serializable {
             stringBuilder.append("- ").append(challengeModifier.toString()).append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    private static boolean onlyAllowedInDuoTrioStreamerChallenge(int numberOfPlayers) {
+        return numberOfPlayers > 1;
+    }
+
+    private static boolean onlyAllowedInSoloStreamerChallenge(int numberOfPlayers) {
+        return numberOfPlayers == 1;
+    }
+
+    private static boolean alwaysAllowed(int numberOfPlayers) {
+        return numberOfPlayers > 0;
     }
 }

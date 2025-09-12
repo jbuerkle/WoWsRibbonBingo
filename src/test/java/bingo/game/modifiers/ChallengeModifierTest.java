@@ -3,6 +3,8 @@ package bingo.game.modifiers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChallengeModifierTest {
 
@@ -10,12 +12,52 @@ class ChallengeModifierTest {
     void getDisplayNameShouldReturnCorrectText() {
         assertEquals("Random ship restrictions", ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.getDisplayName());
         assertEquals("Increased difficulty", ChallengeModifier.INCREASED_DIFFICULTY.getDisplayName());
+        assertEquals("Double difficulty increase", ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.getDisplayName());
+        assertEquals("No help", ChallengeModifier.NO_HELP.getDisplayName());
+        assertEquals("No giving up", ChallengeModifier.NO_GIVING_UP.getDisplayName());
+        assertEquals("No safety net", ChallengeModifier.NO_SAFETY_NET.getDisplayName());
     }
 
     @Test
     void getBonusModifierShouldReturnCorrectValue() {
         assertEquals(0.4, ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.getBonusModifier());
         assertEquals(0.2, ChallengeModifier.INCREASED_DIFFICULTY.getBonusModifier());
+        assertEquals(0.2, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.getBonusModifier());
+        assertEquals(0.2, ChallengeModifier.NO_HELP.getBonusModifier());
+        assertEquals(0.2, ChallengeModifier.NO_GIVING_UP.getBonusModifier());
+        assertEquals(0.5, ChallengeModifier.NO_SAFETY_NET.getBonusModifier());
+    }
+
+    @Test
+    void getPointRequirementModifierShouldReturnCorrectValue() {
+        assertEquals(0, ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.getPointRequirementModifier());
+        assertEquals(0.2, ChallengeModifier.INCREASED_DIFFICULTY.getPointRequirementModifier());
+        assertEquals(0.2, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.getPointRequirementModifier());
+        assertEquals(0, ChallengeModifier.NO_HELP.getPointRequirementModifier());
+        assertEquals(0, ChallengeModifier.NO_GIVING_UP.getPointRequirementModifier());
+        assertEquals(0, ChallengeModifier.NO_SAFETY_NET.getPointRequirementModifier());
+    }
+
+    @Test
+    void allowsNumberOfPlayersShouldReturnCorrectValueForSoloStreamerChallenge() {
+        int numberOfPlayers = 1;
+        assertTrue(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.INCREASED_DIFFICULTY.allowsNumberOfPlayers(numberOfPlayers));
+        assertFalse(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.NO_HELP.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.NO_GIVING_UP.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.NO_SAFETY_NET.allowsNumberOfPlayers(numberOfPlayers));
+    }
+
+    @Test
+    void allowsNumberOfPlayersShouldReturnCorrectValueForDuoTrioStreamerChallenge() {
+        int numberOfPlayers = 2;
+        assertTrue(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.INCREASED_DIFFICULTY.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.allowsNumberOfPlayers(numberOfPlayers));
+        assertFalse(ChallengeModifier.NO_HELP.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.NO_GIVING_UP.allowsNumberOfPlayers(numberOfPlayers));
+        assertTrue(ChallengeModifier.NO_SAFETY_NET.allowsNumberOfPlayers(numberOfPlayers));
     }
 
     @Test
