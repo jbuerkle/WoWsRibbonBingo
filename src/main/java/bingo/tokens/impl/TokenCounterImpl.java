@@ -25,8 +25,10 @@ public class TokenCounterImpl implements TokenCounter {
         resetMatchTokenCounters();
     }
 
+    @Override
     public void calculateMatchResult(
-            boolean isSuccessfulMatch, boolean hasNextLevel, List<RetryRule> activeRetryRules) {
+            boolean isSuccessfulMatch, boolean hasNextLevel,
+            List<RetryRule> activeRetryRules) {
         resetMatchTokenCounters();
         if (isSuccessfulMatch) {
             if (hasNextLevel) {
@@ -46,11 +48,13 @@ public class TokenCounterImpl implements TokenCounter {
         return activeRetryRules.isEmpty();
     }
 
+    @Override
     public void confirmMatchResult() {
         currentTokens = tokensAfterMatch;
         resetMatchTokenCounters();
     }
 
+    @Override
     public void cancelMatchResult() {
         resetMatchTokenCounters();
     }
@@ -108,10 +112,12 @@ public class TokenCounterImpl implements TokenCounter {
         return extraLives + (extraLives == 1 ? " extra life" : " extra lives");
     }
 
+    @Override
     public boolean hasExtraLife() {
         return getCurrentExtraLives() > 0;
     }
 
+    @Override
     public int getCurrentExtraLives() {
         return getExtraLivesForTokens(currentTokens);
     }
