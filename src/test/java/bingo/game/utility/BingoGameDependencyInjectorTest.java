@@ -3,6 +3,7 @@ package bingo.game.utility;
 import bingo.game.BingoGameStateMachine;
 import bingo.game.results.BingoResultBars;
 import bingo.tokens.TokenCounter;
+import bingo.tokens.impl.TokenCounterImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -14,7 +15,7 @@ class BingoGameDependencyInjectorTest {
     @Test
     void createTokenCounterShouldReturnTokenCounterImplementation() {
         TokenCounter tokenCounter = bingoGameDependencyInjector.createTokenCounter(true);
-        assertInstanceOf(TokenCounter.class, tokenCounter);
+        assertInstanceOf(TokenCounterImpl.class, tokenCounter);
     }
 
     @Test

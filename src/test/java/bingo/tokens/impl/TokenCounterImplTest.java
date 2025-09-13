@@ -1,6 +1,7 @@
-package bingo.tokens;
+package bingo.tokens.impl;
 
 import bingo.rules.RetryRule;
+import bingo.tokens.TokenCounter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TokenCounterTest {
+class TokenCounterImplTest {
     private static final String TOKEN_COUNTER_PREFIX = "Token counter: ";
     private static final String NOW_ZERO_TOKENS = "Now 0 tokens 🪙 total.";
     private static final String NOW_ONE_TOKEN = "Now 1 token 🪙 total.";
@@ -27,7 +28,7 @@ class TokenCounterTest {
     @BeforeEach
     void setup() {
         activeRetryRules = new LinkedList<>();
-        tokenCounter = new TokenCounter();
+        tokenCounter = new TokenCounterImpl();
     }
 
     @Test
