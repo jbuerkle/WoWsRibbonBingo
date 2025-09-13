@@ -3,11 +3,11 @@ package bingo.game.utility;
 import bingo.game.BingoGameStateMachine;
 import bingo.game.results.BingoResultBars;
 import bingo.tokens.TokenCounter;
+import bingo.tokens.impl.NonFunctionalTokenCounter;
 import bingo.tokens.impl.TokenCounterImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class BingoGameDependencyInjectorTest {
     private final BingoGameDependencyInjector bingoGameDependencyInjector = new BingoGameDependencyInjector();
@@ -19,9 +19,9 @@ class BingoGameDependencyInjectorTest {
     }
 
     @Test
-    void createTokenCounterShouldReturnNonfunctionalTokenCounter() {
+    void createTokenCounterShouldReturnNonFunctionalTokenCounter() {
         TokenCounter tokenCounter = bingoGameDependencyInjector.createTokenCounter(false);
-        assertNull(tokenCounter);
+        assertInstanceOf(NonFunctionalTokenCounter.class, tokenCounter);
     }
 
     @Test

@@ -3,6 +3,7 @@ package bingo.game.utility;
 import bingo.game.BingoGameStateMachine;
 import bingo.game.results.BingoResultBars;
 import bingo.tokens.TokenCounter;
+import bingo.tokens.impl.NonFunctionalTokenCounter;
 import bingo.tokens.impl.TokenCounterImpl;
 
 public class BingoGameDependencyInjector {
@@ -11,7 +12,7 @@ public class BingoGameDependencyInjector {
         if (extraLivesAreEnabled) {
             return new TokenCounterImpl();
         } else {
-            return null;
+            return new NonFunctionalTokenCounter();
         }
     }
 
