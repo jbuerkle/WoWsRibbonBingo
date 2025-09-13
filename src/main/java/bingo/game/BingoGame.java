@@ -35,6 +35,7 @@ public class BingoGame implements Serializable {
     private static final int START_LEVEL = 1;
     private static final int MAX_LEVEL = 7;
     private static final String SENTENCE_END = ". ";
+    private static final String WHITESPACE = " ";
 
     private final List<Ship> shipsUsed;
     private final List<Player> players;
@@ -372,7 +373,7 @@ public class BingoGame implements Serializable {
                 appendTextForUnsuccessfulMatch(stringBuilder);
             } else {
                 appendTextForShipRestrictions(stringBuilder);
-                appendTextForTokenCounter(stringBuilder);
+                appendTextForTokenCounterWithPrefix(SENTENCE_END, stringBuilder);
             }
         }
         appendTextIfBingoGameIsInFinalState(stringBuilder);
@@ -457,13 +458,12 @@ public class BingoGame implements Serializable {
 
     private void appendTextForSuccessfulMatch(StringBuilder stringBuilder) {
         stringBuilder.append(" ✅ Unlocked reward: ")
-                .append(bingoResultBars.getNumberOfSubsAsStringForLevel(currentLevel))
-                .append(" ");
+                .append(bingoResultBars.getNumberOfSubsAsStringForLevel(currentLevel));
         if (hasNextLevel()) {
-            stringBuilder.append(tokenCounter).append(" ➡️ ");
-            stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
+            appendTextForTokenCounterWithPrefix(WHITESPACE, stringBuilder);
+            stringBuilder.append(" ➡️ ").append(getPointRequirementOfLevelAsString(currentLevel + 1));
         } else {
-            stringBuilder.append("This is the highest reward you can get. Congratulations! 🎊");
+            stringBuilder.append(" This is the highest reward you can get. Congratulations! 🎊");
             appendTextForConversionOfExtraLives(
                     bingoResultBars.getNumberOfSubsAsRewardForLevel(currentLevel),
                     stringBuilder);
@@ -480,7 +480,8 @@ public class BingoGame implements Serializable {
             } else if (tokenCounter.hasExtraLife()) {
                 stringBuilder.append("Extra life (rule 8d)");
             }
-            stringBuilder.append(" 🔄 ").append(tokenCounter);
+            stringBuilder.append(" 🔄");
+            appendTextForTokenCounterWithPrefix(WHITESPACE, stringBuilder);
         } else {
             stringBuilder.append(
                     "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
@@ -509,8 +510,10 @@ public class BingoGame implements Serializable {
         return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs);
     }
 
-    private void appendTextForTokenCounter(StringBuilder stringBuilder) {
-        stringBuilder.append(SENTENCE_END).append(tokenCounter);
+    private void appendTextForTokenCounterWithPrefix(String prefix, StringBuilder stringBuilder) {
+        if (extraLivesAreEnabled()) {
+            stringBuilder.append(prefix).append(tokenCounter);
+        }
     }
 
     private void appendTextIfBingoGameIsInFinalState(StringBuilder stringBuilder) {
