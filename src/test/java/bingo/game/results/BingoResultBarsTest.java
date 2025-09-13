@@ -55,10 +55,10 @@ class BingoResultBarsTest {
 
     @Test
     void getNumberOfSubsAsStringShouldReturnCorrectDisplayText() {
-        assertEquals("1 sub \uD83C\uDF81", bingoResultBars.getNumberOfSubsAsStringForLevel(0));
-        assertEquals("2 subs \uD83C\uDF81", bingoResultBars.getNumberOfSubsAsStringForLevel(1));
-        assertEquals("4 subs \uD83C\uDF81", bingoResultBars.getNumberOfSubsAsStringForLevel(2));
-        assertEquals("8 subs \uD83C\uDF81", bingoResultBars.getNumberOfSubsAsStringForLevel(3));
+        assertEquals("1 sub 🎁", bingoResultBars.getNumberOfSubsAsStringForLevel(0));
+        assertEquals("2 subs 🎁", bingoResultBars.getNumberOfSubsAsStringForLevel(1));
+        assertEquals("4 subs 🎁", bingoResultBars.getNumberOfSubsAsStringForLevel(2));
+        assertEquals("8 subs 🎁", bingoResultBars.getNumberOfSubsAsStringForLevel(3));
     }
 
     @Test
@@ -66,14 +66,14 @@ class BingoResultBarsTest {
         String expectedString = """
                 | Level | Points required | Number of subs as reward: 2^(Level) |
                 |---|---:|---:|
-                | 0 | 0 | 2^0 = 1 sub \uD83C\uDF81 |
-                | 1 | 300 | 2^1 = 2 subs \uD83C\uDF81 |
-                | 2 | 500 | 2^2 = 4 subs \uD83C\uDF81 |
-                | 3 | 700 | 2^3 = 8 subs \uD83C\uDF81 |
-                | 4 | 900 | 2^4 = 16 subs \uD83C\uDF81 |
-                | 5 | 1200 | 2^5 = 32 subs \uD83C\uDF81 |
-                | 6 | 1500 | 2^6 = 64 subs \uD83C\uDF81 |
-                | 7 | 1800 | 2^7 = 128 subs \uD83C\uDF81 |
+                | 0 | 0 | 2^0 = 1 sub 🎁 |
+                | 1 | 300 | 2^1 = 2 subs 🎁 |
+                | 2 | 500 | 2^2 = 4 subs 🎁 |
+                | 3 | 700 | 2^3 = 8 subs 🎁 |
+                | 4 | 900 | 2^4 = 16 subs 🎁 |
+                | 5 | 1200 | 2^5 = 32 subs 🎁 |
+                | 6 | 1500 | 2^6 = 64 subs 🎁 |
+                | 7 | 1800 | 2^7 = 128 subs 🎁 |
                 """;
         assertEquals(expectedString, bingoResultBars.getAllResultBarsAndRewardsInTableFormat());
     }

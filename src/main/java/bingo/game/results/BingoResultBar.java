@@ -33,6 +33,6 @@ public record BingoResultBar(int level) implements Serializable {
 
     public String getNumberOfSubsAsString() {
         int numberOfSubs = getNumberOfSubsAsReward();
-        return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs) + " \uD83C\uDF81";
+        return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs) + " 🎁";
     }
 }

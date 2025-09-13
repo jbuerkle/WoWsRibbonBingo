@@ -11,18 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TokenCounterTest {
     private static final String TOKEN_COUNTER_PREFIX = "Token counter: ";
-    private static final String NOW_ZERO_TOKENS = "Now 0 tokens \uD83E\uDE99 total.";
-    private static final String NOW_ONE_TOKEN = "Now 1 token \uD83E\uDE99 total.";
-    private static final String NOW_TWO_TOKENS = "Now 2 tokens \uD83E\uDE99 total.";
-    private static final String NOW_ONE_EXTRA_LIFE_AND_ZERO_TOKENS =
-            "Now 1 extra life ❤️ and 0 tokens \uD83E\uDE99 total.";
-    private static final String NOW_ONE_EXTRA_LIFE_AND_FIVE_TOKENS =
-            "Now 1 extra life ❤️ and 5 tokens \uD83E\uDE99 total.";
-    private static final String NOW_TWO_EXTRA_LIVES_AND_ONE_TOKEN =
-            "Now 2 extra lives ❤️ and 1 token \uD83E\uDE99 total.";
+    private static final String NOW_ZERO_TOKENS = "Now 0 tokens 🪙 total.";
+    private static final String NOW_ONE_TOKEN = "Now 1 token 🪙 total.";
+    private static final String NOW_TWO_TOKENS = "Now 2 tokens 🪙 total.";
+    private static final String NOW_ONE_EXTRA_LIFE_AND_ZERO_TOKENS = "Now 1 extra life ❤️ and 0 tokens 🪙 total.";
+    private static final String NOW_ONE_EXTRA_LIFE_AND_FIVE_TOKENS = "Now 1 extra life ❤️ and 5 tokens 🪙 total.";
+    private static final String NOW_TWO_EXTRA_LIVES_AND_ONE_TOKEN = "Now 2 extra lives ❤️ and 1 token 🪙 total.";
     private static final String ONE_TOKEN_FOR_RULE_9A = "+1 token (successful match)";
     private static final String ONE_TOKEN_FOR_RULE_9B = "+1 token (imbalanced matchmaking). ";
-    private static final String MINUS_ONE_EXTRA_LIFE = "-1 extra life \uD83D\uDC94 ";
+    private static final String MINUS_ONE_EXTRA_LIFE = "-1 extra life 💔 ";
 
     private List<RetryRule> activeRetryRules;
     private TokenCounter tokenCounter;

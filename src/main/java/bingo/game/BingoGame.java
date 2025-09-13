@@ -463,7 +463,7 @@ public class BingoGame implements Serializable {
             stringBuilder.append(tokenCounter).append(" ➡️ ");
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
         } else {
-            stringBuilder.append("This is the highest reward you can get. Congratulations! \uD83C\uDF8A");
+            stringBuilder.append("This is the highest reward you can get. Congratulations! 🎊");
             appendTextForConversionOfExtraLives(
                     bingoResultBars.getNumberOfSubsAsRewardForLevel(currentLevel),
                     stringBuilder);
@@ -480,7 +480,7 @@ public class BingoGame implements Serializable {
             } else if (tokenCounter.hasExtraLife()) {
                 stringBuilder.append("Extra life (rule 8d)");
             }
-            stringBuilder.append(" ✅ ").append(tokenCounter);
+            stringBuilder.append(" 🔄 ").append(tokenCounter);
         } else {
             stringBuilder.append(
                     "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
@@ -496,7 +496,7 @@ public class BingoGame implements Serializable {
             String unlockedRewardAsString = getSubsAsString(unlockedReward);
             String conversionFactorAsString = getSubsAsString(conversionFactorForExtraLives);
             String totalRewardAsString = getSubsAsString(totalReward);
-            String calculationAsText = " Total reward: %s + (unused extra lives: %s) * %s = %s \uD83C\uDF81".formatted(
+            String calculationAsText = " Total reward: %s + (unused extra lives: %s) * %s = %s 🎁".formatted(
                     unlockedRewardAsString,
                     extraLives,
                     conversionFactorAsString,

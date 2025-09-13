@@ -85,7 +85,7 @@ public class TokenCounter implements Serializable {
     }
 
     private String extraLivesLostForUnsuccessfulMatchAsString() {
-        return MINUS.concat(getExtraLivesAsString(extraLivesLostForUnsuccessfulMatch)).concat(" \uD83D\uDC94 ");
+        return MINUS.concat(getExtraLivesAsString(extraLivesLostForUnsuccessfulMatch)).concat(" 💔 ");
     }
 
     private String resultAfterMatchAsString() {
@@ -96,7 +96,7 @@ public class TokenCounter implements Serializable {
         if (extraLives > 0) {
             stringBuilder.append(getExtraLivesAsString(extraLives)).append(" ❤️ and ");
         }
-        stringBuilder.append(getTokensAsString(unusedTokens)).append(" \uD83E\uDE99 total.");
+        stringBuilder.append(getTokensAsString(unusedTokens)).append(" 🪙 total.");
         return stringBuilder.toString();
     }
 

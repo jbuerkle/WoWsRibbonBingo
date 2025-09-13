@@ -30,15 +30,15 @@ class BingoGameIntegrationTest {
         private static final String END_OF_CHALLENGE_CONFIRMED =
                 "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
         private static final String LEVEL_THREE_UNSUCCESSFUL_END =
-                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 3: 700 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
+                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 3: 700 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁";
         private static final String LEVEL_FIVE_VOLUNTARY_END =
-                "Challenge ended voluntarily on level 5. Your reward from the previous level: 16 subs \uD83C\uDF81";
+                "Challenge ended voluntarily on level 5. Your reward from the previous level: 16 subs 🎁";
         private static final String LEVEL_SEVEN_SUCCESSFUL_END =
-                "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 subs + (unused extra lives: 1) * 6 subs = 134 subs \uD83C\uDF81";
+                "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 128 subs + (unused extra lives: 1) * 6 subs = 134 subs 🎁";
         private static final String LEVEL_FOUR_WITH_ZERO_TOKENS =
-                "Requirement of level 4: 900 points. Token counter: Now 0 tokens \uD83E\uDE99 total.";
+                "Requirement of level 4: 900 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
-                "Ribbon Bingo result: Main gun hit: 400 points + Set on fire: 15 * 20 points + Destroyed: 2 * 120 points + Arsonist: 2 * (30 points + (Set on fire: 15 * 20 points) * 0.1) = 1060 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: +1 token (successful match). Now 1 token \uD83E\uDE99 total. ➡️ Requirement of level 2: 500 points";
+                "Ribbon Bingo result: Main gun hit: 400 points + Set on fire: 15 * 20 points + Destroyed: 2 * 120 points + Arsonist: 2 * (30 points + (Set on fire: 15 * 20 points) * 0.1) = 1060 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs 🎁 Token counter: +1 token (successful match). Now 1 token 🪙 total. ➡️ Requirement of level 2: 500 points";
         private static final Player SINGLE_PLAYER = new Player("Single Player");
 
         private BingoGame bingoGame;
@@ -118,13 +118,13 @@ class BingoGameIntegrationTest {
         private static final Player PLAYER_B = new Player("Player B");
         private static final Player PLAYER_C = new Player("Player C");
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
-                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 250 points + 350 points = 600 points. Requirement of level 1: 540 points. Token counter: +1 token (successful match). Now 1 token \uD83E\uDE99 total.";
+                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 250 points + 350 points = 600 points. Requirement of level 1: 540 points. Token counter: +1 token (successful match). Now 1 token 🪙 total.";
         private static final String LEVEL_ONE_WITH_BINGO_RESULT =
-                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Total result: 250 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens \uD83E\uDE99 total.";
+                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Total result: 250 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_DIVISION_ACHIEVEMENTS =
-                "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens \uD83E\uDE99 total.";
+                "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_TWO_WITH_ONE_TOKEN =
-                "Requirement of level 2: 900 points. Token counter: Now 1 token \uD83E\uDE99 total.";
+                "Requirement of level 2: 900 points. Token counter: Now 1 token 🪙 total.";
 
         private BingoGame bingoGame;
 

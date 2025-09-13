@@ -16,7 +16,7 @@ class BingoGameOutputSplitterTest {
     private static final String LONG_CALCULATION_STRING_PART_3 =
             " + Assisted in capture: 3000 * 40 points + Torpedo hit: 3000 * 40 points + Caused flooding: 3000 * 40 points + Spotted: 3000 * 30 points + Close Quarters Expert: 3000 * 25 points + Citadel hit: 3000 * 20 points + Set on fire: 3000 * 20 points + Depth charge hit: 3000 * 10 points + Shot down by fighter: 3000 * 10 points + Aircraft shot down: 3000 * 10 points + Incapacitation: 3000 * 10 points + Defended: 3000 * 10 points + Sonar ping: 3000 * 5 points + Bomb hit: 3000 * 3 points";
     private static final String LONG_CALCULATION_STRING_PART_4 =
-            " + Rocket hit: 3000 * 3 points + Secondary hit: 3000 points + Main gun hit: 3000 points = 617274000 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: +1 token (successful match). Now 1 token \uD83E\uDE99 total. ➡️ Requirement of level 2: 500 points";
+            " + Rocket hit: 3000 * 3 points + Secondary hit: 3000 points + Main gun hit: 3000 points = 617274000 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs 🎁 Token counter: +1 token (successful match). Now 1 token 🪙 total. ➡️ Requirement of level 2: 500 points";
     private static final String SHORT_STRING = "This is a short test string. It should not be split.";
     private static final String STRING_STARTING_WITH_DOUBLE_LINE_BREAK =
             "\n\nThis string should always be split off, because it starts with a double line break.";
@@ -24,7 +24,7 @@ class BingoGameOutputSplitterTest {
     private static final String PLAYER_B_RESULT_STRING = getResultStringForPlayer("Player B");
     private static final String PLAYER_C_RESULT_STRING = getResultStringForPlayer("Player C");
     private static final String REST_OF_RESULT_STRING =
-            "Shared division achievements: Dummy division text which is slightly too long. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 540 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 900 points";
+            "Shared division achievements: Dummy division text which is slightly too long. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 540 points ✅ Unlocked reward: 2 subs 🎁 Token counter: Dummy token text. ➡️ Requirement of level 2: 900 points";
     private static final String CALCULATION_STRING_WITH_EXACTLY_500_CHARACTERS =
             "Ribbon Bingo result: 234567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890 + 4567890";
     private static final String REST_OF_CALCULATION_STRING =
