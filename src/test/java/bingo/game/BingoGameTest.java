@@ -3,7 +3,9 @@ package bingo.game;
 import bingo.game.input.UserInputException;
 import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
+import bingo.game.results.BingoResultBars;
 import bingo.game.results.division.SharedDivisionAchievements;
+import bingo.game.utility.BingoGameDependencyInjector;
 import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -29,13 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BingoGameTest {
@@ -43,9 +40,9 @@ class BingoGameTest {
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
-            ". Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 128 subs + (unused extra lives: 2) * 6 subs = 140 subs \uD83C\uDF81";
+            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) \uD83C\uDF81 This is the highest reward you can get. Congratulations! \uD83C\uDF8A Total reward: 8 subs + (unused extra lives: 2) * 6 subs = 20 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_GAME_OVER =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
+            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) \uD83C\uDF81";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
             ". Requirement of level 1: 300 points ❌ Active retry rules: Imbalanced matchmaking (rule 8a or 8b) ✅ ";
     private static final String LEVEL_ONE_UNFAIR_DISADVANTAGE =
@@ -53,31 +50,27 @@ class BingoGameTest {
     private static final String LEVEL_ONE_EXTRA_LIFE =
             ". Requirement of level 1: 300 points ❌ Active retry rules: Extra life (rule 8d) ✅ ";
     private static final String LEVEL_ONE_VOLUNTARY_END =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) \uD83C\uDF81";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: 1 sub \uD83C\uDF81 Total reward: 1 sub + (unused extra lives: 1) * 6 subs = 7 subs \uD83C\uDF81";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) \uD83C\uDF81 Total reward: 1 sub + (unused extra lives: 1) * 6 subs = 7 subs \uD83C\uDF81";
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
-    private static final String LEVEL_ONE_REQUIREMENT_FOR_TWO_PLAYERS =
-            "Requirement of level 1: 420 points. Token counter: Dummy token text.";
-    private static final String LEVEL_ONE_REQUIREMENT_FOR_THREE_PLAYERS =
-            "Requirement of level 1: 540 points. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION =
             "Requirement of level 1: 300 points. Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
-            ". Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 500 points";
+            ". Requirement of level 1: 300 points ✅ Unlocked reward: Dummy reward text: 2 sub(s) \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 600 points";
     private static final String LEVEL_TWO_VOLUNTARY_END =
-            "Challenge ended voluntarily on level 2. Your reward from the previous level: 2 subs \uD83C\uDF81";
+            "Challenge ended voluntarily on level 2. Your reward from the previous level: Dummy reward text: 2 sub(s) \uD83C\uDF81";
     private static final String LEVEL_TWO_REQUIREMENT =
-            "Requirement of level 2: 500 points. Token counter: Dummy token text.";
+            "Requirement of level 2: 600 points. Token counter: Dummy token text.";
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
-            ". Requirement of level 2: 500 points ✅ Unlocked reward: 4 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 3: 700 points";
+            ". Requirement of level 2: 600 points ✅ Unlocked reward: Dummy reward text: 3 sub(s) \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 3: 900 points";
     private static final String MULTIPLAYER_RESTRICTION_B =
-            "Requirement of level 1: 540 points. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESTRICTION_AB =
-            "Requirement of level 1: 540 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESTRICTION_ABC =
-            "Requirement of level 1: 540 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Player C's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Player C's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESULT_B =
             "Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points. " +
                     MULTIPLAYER_RESTRICTION_ABC;
@@ -85,9 +78,9 @@ class BingoGameTest {
             "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points = 60 points. " +
                     MULTIPLAYER_RESTRICTION_ABC;
     private static final String MULTIPLAYER_RESULT_ABC =
-            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 540 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub \uD83C\uDF81";
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) \uD83C\uDF81";
     private static final String MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS =
-            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Shared division achievements: Dummy division text. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 540 points ✅ Unlocked reward: 2 subs \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 900 points";
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Shared division achievements: Dummy division text. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 300 points ✅ Unlocked reward: Dummy reward text: 2 sub(s) \uD83C\uDF81 Token counter: Dummy token text. ➡️ Requirement of level 2: 600 points";
     private static final String DUMMY_SHIP_RESTRICTION_TEXT = "Dummy ship restriction text";
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
@@ -106,11 +99,15 @@ class BingoGameTest {
     private static final Player SINGLE_PLAYER = new Player("Single Player");
 
     @Mock
-    private TokenCounter mockedTokenCounter;
+    private BingoGameDependencyInjector mockedBingoGameDependencyInjector;
     @Mock
     private BingoGameStateMachine mockedBingoGameStateMachine;
     @Mock
+    private BingoResultBars mockedBingoResultBars;
+    @Mock
     private BingoResult mockedBingoResult;
+    @Mock
+    private TokenCounter mockedTokenCounter;
     @Mock
     private ShipRestriction mockedShipRestriction;
     @Mock
@@ -166,6 +163,7 @@ class BingoGameTest {
 
         @Test
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWhenSetIsAllowed() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
             verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
             verify(mockedBingoGameStateMachine).processSubmitResultAction(false, false);
@@ -216,6 +214,7 @@ class BingoGameTest {
 
         @Test
         void setShouldUpdateTokenCounterWhenSetIsAllowed() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             bingoGame.setActiveRetryRules(activeRetryRules);
             verify(mockedTokenCounter).calculateMatchResult(false, true, activeRetryRules);
@@ -495,26 +494,56 @@ class BingoGameTest {
             assertEquals(allModifiers.size() - 1, allowedModifiers.size());
             assertFalse(allowedModifiers.contains(ChallengeModifier.NO_HELP));
         }
-    }
-
-    @Nested
-    class GetAllResultBarsAndRewardsInTableFormat {
 
         @Test
-        void shouldReturnLongString() {
-            String expectedString = """
-                    | Level | Points required | Number of subs as reward: 2^(Level) |
-                    |---|---:|---:|
-                    | 0 | 0 | 2^0 = 1 sub \uD83C\uDF81 |
-                    | 1 | 300 | 2^1 = 2 subs \uD83C\uDF81 |
-                    | 2 | 500 | 2^2 = 4 subs \uD83C\uDF81 |
-                    | 3 | 700 | 2^3 = 8 subs \uD83C\uDF81 |
-                    | 4 | 900 | 2^4 = 16 subs \uD83C\uDF81 |
-                    | 5 | 1200 | 2^5 = 32 subs \uD83C\uDF81 |
-                    | 6 | 1500 | 2^6 = 64 subs \uD83C\uDF81 |
-                    | 7 | 1800 | 2^7 = 128 subs \uD83C\uDF81 |
-                    """;
-            assertEquals(expectedString, bingoGame.getAllResultBarsAndRewardsInTableFormat());
+        void shouldInvokeBingoGameDependencyInjectorWithoutChallengeModifiers() {
+            verify(mockedBingoGameDependencyInjector).createBingoGameStateMachine(false, true);
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.0, 7);
+            verify(mockedBingoGameDependencyInjector).createTokenCounter(true);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithRandomShipRestrictions() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+            verify(mockedBingoGameDependencyInjector).createBingoGameStateMachine(true, true);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithNoGivingUp() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_GIVING_UP));
+            verify(mockedBingoGameDependencyInjector).createBingoGameStateMachine(false, false);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithNoSafetyNet() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
+            verify(mockedBingoGameDependencyInjector).createTokenCounter(false);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithIncreasedDifficulty() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.INCREASED_DIFFICULTY));
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.2, 7);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithTwoPlayersAndIncreasedDifficulty() throws UserInputException {
+            setupBingoGame(List.of(PLAYER_A, PLAYER_B), List.of(ChallengeModifier.INCREASED_DIFFICULTY));
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.6, 7);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithThreePlayers() throws UserInputException {
+            setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.8, 7);
+        }
+
+        @Test
+        void shouldInvokeBingoGameDependencyInjectorWithDoubleDifficultyIncrease() throws UserInputException {
+            setupBingoGame(
+                    List.of(PLAYER_A, PLAYER_B, PLAYER_C),
+                    List.of(ChallengeModifier.INCREASED_DIFFICULTY, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE));
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(2.2, 7);
         }
     }
 
@@ -525,6 +554,7 @@ class BingoGameTest {
         void shouldReturnFirstResultBarWhenNoResultWasSubmitted() {
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             mockTokenCounterToString();
+            mockBingoResultBarsGetPointRequirement();
             assertToStringMethodReturnsFirstResultBar();
         }
 
@@ -533,6 +563,7 @@ class BingoGameTest {
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             mockTokenCounterToString();
             mockShipRestrictionGetDisplayText();
+            mockBingoResultBarsGetPointRequirement();
             bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
             assertEquals(LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION, bingoGame.toString());
         }
@@ -542,6 +573,8 @@ class BingoGameTest {
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoResultToString();
             mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER, bingoGame.toString());
             mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_UNSUCCESSFULLY);
@@ -554,6 +587,7 @@ class BingoGameTest {
             mockBingoResultToString();
             mockTokenCounterToString();
             mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
             bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_IMBALANCED_MATCHMAKING + DUMMY_TOKEN_TEXT, bingoGame.toString());
@@ -565,6 +599,7 @@ class BingoGameTest {
             mockBingoResultToString();
             mockTokenCounterToString();
             mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
             bingoGame.setActiveRetryRules(List.of(RetryRule.UNFAIR_DISADVANTAGE));
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_UNFAIR_DISADVANTAGE + DUMMY_TOKEN_TEXT, bingoGame.toString());
@@ -577,6 +612,7 @@ class BingoGameTest {
             mockTokenCounterToString();
             mockTokenCounterHasExtraLife();
             mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_EXTRA_LIFE + DUMMY_TOKEN_TEXT, bingoGame.toString());
         }
@@ -587,12 +623,15 @@ class BingoGameTest {
             mockBingoResultToString();
             mockTokenCounterToString();
             mockSufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_TRANSITION_TO_TWO, bingoGame.toString());
         }
 
         @Test
         void shouldReturnSecondResultBarWhenNoResultWasSubmitted() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             skipLevelsUntilReachingLevel(2);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             mockTokenCounterToString();
@@ -601,6 +640,8 @@ class BingoGameTest {
 
         @Test
         void shouldReturnLevelThreeNextWhenSubmittedResultIsSufficient() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             skipLevelsUntilReachingLevel(2);
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             mockBingoResultToString();
@@ -612,6 +653,9 @@ class BingoGameTest {
 
         @Test
         void shouldReturnCongratulationsForLevelSevenWhenSubmittedResultIsSufficient() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsReward();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             skipLevelsUntilReachingLevel(7);
             mockBingoResultToString();
             mockTokenCounterHasExtraLife();
@@ -630,6 +674,8 @@ class BingoGameTest {
 
         @Test
         void shouldReturnLevelTwoVoluntaryEnd() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             skipLevelsUntilReachingLevel(2);
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_TWO_VOLUNTARY_END, bingoGame.toString());
@@ -637,34 +683,21 @@ class BingoGameTest {
 
         @Test
         void shouldReturnLevelOneVoluntaryEnd() {
+            mockBingoResultBarsGetNumberOfSubsAsString();
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_ONE_VOLUNTARY_END, bingoGame.toString());
         }
 
         @Test
         void shouldReturnLevelOneVoluntaryEndWithExtraLife() {
+            mockBingoResultBarsGetNumberOfSubsAsReward();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             mockTokenCounterHasExtraLife();
             mockExtraLivesInTokenCounterAre(1);
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE, bingoGame.toString());
             mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
-        }
-
-        @Test
-        void shouldShowHigherRequirementForTwoPlayers() throws UserInputException {
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            mockTokenCounterToString();
-            setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B));
-            assertEquals(LEVEL_ONE_REQUIREMENT_FOR_TWO_PLAYERS, bingoGame.toString());
-        }
-
-        @Test
-        void shouldShowHigherRequirementForThreePlayers() throws UserInputException {
-            mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
-            mockTokenCounterToString();
-            setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
-            assertEquals(LEVEL_ONE_REQUIREMENT_FOR_THREE_PLAYERS, bingoGame.toString());
         }
 
         @Test
@@ -677,6 +710,8 @@ class BingoGameTest {
             mockShipRestrictionAllowsMainArmamentType();
             mockSharedDivisionAchievementsToString();
             mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsString();
             mockSharedDivisionAchievementsGetPointValue();
             setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
             setShipRestrictionsOneByOneAndCheckResults();
@@ -781,6 +816,7 @@ class BingoGameTest {
         @Test
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithInsufficientResult()
                 throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             mockInsufficientBingoResult();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
@@ -790,6 +826,7 @@ class BingoGameTest {
         @Test
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithSufficientResult()
                 throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             mockSufficientBingoResult();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             verify(mockedTokenCounter).calculateMatchResult(true, true, Collections.emptyList());
@@ -799,6 +836,8 @@ class BingoGameTest {
         @Test
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithActiveRetryRules()
                 throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
+            mockInsufficientBingoResult();
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             bingoGame.setActiveRetryRules(activeRetryRules);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
@@ -808,6 +847,7 @@ class BingoGameTest {
 
         @Test
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithMultiplePlayers() throws UserInputException {
+            mockBingoResultBarsGetPointRequirement();
             mockSufficientBingoResult();
             setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
             bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult);
@@ -914,6 +954,8 @@ class BingoGameTest {
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             setupMatchResultsBeforeConfirmation(activeRetryRules);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            mockBingoResultBarsGetPointRequirement();
+            mockInsufficientBingoResult();
             bingoGame.confirmCurrentResult();
             verify(mockedTokenCounter).confirmMatchResult();
             verify(mockedBingoGameStateMachine).getCurrentState();
@@ -929,6 +971,8 @@ class BingoGameTest {
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             setupMatchResultsBeforeConfirmation(activeRetryRules);
             mockCurrentBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
+            mockBingoResultBarsGetPointRequirement();
+            mockInsufficientBingoResult();
             bingoGame.confirmCurrentResult();
             verify(mockedTokenCounter).confirmMatchResult();
             verify(mockedBingoGameStateMachine).getCurrentState();
@@ -944,6 +988,7 @@ class BingoGameTest {
             List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
             setupMatchResultsBeforeConfirmation(activeRetryRules);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
+            mockBingoResultBarsGetPointRequirement();
             mockSufficientBingoResult();
             bingoGame.confirmCurrentResult();
             verify(mockedTokenCounter).confirmMatchResult();
@@ -1042,7 +1087,17 @@ class BingoGameTest {
 
     private void setupBingoGame(List<Player> players, List<ChallengeModifier> challengeModifiers)
             throws UserInputException {
-        bingoGame = new BingoGame(players, challengeModifiers, mockedTokenCounter, mockedBingoGameStateMachine);
+        mockBingoGameDependencyInjector();
+        bingoGame = new BingoGame(players, challengeModifiers, mockedBingoGameDependencyInjector);
+    }
+
+    private void mockBingoGameDependencyInjector() {
+        lenient().when(mockedBingoGameDependencyInjector.createBingoGameStateMachine(anyBoolean(), anyBoolean()))
+                .thenReturn(mockedBingoGameStateMachine);
+        lenient().when(mockedBingoGameDependencyInjector.createBingoResultBars(anyDouble(), anyInt()))
+                .thenReturn(mockedBingoResultBars);
+        lenient().when(mockedBingoGameDependencyInjector.createTokenCounter(anyBoolean()))
+                .thenReturn(mockedTokenCounter);
     }
 
     private void mockBingoGameActionIsNotAllowed(BingoGameAction action) throws UserInputException {
@@ -1051,6 +1106,24 @@ class BingoGameTest {
 
     private void mockCurrentBingoGameStateIs(BingoGameState currentState) {
         when(mockedBingoGameStateMachine.getCurrentState()).thenReturn(currentState);
+    }
+
+    private void mockBingoResultBarsGetPointRequirement() {
+        when(mockedBingoResultBars.getPointRequirementOfLevel(anyInt())).thenAnswer(invocationOnMock -> (
+                invocationOnMock.getArgument(0, Integer.class) * 300L));
+    }
+
+    private void mockBingoResultBarsGetNumberOfSubsAsReward() {
+        when(mockedBingoResultBars.getNumberOfSubsAsRewardForLevel(anyInt())).thenAnswer(this::convertLevelToNumberOfSubs);
+    }
+
+    private void mockBingoResultBarsGetNumberOfSubsAsString() {
+        when(mockedBingoResultBars.getNumberOfSubsAsStringForLevel(anyInt())).thenAnswer(invocationOnMock -> "Dummy reward text: %s sub(s) \uD83C\uDF81".formatted(
+                convertLevelToNumberOfSubs(invocationOnMock)));
+    }
+
+    private int convertLevelToNumberOfSubs(InvocationOnMock invocationOnMock) {
+        return invocationOnMock.getArgument(0, Integer.class) + 1;
     }
 
     private void mockInsufficientBingoResult() {

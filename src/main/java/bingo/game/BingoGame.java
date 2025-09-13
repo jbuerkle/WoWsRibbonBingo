@@ -3,8 +3,9 @@ package bingo.game;
 import bingo.game.input.UserInputException;
 import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
-import bingo.game.results.BingoResultBar;
+import bingo.game.results.BingoResultBars;
 import bingo.game.results.division.SharedDivisionAchievements;
+import bingo.game.utility.BingoGameDependencyInjector;
 import bingo.math.terms.Term;
 import bingo.math.terms.impl.Addition;
 import bingo.math.terms.impl.Equation;
@@ -35,65 +36,48 @@ public class BingoGame implements Serializable {
     private static final int MAX_LEVEL = 7;
     private static final String SENTENCE_END = ". ";
 
-    private final TokenCounter tokenCounter;
-    private final BingoGameStateMachine bingoGameStateMachine;
-    private final List<BingoResultBar> resultBars;
     private final List<Ship> shipsUsed;
     private final List<Player> players;
     private final List<RetryRule> activeRetryRules;
     private final List<ChallengeModifier> challengeModifiers;
     private final Map<Player, ShipRestriction> shipRestrictionByPlayer;
     private final Map<Player, BingoResult> bingoResultByPlayer;
+    private final BingoGameStateMachine bingoGameStateMachine;
+    private final BingoResultBars bingoResultBars;
+    private final TokenCounter tokenCounter;
     private SharedDivisionAchievements sharedDivisionAchievements;
     private int currentLevel;
 
     BingoGame(
-            List<Player> players, List<ChallengeModifier> challengeModifiers, TokenCounter tokenCounter,
-            BingoGameStateMachine bingoGameStateMachine) throws UserInputException {
+            List<Player> players, List<ChallengeModifier> challengeModifiers,
+            BingoGameDependencyInjector bingoGameDependencyInjector) throws UserInputException {
         if (players.isEmpty() || players.size() > 3) {
             throw exceptionWithMessage("The number of players must be between 1 and 3");
         }
-        this.tokenCounter = tokenCounter;
-        this.bingoGameStateMachine = bingoGameStateMachine;
-        this.resultBars = new LinkedList<>();
         this.shipsUsed = new LinkedList<>();
         this.players = new LinkedList<>(players);
         this.activeRetryRules = new LinkedList<>();
-        this.challengeModifiers = filterDisallowedModifiers(challengeModifiers, players);
+        this.challengeModifiers = filterDisallowedModifiers(challengeModifiers, players.size());
         this.shipRestrictionByPlayer = new HashMap<>();
         this.bingoResultByPlayer = new HashMap<>();
-        for (int level = START_LEVEL - 1; level <= MAX_LEVEL; level++) {
-            resultBars.add(new BingoResultBar(level));
-        }
+        this.bingoGameStateMachine =
+                bingoGameDependencyInjector.createBingoGameStateMachine(
+                        shipRestrictionsAreEnabled(),
+                        endingVoluntarilyIsAllowed());
+        this.bingoResultBars =
+                bingoGameDependencyInjector.createBingoResultBars(getPointRequirementModifier(), MAX_LEVEL);
+        this.tokenCounter = bingoGameDependencyInjector.createTokenCounter(extraLivesAreEnabled());
         this.currentLevel = START_LEVEL;
     }
 
     public BingoGame(List<Player> players, List<ChallengeModifier> challengeModifiers) throws UserInputException {
-        this(
-                players,
-                challengeModifiers,
-                new TokenCounter(),
-                new BingoGameStateMachine(
-                        shipRestrictionsAreEnabled(challengeModifiers),
-                        endingVoluntarilyIsAllowed(challengeModifiers)));
+        this(players, challengeModifiers, new BingoGameDependencyInjector());
     }
 
     private List<ChallengeModifier> filterDisallowedModifiers(
-            List<ChallengeModifier> challengeModifiers, List<Player> players) {
-        final List<ChallengeModifier> filteredChallengeModifiers;
-        if (players.size() == 1) {
-            filteredChallengeModifiers =
-                    filterDisallowedModifier(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE, challengeModifiers);
-        } else {
-            filteredChallengeModifiers = filterDisallowedModifier(ChallengeModifier.NO_HELP, challengeModifiers);
-        }
-        return filteredChallengeModifiers;
-    }
-
-    private List<ChallengeModifier> filterDisallowedModifier(
-            ChallengeModifier disallowedModifier, List<ChallengeModifier> challengeModifiers) {
+            List<ChallengeModifier> challengeModifiers, int numberOfPlayers) {
         return challengeModifiers.stream()
-                .filter(challengeModifier -> !challengeModifier.equals(disallowedModifier))
+                .filter(challengeModifier -> challengeModifier.allowsNumberOfPlayers(numberOfPlayers))
                 .toList();
     }
 
@@ -213,7 +197,7 @@ public class BingoGame implements Serializable {
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
-        return getPointValueOfTotalResult() >= getPointRequirementOfLevel(currentLevel);
+        return getPointValueOfTotalResult() >= bingoResultBars.getPointRequirementOfLevel(currentLevel);
     }
 
     private long getPointValueOfTotalResult() {
@@ -241,17 +225,28 @@ public class BingoGame implements Serializable {
         return new TermWithPoints(new Literal((int) pointValue));
     }
 
-    private long getPointRequirementOfLevel(int level) {
-        int baseRequirement = resultBars.get(level).getPointRequirement();
-        return Math.round(baseRequirement * getRequirementModifierForPlayers());
+    private double getPointRequirementModifier() {
+        double rawModifier = 1 + getModifierIncreaseForPlayers() + getModifierIncreaseForChallengeModifiers();
+        return roundedDoubleOf(rawModifier);
     }
 
-    private double getRequirementModifierForPlayers() {
-        return 1 + (players.size() - 1) * 0.4;
+    private double getModifierIncreaseForPlayers() {
+        return (players.size() - 1) * 0.4;
+    }
+
+    private double getModifierIncreaseForChallengeModifiers() {
+        return challengeModifiers.stream()
+                .map(ChallengeModifier::getPointRequirementModifier)
+                .reduce(Double::sum)
+                .orElse(0.0);
+    }
+
+    private double roundedDoubleOf(double rawModifier) {
+        return Math.round(rawModifier * 100) / 100.0;
     }
 
     private String getPointRequirementOfLevelAsString(int level) {
-        return "Requirement of level %s: %s points".formatted(level, getPointRequirementOfLevel(level));
+        return "Requirement of level %s: %s points".formatted(level, bingoResultBars.getPointRequirementOfLevel(level));
     }
 
     public int getCurrentLevel() {
@@ -360,20 +355,6 @@ public class BingoGame implements Serializable {
         return new LinkedList<>(challengeModifiers);
     }
 
-    public String getAllResultBarsAndRewardsInTableFormat() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("| Level | Points required | Number of subs as reward: 2^(Level) |\n");
-        stringBuilder.append("|---|---:|---:|\n");
-        for (BingoResultBar resultBar : resultBars) {
-            stringBuilder.append("| %s | %s | 2^%s = %s |\n".formatted(
-                    resultBar.level(),
-                    resultBar.getPointRequirement(),
-                    resultBar.level(),
-                    resultBar.getNumberOfSubsAsString()));
-        }
-        return stringBuilder.toString();
-    }
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -464,23 +445,28 @@ public class BingoGame implements Serializable {
     }
 
     private void appendTextForVoluntaryEndOfChallenge(StringBuilder stringBuilder) {
-        BingoResultBar previousResultBar = resultBars.get(currentLevel - 1);
+        int previousLevel = currentLevel - 1;
         stringBuilder.append("Challenge ended voluntarily on level ")
                 .append(currentLevel)
                 .append(". Your reward from the previous level: ")
-                .append(previousResultBar.getNumberOfSubsAsString());
-        appendTextForConversionOfExtraLives(previousResultBar, stringBuilder);
+                .append(bingoResultBars.getNumberOfSubsAsStringForLevel(previousLevel));
+        appendTextForConversionOfExtraLives(
+                bingoResultBars.getNumberOfSubsAsRewardForLevel(previousLevel),
+                stringBuilder);
     }
 
     private void appendTextForSuccessfulMatch(StringBuilder stringBuilder) {
-        BingoResultBar currentResultBar = resultBars.get(currentLevel);
-        stringBuilder.append(" ✅ Unlocked reward: ").append(currentResultBar.getNumberOfSubsAsString()).append(" ");
+        stringBuilder.append(" ✅ Unlocked reward: ")
+                .append(bingoResultBars.getNumberOfSubsAsStringForLevel(currentLevel))
+                .append(" ");
         if (hasNextLevel()) {
             stringBuilder.append(tokenCounter).append(" ➡️ ");
             stringBuilder.append(getPointRequirementOfLevelAsString(currentLevel + 1));
         } else {
             stringBuilder.append("This is the highest reward you can get. Congratulations! \uD83C\uDF8A");
-            appendTextForConversionOfExtraLives(currentResultBar, stringBuilder);
+            appendTextForConversionOfExtraLives(
+                    bingoResultBars.getNumberOfSubsAsRewardForLevel(currentLevel),
+                    stringBuilder);
         }
     }
 
@@ -498,13 +484,12 @@ public class BingoGame implements Serializable {
         } else {
             stringBuilder.append(
                     "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
-            stringBuilder.append(resultBars.getFirst().getNumberOfSubsAsString());
+            stringBuilder.append(bingoResultBars.getNumberOfSubsAsStringForLevel(0));
         }
     }
 
-    private void appendTextForConversionOfExtraLives(BingoResultBar resultBar, StringBuilder stringBuilder) {
+    private void appendTextForConversionOfExtraLives(int unlockedReward, StringBuilder stringBuilder) {
         if (tokenCounter.hasExtraLife()) {
-            int unlockedReward = resultBar.getNumberOfSubsAsReward();
             int extraLives = tokenCounter.getCurrentExtraLives();
             int conversionFactorForExtraLives = 6;
             int totalReward = unlockedReward + extraLives * conversionFactorForExtraLives;
@@ -534,11 +519,15 @@ public class BingoGame implements Serializable {
         }
     }
 
-    private static boolean shipRestrictionsAreEnabled(List<ChallengeModifier> challengeModifiers) {
+    private boolean shipRestrictionsAreEnabled() {
         return challengeModifiers.contains(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS);
     }
 
-    private static boolean endingVoluntarilyIsAllowed(List<ChallengeModifier> challengeModifiers) {
+    private boolean endingVoluntarilyIsAllowed() {
         return !challengeModifiers.contains(ChallengeModifier.NO_GIVING_UP);
+    }
+
+    private boolean extraLivesAreEnabled() {
+        return !challengeModifiers.contains(ChallengeModifier.NO_SAFETY_NET);
     }
 }
