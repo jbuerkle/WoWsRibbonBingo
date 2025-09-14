@@ -177,26 +177,23 @@ occur here. This means you will never be forced to play aircraft carriers or sub
 **explicitly** banned. Despite that, if you were to pick a ship you want to play before picking a number, then the
 chances of you being allowed to play that ship are exactly 50/50, regardless of the type of ship you want to play.
 
-## Hall of Fame
+## Leaderboard
 
 ### Solo streamer challenge (classic)
 
-| Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
-|-----------------|--------------------------|---------------------------|-------------:|
-| OverLordBou     | 21.02.2025               | Your_SAT_Score            |  140 subs 🎁 |
-| OverLordBou     | 04.04.2025               | Your_SAT_Score            |  140 subs 🎁 |
-| Hyf1re          | 10.04.2025               | ArmoredGuppy, OverLordBou |  140 subs 🎁 |
-| OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
-| OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
-| OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| Hyf1re          | 03.07.2025               | ArmoredGuppy              |  128 subs 🎁 |
-| Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
-| OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| Rank | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
+|------|-----------------|--------------------------|---------------------------|-------------:|
+| 1.🥇 | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
+| 2.🥈 | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 3.🥉 | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 4.   | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 5.   | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
+| 6.   | OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 7.   | Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
+| 8.   | Hyf1re          | 03.07.2025               | ArmoredGuppy              |  128 subs 🎁 |
 
 ### Duo/trio streamer challenge
 
-| Twitch streamers     | Date played (dd.mm.yyyy) | Total reward |
-|----------------------|--------------------------|-------------:|
-| Hyf1re, ArmoredGuppy | 17.08.2025               |  158 subs 🎁 |
+| Rank | Twitch streamers     | Date played (dd.mm.yyyy) | Total reward |
+|------|----------------------|--------------------------|-------------:|
+| 1.🥇 | Hyf1re, ArmoredGuppy | 17.08.2025               |  158 subs 🎁 |
