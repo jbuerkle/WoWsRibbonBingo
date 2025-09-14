@@ -1,5 +1,8 @@
 package bingo.game.modifiers;
 
+import bingo.math.terms.Term;
+import bingo.math.terms.impl.LabeledTerm;
+import bingo.math.terms.impl.Literal;
 import bingo.text.TextUtility;
 
 import java.io.Serial;
@@ -87,6 +90,10 @@ public enum ChallengeModifier implements Serializable {
 
     private String getTextForBonusModifier() {
         return "in exchange for +%s additional rewards".formatted(TextUtility.getAsPercentage(bonusModifier));
+    }
+
+    public Term getAsTerm() {
+        return new LabeledTerm(displayName, new Literal(bonusModifier));
     }
 
     public static String getAllChallengeModifiersListedAsString() {

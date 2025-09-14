@@ -61,6 +61,20 @@ class ChallengeModifierTest {
     }
 
     @Test
+    void getAsTermShouldReturnDisplayNameWithValueOfBonusModifier() {
+        assertEquals(
+                "Random ship restrictions: 0.5",
+                getAsTermAndConvertToString(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+        assertEquals("Increased difficulty: 0.25", getAsTermAndConvertToString(ChallengeModifier.INCREASED_DIFFICULTY));
+        assertEquals(
+                "Double difficulty increase: 0.25",
+                getAsTermAndConvertToString(ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE));
+        assertEquals("No help: 0.25", getAsTermAndConvertToString(ChallengeModifier.NO_HELP));
+        assertEquals("No giving up: 0.25", getAsTermAndConvertToString(ChallengeModifier.NO_GIVING_UP));
+        assertEquals("No safety net: 0.75", getAsTermAndConvertToString(ChallengeModifier.NO_SAFETY_NET));
+    }
+
+    @Test
     void getAllChallengeModifiersListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Random ship restrictions: All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), in exchange for +50% additional rewards.
@@ -71,5 +85,9 @@ class ChallengeModifierTest {
                 - No safety net: You do not gain any extra lives, in exchange for +75% additional rewards.
                 """;
         assertEquals(expectedString, ChallengeModifier.getAllChallengeModifiersListedAsString());
+    }
+
+    private String getAsTermAndConvertToString(ChallengeModifier challengeModifier) {
+        return challengeModifier.getAsTerm().getAsString();
     }
 }
