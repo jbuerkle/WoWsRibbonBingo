@@ -240,10 +240,10 @@ public class BingoGame implements Serializable {
 
     private Term getBaseRewardAsTerm(int unlockedReward) {
         Term unlockedRewardAsTerm = new TermWithSubs(new Literal(unlockedReward));
-        Term extraLives = new Literal(tokenCounter.getCurrentExtraLives());
+        Term extraLives = new LabeledTerm("unused extra lives", new Literal(tokenCounter.getCurrentExtraLives()));
         Term conversionFactor = new TermWithSubs(new Literal(6));
-        Term convertedExtraLives =
-                new LabeledTerm("unused extra lives", new Multiplication(extraLives, conversionFactor));
+        Multiplication convertedExtraLives = new Multiplication(extraLives, conversionFactor);
+        convertedExtraLives.displayIdentity();
         return new Addition(unlockedRewardAsTerm, convertedExtraLives);
     }
 

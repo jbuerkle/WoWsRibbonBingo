@@ -58,9 +58,9 @@ class BingoGameTest {
     private static final String LEVEL_ONE_VOLUNTARY_END =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub + unused extra lives: 6 subs = 7 subs 🎁";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub + unused extra lives: 1 * 6 subs = 7 subs 🎁";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE_AND_NO_SAFETY_NET =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: (1 sub + unused extra lives: 6 subs) * (challenge modifiers: 1 + No safety net: 0.75) = 12 subs 🎁";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: (1 sub + unused extra lives: 1 * 6 subs) * (challenge modifiers: 1 + No safety net: 0.75) = 12 subs 🎁";
     private static final String LEVEL_ONE_REQUIREMENT_WITHOUT_TOKEN_COUNTER = "Requirement of level 1: 300 points";
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
