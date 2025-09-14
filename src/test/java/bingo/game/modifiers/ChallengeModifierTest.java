@@ -20,12 +20,12 @@ class ChallengeModifierTest {
 
     @Test
     void getBonusModifierShouldReturnCorrectValue() {
-        assertEquals(0.4, ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.getBonusModifier());
-        assertEquals(0.2, ChallengeModifier.INCREASED_DIFFICULTY.getBonusModifier());
-        assertEquals(0.2, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.getBonusModifier());
-        assertEquals(0.2, ChallengeModifier.NO_HELP.getBonusModifier());
-        assertEquals(0.2, ChallengeModifier.NO_GIVING_UP.getBonusModifier());
-        assertEquals(0.5, ChallengeModifier.NO_SAFETY_NET.getBonusModifier());
+        assertEquals(0.5, ChallengeModifier.RANDOM_SHIP_RESTRICTIONS.getBonusModifier());
+        assertEquals(0.25, ChallengeModifier.INCREASED_DIFFICULTY.getBonusModifier());
+        assertEquals(0.25, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE.getBonusModifier());
+        assertEquals(0.25, ChallengeModifier.NO_HELP.getBonusModifier());
+        assertEquals(0.25, ChallengeModifier.NO_GIVING_UP.getBonusModifier());
+        assertEquals(0.75, ChallengeModifier.NO_SAFETY_NET.getBonusModifier());
     }
 
     @Test
@@ -63,12 +63,12 @@ class ChallengeModifierTest {
     @Test
     void getAllChallengeModifiersListedAsStringShouldReturnLongString() {
         String expectedString = """
-                - Random ship restrictions: All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), in exchange for +40% additional rewards.
-                - Increased difficulty: The point requirements for each level increase by 20%, in exchange for +20% additional rewards.
-                - Double difficulty increase: The point requirements for each level increase by another 20%, in exchange for +20% additional rewards. Duo/trio streamer challenge only.
-                - No help: Supporters cannot join your division, in exchange for +20% additional rewards. Solo streamer challenge only.
-                - No giving up: You cannot end the challenge early, in exchange for +20% additional rewards. This does not affect your ability to pause the challenge.
-                - No safety net: You do not gain any extra lives, in exchange for +50% additional rewards.
+                - Random ship restrictions: All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), in exchange for +50% additional rewards.
+                - Increased difficulty: The point requirements for each level increase by 20%, in exchange for +25% additional rewards.
+                - Double difficulty increase: The point requirements for each level increase by another 20%, in exchange for +25% additional rewards. Duo/trio streamer challenge only.
+                - No help: Supporters cannot join your division, in exchange for +25% additional rewards. Solo streamer challenge only.
+                - No giving up: You cannot end the challenge early, in exchange for +25% additional rewards. This does not affect your ability to pause the challenge.
+                - No safety net: You do not gain any extra lives, in exchange for +75% additional rewards.
                 """;
         assertEquals(expectedString, ChallengeModifier.getAllChallengeModifiersListedAsString());
     }

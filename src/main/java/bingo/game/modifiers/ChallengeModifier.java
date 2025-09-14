@@ -9,37 +9,37 @@ import java.util.function.Predicate;
 public enum ChallengeModifier implements Serializable {
     RANDOM_SHIP_RESTRICTIONS(
             "Random ship restrictions",
-            0.4,
+            0.5,
             0,
             "All participating streamers get random ship restrictions, as described in [the section below](#optional-ship-restrictions), %reward%.",
             ChallengeModifier::alwaysAllowed),
     INCREASED_DIFFICULTY(
             "Increased difficulty",
-            0.2,
+            0.25,
             0.2,
             "The point requirements for each level increase by 20%, %reward%.",
             ChallengeModifier::alwaysAllowed),
     DOUBLE_DIFFICULTY_INCREASE(
             "Double difficulty increase",
-            0.2,
+            0.25,
             0.2,
             "The point requirements for each level increase by another 20%, %reward%. Duo/trio streamer challenge only.",
             ChallengeModifier::onlyAllowedInDuoTrioStreamerChallenge),
     NO_HELP(
             "No help",
-            0.2,
+            0.25,
             0,
             "Supporters cannot join your division, %reward%. Solo streamer challenge only.",
             ChallengeModifier::onlyAllowedInSoloStreamerChallenge),
     NO_GIVING_UP(
             "No giving up",
-            0.2,
+            0.25,
             0,
             "You cannot end the challenge early, %reward%. This does not affect your ability to pause the challenge.",
             ChallengeModifier::alwaysAllowed),
     NO_SAFETY_NET(
             "No safety net",
-            0.5,
+            0.75,
             0,
             "You do not gain any extra lives, %reward%.",
             ChallengeModifier::alwaysAllowed);
