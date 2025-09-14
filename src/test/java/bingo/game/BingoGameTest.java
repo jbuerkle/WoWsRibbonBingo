@@ -40,9 +40,13 @@ class BingoGameTest {
     private static final String END_OF_CHALLENGE_CONFIRMED =
             "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
-            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 8 subs + (unused extra lives: 2) * 6 subs = 20 subs 🎁";
+            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 8 subs + unused extra lives: 2 * 6 subs = 20 subs 🎁";
+    private static final String LEVEL_SEVEN_CONGRATULATIONS_WITH_ALL_CHALLENGE_MODIFIERS =
+            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: (8 subs + unused extra lives: 2 * 6 subs) * (challenge modifiers: 1 + Random ship restrictions: 0.5 + Increased difficulty: 0.25 + No help: 0.25 + No giving up: 0.25 + No safety net: 0.75) = 60 subs 🎁";
     private static final String LEVEL_ONE_GAME_OVER =
             ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
+    private static final String LEVEL_ONE_GAME_OVER_WITH_NO_GIVING_UP_AND_NO_SAFETY_NET =
+            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No giving up: 0.25 + No safety net: 0.75) = 2 subs 🎁";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING_WITHOUT_TOKEN_COUNTER =
             ". Requirement of level 1: 300 points ❌ Active retry rules: Imbalanced matchmaking (rule 8a or 8b) 🔄";
     private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
@@ -54,7 +58,9 @@ class BingoGameTest {
     private static final String LEVEL_ONE_VOLUNTARY_END =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
-            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub + (unused extra lives: 1) * 6 subs = 7 subs 🎁";
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub + unused extra lives: 6 subs = 7 subs 🎁";
+    private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE_AND_NO_SAFETY_NET =
+            "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁 Total reward: (1 sub + unused extra lives: 6 subs) * (challenge modifiers: 1 + No safety net: 0.75) = 12 subs 🎁";
     private static final String LEVEL_ONE_REQUIREMENT_WITHOUT_TOKEN_COUNTER = "Requirement of level 1: 300 points";
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
@@ -595,6 +601,23 @@ class BingoGameTest {
         }
 
         @Test
+        void shouldReturnGameOverWithNoGivingUpAndNoSafetyNet() throws UserInputException {
+            setupBingoGame(
+                    List.of(SINGLE_PLAYER),
+                    List.of(ChallengeModifier.NO_GIVING_UP, ChallengeModifier.NO_SAFETY_NET));
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
+            mockBingoResultToString();
+            mockInsufficientBingoResult();
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsReward();
+            mockBingoResultBarsGetNumberOfSubsAsString();
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
+            assertEquals(
+                    DUMMY_RESULT_TEXT + LEVEL_ONE_GAME_OVER_WITH_NO_GIVING_UP_AND_NO_SAFETY_NET,
+                    bingoGame.toString());
+        }
+
+        @Test
         void shouldReturnRetryAllowedWithoutTokenCounter() throws UserInputException {
             setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
@@ -712,6 +735,23 @@ class BingoGameTest {
         }
 
         @Test
+        void shouldReturnCongratulationsForLevelSevenWithAllChallengeModifiers() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.values()));
+            mockBingoResultBarsGetPointRequirement();
+            mockBingoResultBarsGetNumberOfSubsAsReward();
+            mockBingoResultBarsGetNumberOfSubsAsString();
+            skipLevelsUntilReachingLevel(7);
+            mockBingoResultToString();
+            mockTokenCounterHasExtraLife();
+            mockExtraLivesInTokenCounterAre(2);
+            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
+            assertEquals(
+                    DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS_WITH_ALL_CHALLENGE_MODIFIERS,
+                    bingoGame.toString());
+        }
+
+        @Test
         void shouldReturnLevelTwoVoluntaryEnd() throws UserInputException {
             mockBingoResultBarsGetPointRequirement();
             mockBingoResultBarsGetNumberOfSubsAsString();
@@ -737,6 +777,17 @@ class BingoGameTest {
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE, bingoGame.toString());
             mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
             assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
+        }
+
+        @Test
+        void shouldReturnLevelOneVoluntaryEndWithExtraLifeAndNoSafetyNet() throws UserInputException {
+            setupBingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
+            mockBingoResultBarsGetNumberOfSubsAsReward();
+            mockBingoResultBarsGetNumberOfSubsAsString();
+            mockTokenCounterHasExtraLife();
+            mockExtraLivesInTokenCounterAre(1);
+            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_VOLUNTARY_END);
+            assertEquals(LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE_AND_NO_SAFETY_NET, bingoGame.toString());
         }
 
         @Test

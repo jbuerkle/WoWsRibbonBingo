@@ -11,13 +11,14 @@ import bingo.math.terms.impl.Addition;
 import bingo.math.terms.impl.Equation;
 import bingo.math.terms.impl.LabeledTerm;
 import bingo.math.terms.impl.Literal;
+import bingo.math.terms.impl.Multiplication;
 import bingo.math.terms.impl.TermWithPoints;
+import bingo.math.terms.impl.TermWithSubs;
 import bingo.players.Player;
 import bingo.restrictions.ShipRestriction;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
 import bingo.ships.Ship;
-import bingo.text.TextUtility;
 import bingo.tokens.TokenCounter;
 
 import java.io.Serial;
@@ -224,6 +225,37 @@ public class BingoGame implements Serializable {
 
     private Term getAsTerm(long pointValue) {
         return new TermWithPoints(new Literal((int) pointValue));
+    }
+
+    private String getTotalRewardAsString(int unlockedReward) {
+        Term baseReward = getBaseRewardAsTerm(unlockedReward);
+        Term totalMultiplier = getTotalMultiplierAsTerm();
+        Term calculation = new Multiplication(baseReward, totalMultiplier);
+        Term totalReward = new LabeledTerm("Total reward", new TermWithSubs(new Equation(calculation)));
+        String totalRewardAsString = totalReward.getAsString();
+        if (baseReward.getValue() == 1) {
+            String calculationAsString = calculation.getAsString();
+            String calculationWithBaseReward = "%s * (%s)".formatted(baseReward.getAsString(), calculationAsString);
+            return totalRewardAsString.replace(calculationAsString, calculationWithBaseReward);
+        }
+        return totalRewardAsString;
+    }
+
+    private Term getBaseRewardAsTerm(int unlockedReward) {
+        Term unlockedRewardAsTerm = new TermWithSubs(new Literal(unlockedReward));
+        Term extraLives = new Literal(tokenCounter.getCurrentExtraLives());
+        Term conversionFactor = new TermWithSubs(new Literal(6));
+        Term convertedExtraLives =
+                new LabeledTerm("unused extra lives", new Multiplication(extraLives, conversionFactor));
+        return new Addition(unlockedRewardAsTerm, convertedExtraLives);
+    }
+
+    private Term getTotalMultiplierAsTerm() {
+        Term bonusMultiplier = challengeModifiers.stream()
+                .map(ChallengeModifier::getAsTerm)
+                .reduce(Addition::new)
+                .orElse(new Literal(0));
+        return new LabeledTerm("challenge modifiers", new Addition(new Literal(1), bonusMultiplier));
     }
 
     private double getPointRequirementModifier() {
@@ -451,9 +483,7 @@ public class BingoGame implements Serializable {
                 .append(currentLevel)
                 .append(". Your reward from the previous level: ")
                 .append(bingoResultBars.getNumberOfSubsAsStringForLevel(previousLevel));
-        appendTextForConversionOfExtraLives(
-                bingoResultBars.getNumberOfSubsAsRewardForLevel(previousLevel),
-                stringBuilder);
+        appendTextForTotalReward(bingoResultBars.getNumberOfSubsAsRewardForLevel(previousLevel), stringBuilder);
     }
 
     private void appendTextForSuccessfulMatch(StringBuilder stringBuilder) {
@@ -464,9 +494,7 @@ public class BingoGame implements Serializable {
             stringBuilder.append(" ➡️ ").append(getPointRequirementOfLevelAsString(currentLevel + 1));
         } else {
             stringBuilder.append(" This is the highest reward you can get. Congratulations! 🎊");
-            appendTextForConversionOfExtraLives(
-                    bingoResultBars.getNumberOfSubsAsRewardForLevel(currentLevel),
-                    stringBuilder);
+            appendTextForTotalReward(bingoResultBars.getNumberOfSubsAsRewardForLevel(currentLevel), stringBuilder);
         }
     }
 
@@ -486,28 +514,14 @@ public class BingoGame implements Serializable {
             stringBuilder.append(
                     "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
             stringBuilder.append(bingoResultBars.getNumberOfSubsAsStringForLevel(0));
+            appendTextForTotalReward(bingoResultBars.getNumberOfSubsAsRewardForLevel(0), stringBuilder);
         }
     }
 
-    private void appendTextForConversionOfExtraLives(int unlockedReward, StringBuilder stringBuilder) {
-        if (tokenCounter.hasExtraLife()) {
-            int extraLives = tokenCounter.getCurrentExtraLives();
-            int conversionFactorForExtraLives = 6;
-            int totalReward = unlockedReward + extraLives * conversionFactorForExtraLives;
-            String unlockedRewardAsString = getSubsAsString(unlockedReward);
-            String conversionFactorAsString = getSubsAsString(conversionFactorForExtraLives);
-            String totalRewardAsString = getSubsAsString(totalReward);
-            String calculationAsText = " Total reward: %s + (unused extra lives: %s) * %s = %s 🎁".formatted(
-                    unlockedRewardAsString,
-                    extraLives,
-                    conversionFactorAsString,
-                    totalRewardAsString);
-            stringBuilder.append(calculationAsText);
+    private void appendTextForTotalReward(int unlockedReward, StringBuilder stringBuilder) {
+        if (tokenCounter.hasExtraLife() || anyChallengeModifierIsActive()) {
+            stringBuilder.append(WHITESPACE).append(getTotalRewardAsString(unlockedReward)).append(" 🎁");
         }
-    }
-
-    private String getSubsAsString(int numberOfSubs) {
-        return numberOfSubs + TextUtility.getSuffixForSubs(numberOfSubs);
     }
 
     private void appendTextForTokenCounterWithPrefix(String prefix, StringBuilder stringBuilder) {
@@ -520,6 +534,10 @@ public class BingoGame implements Serializable {
         if (bingoGameStateMachine.getCurrentState().isFinal()) {
             stringBuilder.append("\n\nEnd of challenge confirmed. Changes are no longer allowed.");
         }
+    }
+
+    private boolean anyChallengeModifierIsActive() {
+        return !challengeModifiers.isEmpty();
     }
 
     private boolean shipRestrictionsAreEnabled() {
