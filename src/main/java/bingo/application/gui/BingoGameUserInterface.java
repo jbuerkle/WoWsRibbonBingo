@@ -612,6 +612,7 @@ public class BingoGameUserInterface {
             ShipRestriction shipRestriction = randomShipRestrictionGenerator.getForNumber(number);
             bingoGame.setShipRestrictionForPlayer(getSelectedPlayer(), shipRestriction);
             updateComboBoxWithAllowedMainArmamentTypes();
+            updateButtonVisibility();
             clearInput(numberInputField);
             setTextInTextArea();
         } catch (UserInputException exception) {
@@ -623,6 +624,7 @@ public class BingoGameUserInterface {
         try {
             bingoGame.removeShipRestrictionForPlayer(getSelectedPlayer());
             updateComboBoxWithAllowedMainArmamentTypes();
+            updateButtonVisibility();
             setTextInTextArea();
         } catch (UserInputException exception) {
             showMessageOfUserInputExceptionInTextArea(exception);
