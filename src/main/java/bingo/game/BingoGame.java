@@ -230,15 +230,12 @@ public class BingoGame implements Serializable {
     private String getTotalRewardAsString(int unlockedReward) {
         Term baseReward = getBaseRewardAsTerm(unlockedReward);
         Term totalMultiplier = getTotalMultiplierAsTerm();
-        Term calculation = new Multiplication(baseReward, totalMultiplier);
+        Multiplication calculation = new Multiplication(baseReward, totalMultiplier);
         Term totalReward = new LabeledTerm("Total reward", new TermWithSubs(new Equation(calculation)));
-        String totalRewardAsString = totalReward.getAsString();
         if (baseReward.getValue() == 1) {
-            String calculationAsString = calculation.getAsString();
-            String calculationWithBaseReward = "%s * (%s)".formatted(baseReward.getAsString(), calculationAsString);
-            return totalRewardAsString.replace(calculationAsString, calculationWithBaseReward);
+            calculation.displayIdentity();
         }
-        return totalRewardAsString;
+        return totalReward.getAsString();
     }
 
     private Term getBaseRewardAsTerm(int unlockedReward) {
