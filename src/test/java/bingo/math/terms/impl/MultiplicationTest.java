@@ -69,6 +69,13 @@ class MultiplicationTest {
     }
 
     @Test
+    void getAsStringShouldReturnBothSidesIfDisplayIdentityIsSet() {
+        Multiplication multiplicationWithIdentity = new Multiplication(one, three);
+        multiplicationWithIdentity.displayIdentity();
+        assertEquals("1 * 3", multiplicationWithIdentity.getAsString());
+    }
+
+    @Test
     void getAsStringShouldReturnThreeTimesThreeWithLiterals() {
         assertEquals("3 * 3", new Multiplication(three, three).getAsString());
     }

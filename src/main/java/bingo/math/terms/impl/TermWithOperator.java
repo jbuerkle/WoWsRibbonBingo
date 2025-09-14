@@ -8,12 +8,18 @@ public abstract class TermWithOperator implements Term {
     private final Term right;
     private final Operator operator;
     private final double value;
+    private boolean displayIdentity;
 
     protected TermWithOperator(Term left, Term right, Operator operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
         this.value = operator.apply(left.getValue(), right.getValue());
+        this.displayIdentity = false;
+    }
+
+    public void displayIdentity() {
+        this.displayIdentity = true;
     }
 
     @Override
@@ -29,11 +35,13 @@ public abstract class TermWithOperator implements Term {
 
     @Override
     public String getAsString() {
-        if (leftIsIdentity()) {
-            return right.getAsString();
-        }
-        if (rightIsIdentity()) {
-            return left.getAsString();
+        if (!displayIdentity) {
+            if (leftIsIdentity()) {
+                return right.getAsString();
+            }
+            if (rightIsIdentity()) {
+                return left.getAsString();
+            }
         }
         return subTermAsString(left) + operator.getAsString() + subTermAsString(right);
     }

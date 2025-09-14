@@ -69,6 +69,13 @@ class AdditionTest {
     }
 
     @Test
+    void getAsStringShouldReturnBothSidesIfDisplayIdentityIsSet() {
+        Addition additionWithIdentity = new Addition(zero, three);
+        additionWithIdentity.displayIdentity();
+        assertEquals("0 + 3", additionWithIdentity.getAsString());
+    }
+
+    @Test
     void getAsStringShouldReturnThreePlusThreeWithLiterals() {
         assertEquals("3 + 3", new Addition(three, three).getAsString());
     }
