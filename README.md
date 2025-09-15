@@ -152,6 +152,30 @@ Note:
   must receive at least a 25% share of the total reward. The only exception are small rewards (1 sub cannot be split).
 - As the reward is paid in gift subs, all participating streamers **must** have a monetized stream on Twitch.
 
+## Optional challenge modifiers
+
+Before starting the challenge, participating streamers can pick from a list of challenge modifiers, which will make the
+challenge harder for them, but also yield a higher potential reward. Once the challenge has started, the choice of
+challenge modifiers is permanent, and cannot be changed until the end of the current challenge attempt. You can pick any
+combination of the following challenge modifiers (including none, or all of them):
+
+- Random ship restrictions: All participating streamers get random ship restrictions, as described
+  in [the section below](#optional-ship-restrictions), in exchange for +50% additional rewards.
+- Increased difficulty: The point requirements for each level increase by 20%, in exchange for +25% additional rewards.
+- Double difficulty increase: The point requirements for each level increase by another 20%, in exchange for +25%
+  additional rewards. Duo/trio streamer challenge only.
+- No help: Supporters cannot join your division, in exchange for +25% additional rewards. Solo streamer challenge only.
+- No giving up: You cannot end the challenge early, in exchange for +25% additional rewards. This does not affect your
+  ability to pause the challenge.
+- No safety net: You do not gain any extra lives, in exchange for +75% additional rewards.
+
+Note:
+
+- All bonus rewards from challenge modifiers, as well as all point requirement increases of any type stack additively,
+  **not** multiplicatively.
+- Any number higher than or equal to 0.5 subs will be rounded up to 1 sub, while any number lower than that will be
+  rounded down to 0 subs.
+
 ## Optional ship restrictions
 
 At the start of every level, all participating streamers pick a positive integer (including 0), which corresponds to one
