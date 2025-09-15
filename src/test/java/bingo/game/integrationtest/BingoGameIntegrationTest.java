@@ -4,9 +4,12 @@ import bingo.achievements.Achievement;
 import bingo.achievements.division.DivisionAchievement;
 import bingo.game.BingoGame;
 import bingo.game.input.UserInputException;
+import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.players.Player;
+import bingo.restrictions.ShipRestriction;
+import bingo.restrictions.impl.BannedMainArmamentType;
 import bingo.ribbons.Ribbon;
 import bingo.rules.RetryRule;
 import bingo.ships.MainArmamentType;
@@ -31,14 +34,23 @@ class BingoGameIntegrationTest {
                 "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
         private static final String LEVEL_THREE_UNSUCCESSFUL_END =
                 "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 3: 700 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁";
+        private static final String LEVEL_FOUR_UNSUCCESSFUL_END =
+                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 4: 900 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No safety net: 0.75) = 2 subs 🎁";
         private static final String LEVEL_FIVE_VOLUNTARY_END =
                 "Challenge ended voluntarily on level 5. Your reward from the previous level: 16 subs 🎁";
         private static final String LEVEL_SEVEN_SUCCESSFUL_END =
                 "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 1800 points ✅ Unlocked reward: 128 subs 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 128 subs + unused extra lives: 1 * 6 subs = 134 subs 🎁";
+        private static final String LEVEL_SEVEN_SUCCESSFUL_END_WITH_ALL_CHALLENGE_MODIFIERS =
+                "Ribbon Bingo result: Main gun hit: 500 * 2 points + Destroyed: 6 * 120 points + Set on fire: 25 * 20 points + Witherer: 30 points + (Set on fire: 25 * 20 points) * 0.3 + Kraken Unleashed: 30 points + (Destroyed: 6 * 120 points) * 0.2 + High Caliber: 150 points = 2724 points. Requirement of level 7: 2160 points ✅ Unlocked reward: 128 subs 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 128 subs * (challenge modifiers: 1 + Random ship restrictions: 0.5 + Increased difficulty: 0.25 + No help: 0.25 + No giving up: 0.25 + No safety net: 0.75) = 384 subs 🎁";
         private static final String LEVEL_FOUR_WITH_ZERO_TOKENS =
                 "Requirement of level 4: 900 points. Token counter: Now 0 tokens 🪙 total.";
+        private static final String LEVEL_ONE_WITH_ZERO_TOKENS =
+                "Requirement of level 1: 300 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
                 "Ribbon Bingo result: Main gun hit: 400 points + Set on fire: 15 * 20 points + Destroyed: 2 * 120 points + Arsonist: 2 * (30 points + (Set on fire: 15 * 20 points) * 0.1) = 1060 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs 🎁 Token counter: +1 token (successful match). Now 1 token 🪙 total. ➡️ Requirement of level 2: 500 points";
+        private static final String LEVEL_ONE_SUCCESSFUL_MATCH_WITHOUT_TOKEN_COUNTER =
+                "Ribbon Bingo result: Main gun hit: 400 points + Set on fire: 15 * 20 points + Destroyed: 2 * 120 points + Arsonist: 2 * (30 points + (Set on fire: 15 * 20 points) * 0.1) = 1060 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs 🎁 ➡️ Requirement of level 2: 500 points";
+        private static final String LEVEL_TWO_WITHOUT_TOKEN_COUNTER = "Requirement of level 2: 500 points";
         private static final Player SINGLE_PLAYER = new Player("Single Player");
 
         private BingoGame bingoGame;
@@ -80,6 +92,34 @@ class BingoGameIntegrationTest {
         }
 
         @Test
+        void shouldProceedToLevelSevenWithAllChallengeModifiersActive() throws UserInputException {
+            bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.values()));
+            ShipRestriction shipRestriction = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
+            for (int level = START_LEVEL; level <= MAX_LEVEL; level++) {
+                bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, shipRestriction);
+                submitBingoResult(getBingoResultWithMoreThanTwoThousandPoints());
+                bingoGame.confirmCurrentResult();
+            }
+            assertEquals(
+                    LEVEL_SEVEN_SUCCESSFUL_END_WITH_ALL_CHALLENGE_MODIFIERS + END_OF_CHALLENGE_CONFIRMED,
+                    bingoGame.toString());
+        }
+
+        @Test
+        void shouldGoBackToInitialStateRegardlessOfPreviousStateWhenPerformingReset() throws UserInputException {
+            assertEquals(LEVEL_ONE_WITH_ZERO_TOKENS, bingoGame.toString());
+            submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
+            bingoGame.doResetForCurrentLevel();
+            assertEquals(LEVEL_ONE_WITH_ZERO_TOKENS, bingoGame.toString());
+            submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
+            bingoGame.doResetForCurrentLevel();
+            assertEquals(LEVEL_ONE_WITH_ZERO_TOKENS, bingoGame.toString());
+            bingoGame.endChallenge();
+            bingoGame.doResetForCurrentLevel();
+            assertEquals(LEVEL_ONE_WITH_ZERO_TOKENS, bingoGame.toString());
+        }
+
+        @Test
         void shouldAddAnExtraLifeThenConsumeItToContinueAfterAnUnsuccessfulMatch() throws UserInputException {
             for (int level = START_LEVEL; level < 4; level++) {
                 submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
@@ -92,6 +132,19 @@ class BingoGameIntegrationTest {
         }
 
         @Test
+        void shouldNotAddAnExtraLifeWhenNoSafetyNetChallengeModifierIsActive() throws UserInputException {
+            bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
+            for (int level = START_LEVEL; level < 4; level++) {
+                submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
+                bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+                bingoGame.confirmCurrentResult();
+            }
+            submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
+            bingoGame.confirmCurrentResult();
+            assertEquals(LEVEL_FOUR_UNSUCCESSFUL_END + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
+        }
+
+        @Test
         void shouldAllowRetryButNotAwardAnyTokens() throws UserInputException {
             String initialBingoGameText = bingoGame.toString();
             submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
@@ -101,10 +154,27 @@ class BingoGameIntegrationTest {
         }
 
         @Test
+        void shouldNotAllowSettingShipRestrictionsWhenTheChallengeModifierIsNotActive() {
+            ShipRestriction shipRestriction = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action CHANGE_SHIP_RESTRICTION is not allowed in the PREREQUISITE_SETUP_DONE state",
+                    () -> bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, shipRestriction));
+        }
+
+        @Test
         void shouldNotAwardPointsForDivisionAchievementsEvenIfAdded() throws UserInputException {
             submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
             assertEquals(LEVEL_ONE_SUCCESSFUL_MATCH, bingoGame.toString());
+        }
+
+        @Test
+        void shouldNotShowTokenCounterWhenNoSafetyNetChallengeModifierIsActive() throws UserInputException {
+            bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
+            submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
+            assertEquals(LEVEL_ONE_SUCCESSFUL_MATCH_WITHOUT_TOKEN_COUNTER, bingoGame.toString());
+            bingoGame.confirmCurrentResult();
+            assertEquals(LEVEL_TWO_WITHOUT_TOKEN_COUNTER, bingoGame.toString());
         }
 
         private void submitBingoResult(BingoResult bingoResult) throws UserInputException {
@@ -123,6 +193,8 @@ class BingoGameIntegrationTest {
                 "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Total result: 250 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_DIVISION_ACHIEVEMENTS =
                 "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
+        private static final String LEVEL_ONE_WITH_ZERO_TOKENS =
+                "Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_TWO_WITH_ONE_TOKEN =
                 "Requirement of level 2: 900 points. Token counter: Now 1 token 🪙 total.";
 
@@ -156,21 +228,73 @@ class BingoGameIntegrationTest {
         @Test
         void shouldNotAllowProceedingToLevelTwoBeforeResultsAreSubmittedForAllPlayers() throws UserInputException {
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
-            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
+            assertUserInputExceptionIsThrownForConfirmResultAction();
             bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithMoreThanOneThousandPoints());
-            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
+            assertUserInputExceptionIsThrownForConfirmResultAction();
             bingoGame.submitBingoResultForPlayer(PLAYER_B, getBingoResultWithMoreThanOneThousandPoints());
-            assertUserInputExceptionIsThrownForPartialResult(() -> bingoGame.confirmCurrentResult());
+            assertUserInputExceptionIsThrownForConfirmResultAction();
             bingoGame.submitBingoResultForPlayer(PLAYER_C, getBingoResultWithMoreThanOneThousandPoints());
             bingoGame.confirmCurrentResult();
             assertEquals(LEVEL_TWO_WITH_ONE_TOKEN, bingoGame.toString());
         }
 
-        private void assertUserInputExceptionIsThrownForPartialResult(Executable executable) {
-            UserInputException exception = assertThrows(UserInputException.class, executable);
-            assertEquals(
+        @Test
+        void shouldNotAllowSubmittingResultsBeforeShipRestrictionsAreSetForAllPlayers() throws UserInputException {
+            bingoGame = new BingoGame(
+                    List.of(PLAYER_A, PLAYER_B, PLAYER_C),
+                    List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+            ShipRestriction shipRestriction = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
+            assertUserInputExceptionIsThrownForSubmitResultAction();
+            bingoGame.setShipRestrictionForPlayer(PLAYER_A, shipRestriction);
+            assertUserInputExceptionIsThrownForSubmitResultAction();
+            bingoGame.setShipRestrictionForPlayer(PLAYER_B, shipRestriction);
+            assertUserInputExceptionIsThrownForSubmitResultAction();
+            bingoGame.setShipRestrictionForPlayer(PLAYER_C, shipRestriction);
+            bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithMoreThanOneThousandPoints());
+            bingoGame.submitBingoResultForPlayer(PLAYER_B, getBingoResultWithMoreThanOneThousandPoints());
+            bingoGame.submitBingoResultForPlayer(PLAYER_C, getBingoResultWithMoreThanOneThousandPoints());
+            bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
+            bingoGame.confirmCurrentResult();
+            assertEquals(LEVEL_TWO_WITH_ONE_TOKEN, bingoGame.toString());
+        }
+
+        @Test
+        void shouldNotAllowChangingShipRestrictionsWhenAnyResultIsSubmitted() throws UserInputException {
+            bingoGame = new BingoGame(
+                    List.of(PLAYER_A, PLAYER_B, PLAYER_C),
+                    List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+            ShipRestriction shipRestriction = new BannedMainArmamentType(MainArmamentType.AIRCRAFT);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_A, shipRestriction);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_B, shipRestriction);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_C, shipRestriction);
+            bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithMoreThanOneThousandPoints());
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action CHANGE_SHIP_RESTRICTION is not allowed in the PARTIAL_RESULT_SUBMITTED state",
+                    () -> bingoGame.removeShipRestrictionForPlayer(PLAYER_A));
+            bingoGame.submitBingoResultForPlayer(PLAYER_B, getBingoResultWithMoreThanOneThousandPoints());
+            bingoGame.submitBingoResultForPlayer(PLAYER_C, getBingoResultWithMoreThanOneThousandPoints());
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action CHANGE_SHIP_RESTRICTION is not allowed in the UNCONFIRMED_SUCCESSFUL_MATCH state",
+                    () -> bingoGame.removeShipRestrictionForPlayer(PLAYER_A));
+            bingoGame.doResetForCurrentLevel();
+            bingoGame.removeShipRestrictionForPlayer(PLAYER_A);
+            bingoGame.removeShipRestrictionForPlayer(PLAYER_B);
+            bingoGame.removeShipRestrictionForPlayer(PLAYER_C);
+            assertEquals(LEVEL_ONE_WITH_ZERO_TOKENS, bingoGame.toString());
+        }
+
+        private void assertUserInputExceptionIsThrownForConfirmResultAction() {
+            assertUserInputExceptionIsThrownWithMessage(
                     "Action CONFIRM_RESULT is not allowed in the PARTIAL_RESULT_SUBMITTED state",
-                    exception.getMessage());
+                    () -> bingoGame.confirmCurrentResult());
+        }
+
+        private void assertUserInputExceptionIsThrownForSubmitResultAction() {
+            assertUserInputExceptionIsThrownWithMessage(
+                    "Action SUBMIT_RESULT is not allowed in the LEVEL_INITIALIZED state",
+                    () -> bingoGame.submitBingoResultForPlayer(
+                            PLAYER_A,
+                            getBingoResultWithMoreThanOneThousandPoints()));
         }
     }
 
@@ -206,5 +330,10 @@ class BingoGameIntegrationTest {
         divisionAchievements.addAchievementResult(DivisionAchievement.GENERAL_OFFENSIVE, 2);
         divisionAchievements.addAchievementResult(DivisionAchievement.BROTHERS_IN_ARMS, 1);
         return divisionAchievements;
+    }
+
+    private void assertUserInputExceptionIsThrownWithMessage(String expectedMessage, Executable actionToPerform) {
+        UserInputException exception = assertThrows(UserInputException.class, actionToPerform);
+        assertEquals(expectedMessage, exception.getMessage());
     }
 }
