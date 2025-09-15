@@ -42,7 +42,7 @@ class BingoGameTest {
     private static final String LEVEL_SEVEN_CONGRATULATIONS =
             ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 8 subs + unused extra lives: 2 * 6 subs = 20 subs 🎁";
     private static final String LEVEL_SEVEN_CONGRATULATIONS_WITH_ALL_CHALLENGE_MODIFIERS =
-            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: (8 subs + unused extra lives: 2 * 6 subs) * (challenge modifiers: 1 + Random ship restrictions: 0.5 + Increased difficulty: 0.25 + No help: 0.25 + No giving up: 0.25 + No safety net: 0.75) = 60 subs 🎁";
+            ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 8 subs * (challenge modifiers: 1 + Random ship restrictions: 0.5 + Increased difficulty: 0.25 + No help: 0.25 + No giving up: 0.25 + No safety net: 0.75) = 24 subs 🎁";
     private static final String LEVEL_ONE_GAME_OVER =
             ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
     private static final String LEVEL_ONE_GAME_OVER_WITH_NO_GIVING_UP_AND_NO_SAFETY_NET =
@@ -742,8 +742,6 @@ class BingoGameTest {
             mockBingoResultBarsGetNumberOfSubsAsString();
             skipLevelsUntilReachingLevel(7);
             mockBingoResultToString();
-            mockTokenCounterHasExtraLife();
-            mockExtraLivesInTokenCounterAre(2);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_SUCCESSFUL_MATCH);
             assertEquals(
