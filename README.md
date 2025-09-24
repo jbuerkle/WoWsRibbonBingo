@@ -218,6 +218,7 @@ chances of you being allowed to play that ship are exactly 50/50, regardless of 
 
 ### Duo/trio streamer challenge
 
-| Rank | Twitch streamers     | Date played (dd.mm.yyyy) | Total reward |
-|------|----------------------|--------------------------|-------------:|
-| 1.🥇 | Hyf1re, ArmoredGuppy | 17.08.2025               |  158 subs 🎁 |
+| Rank | Twitch streamers       | Date played (dd.mm.yyyy) | Total reward |
+|------|------------------------|--------------------------|-------------:|
+| 1.🥇 | OverLordBou, StarboyNA | 24.09.2025               |  320 subs 🎁 |
+| 2.🥈 | Hyf1re, ArmoredGuppy   | 17.08.2025               |  158 subs 🎁 |
