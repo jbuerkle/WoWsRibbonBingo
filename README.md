@@ -221,4 +221,5 @@ chances of you being allowed to play that ship are exactly 50/50, regardless of 
 | Rank | Twitch streamers       | Date played (dd.mm.yyyy) | Total reward |
 |------|------------------------|--------------------------|-------------:|
 | 1.🥇 | OverLordBou, StarboyNA | 24.09.2025               |  320 subs 🎁 |
-| 2.🥈 | Hyf1re, ArmoredGuppy   | 17.08.2025               |  158 subs 🎁 |
+| 2.🥈 | Hyf1re, ArmoredGuppy   | 28.09.2025               |  235 subs 🎁 |
+| 3.🥉 | Hyf1re, ArmoredGuppy   | 17.08.2025               |  158 subs 🎁 |
