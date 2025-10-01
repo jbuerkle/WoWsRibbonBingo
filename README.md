@@ -118,9 +118,9 @@ Note: Bonus points for the same ribbon stack additively, **not** multiplicativel
 
 - General Offensive: 100 points (+50% bonus points for duos)
 - Brothers-in-Arms: 150 points
-- Strike Team: 250 points (+50% bonus points for duos)
-- Coordinated Attack: 200 points (+50% bonus points for duos)
-- Shoulder to Shoulder: 250 points (+50% bonus points for duos)
+- Strike Team: 150 points (+50% bonus points for duos)
+- Coordinated Attack: 150 points (+50% bonus points for duos)
+- Shoulder to Shoulder: 150 points (+50% bonus points for duos)
 
 Note:
 
