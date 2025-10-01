@@ -60,14 +60,14 @@ class DivisionAchievementResultTest {
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneCoordinatedAttackAchievementWithTwoPlayers() {
         Term term = oneCoordinatedAttackAchievement.getAsTerm(2);
-        assertEquals(300, term.getValue());
-        assertEquals("Coordinated Attack: 300 points", term.getAsString());
+        assertEquals(225, term.getValue());
+        assertEquals("Coordinated Attack: 225 points", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneCoordinatedAttackAchievementWithThreePlayers() {
         Term term = oneCoordinatedAttackAchievement.getAsTerm(3);
-        assertEquals(200, term.getValue());
-        assertEquals("Coordinated Attack: 200 points", term.getAsString());
+        assertEquals(150, term.getValue());
+        assertEquals("Coordinated Attack: 150 points", term.getAsString());
     }
 }

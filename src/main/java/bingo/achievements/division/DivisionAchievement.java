@@ -11,9 +11,9 @@ import java.io.Serializable;
 public enum DivisionAchievement implements Serializable {
     GENERAL_OFFENSIVE("General Offensive", 100, 0.5),
     BROTHERS_IN_ARMS("Brothers-in-Arms", 150, 0),
-    STRIKE_TEAM("Strike Team", 250, 0.5),
-    COORDINATED_ATTACK("Coordinated Attack", 200, 0.5),
-    SHOULDER_TO_SHOULDER("Shoulder to Shoulder", 250, 0.5);
+    STRIKE_TEAM("Strike Team", 150, 0.5),
+    COORDINATED_ATTACK("Coordinated Attack", 150, 0.5),
+    SHOULDER_TO_SHOULDER("Shoulder to Shoulder", 150, 0.5);
 
     @Serial
     private static final long serialVersionUID = -2677701939598808090L;

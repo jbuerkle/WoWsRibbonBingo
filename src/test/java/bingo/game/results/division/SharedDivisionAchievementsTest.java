@@ -42,7 +42,7 @@ class SharedDivisionAchievementsTest {
         divisionAchievements.addAchievementResult(DivisionAchievement.GENERAL_OFFENSIVE, 1);
         divisionAchievements.addAchievementResult(DivisionAchievement.BROTHERS_IN_ARMS, 1);
         divisionAchievements.addAchievementResult(DivisionAchievement.COORDINATED_ATTACK, 1);
-        assertEquals(450, divisionAchievements.getPointValue());
+        assertEquals(400, divisionAchievements.getPointValue());
     }
 
     @Test
@@ -61,12 +61,12 @@ class SharedDivisionAchievementsTest {
 
     @Test
     void toStringMethodShouldReturnCorrectDisplayTextForMultipleAchievementResults() {
-        SharedDivisionAchievements divisionAchievements = new SharedDivisionAchievements(3);
+        SharedDivisionAchievements divisionAchievements = new SharedDivisionAchievements(2);
         divisionAchievements.addAchievementResult(DivisionAchievement.BROTHERS_IN_ARMS, 1);
+        divisionAchievements.addAchievementResult(DivisionAchievement.GENERAL_OFFENSIVE, 2);
         divisionAchievements.addAchievementResult(DivisionAchievement.COORDINATED_ATTACK, 1);
-        divisionAchievements.addAchievementResult(DivisionAchievement.GENERAL_OFFENSIVE, 1);
         assertEquals(
-                "Shared division achievements: Coordinated Attack: 200 points + Brothers-in-Arms: 150 points + General Offensive: 100 points = 450 points",
+                "Shared division achievements: General Offensive: 2 * 150 points + Coordinated Attack: 225 points + Brothers-in-Arms: 150 points = 675 points",
                 divisionAchievements.toString());
     }
 }

@@ -30,9 +30,9 @@ class DivisionAchievementTest {
         final int numberOfPlayers = 2;
         assertEquals(150, DivisionAchievement.GENERAL_OFFENSIVE.getPointValue(numberOfPlayers));
         assertEquals(150, DivisionAchievement.BROTHERS_IN_ARMS.getPointValue(numberOfPlayers));
-        assertEquals(375, DivisionAchievement.STRIKE_TEAM.getPointValue(numberOfPlayers));
-        assertEquals(300, DivisionAchievement.COORDINATED_ATTACK.getPointValue(numberOfPlayers));
-        assertEquals(375, DivisionAchievement.SHOULDER_TO_SHOULDER.getPointValue(numberOfPlayers));
+        assertEquals(225, DivisionAchievement.STRIKE_TEAM.getPointValue(numberOfPlayers));
+        assertEquals(225, DivisionAchievement.COORDINATED_ATTACK.getPointValue(numberOfPlayers));
+        assertEquals(225, DivisionAchievement.SHOULDER_TO_SHOULDER.getPointValue(numberOfPlayers));
     }
 
     @Test
@@ -40,9 +40,9 @@ class DivisionAchievementTest {
         final int numberOfPlayers = 3;
         assertEquals(100, DivisionAchievement.GENERAL_OFFENSIVE.getPointValue(numberOfPlayers));
         assertEquals(150, DivisionAchievement.BROTHERS_IN_ARMS.getPointValue(numberOfPlayers));
-        assertEquals(250, DivisionAchievement.STRIKE_TEAM.getPointValue(numberOfPlayers));
-        assertEquals(200, DivisionAchievement.COORDINATED_ATTACK.getPointValue(numberOfPlayers));
-        assertEquals(250, DivisionAchievement.SHOULDER_TO_SHOULDER.getPointValue(numberOfPlayers));
+        assertEquals(150, DivisionAchievement.STRIKE_TEAM.getPointValue(numberOfPlayers));
+        assertEquals(150, DivisionAchievement.COORDINATED_ATTACK.getPointValue(numberOfPlayers));
+        assertEquals(150, DivisionAchievement.SHOULDER_TO_SHOULDER.getPointValue(numberOfPlayers));
     }
 
     @Test
@@ -59,9 +59,9 @@ class DivisionAchievementTest {
         String expectedString = """
                 - General Offensive: 100 points (+50% bonus points for duos)
                 - Brothers-in-Arms: 150 points
-                - Strike Team: 250 points (+50% bonus points for duos)
-                - Coordinated Attack: 200 points (+50% bonus points for duos)
-                - Shoulder to Shoulder: 250 points (+50% bonus points for duos)
+                - Strike Team: 150 points (+50% bonus points for duos)
+                - Coordinated Attack: 150 points (+50% bonus points for duos)
+                - Shoulder to Shoulder: 150 points (+50% bonus points for duos)
                 """;
         assertEquals(expectedString, DivisionAchievement.getAllAchievementsListedAsString());
     }
