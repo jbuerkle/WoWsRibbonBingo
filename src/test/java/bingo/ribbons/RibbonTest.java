@@ -67,6 +67,7 @@ class RibbonTest {
     void getAllRibbonsListedAsStringShouldReturnLongString() {
         String expectedString = """
                 - Destroyed: 120 points
+                - Assisted in destruction: 40 points
                 - Main gun hit: 1 point (2 points for ships with gun caliber of 203mm up to 304mm as main armament, 3 points for ships with gun caliber of 305mm up to 405mm as main armament, 4 points for ships with gun caliber of 406mm or above as main armament)
                 - Secondary hit: 1 point
                 - Bomb hit: 3 points
