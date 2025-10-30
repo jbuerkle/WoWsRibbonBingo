@@ -30,7 +30,7 @@ public enum Achievement implements Serializable {
     HIGH_CALIBER("High Caliber", 150),
     KRAKEN_UNLEASHED("Kraken Unleashed", 30),
     SOLO_WARRIOR("Solo Warrior", 300),
-    WITHERER("Witherer", 30);
+    WITHERER("Witherer", 60);
 
     @Serial
     private static final long serialVersionUID = 8667639193335488476L;

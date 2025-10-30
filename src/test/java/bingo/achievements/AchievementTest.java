@@ -107,7 +107,7 @@ class AchievementTest {
                 - High Caliber: 150 points
                 - Kraken Unleashed: 30 points + 20% bonus points for all 'Destroyed' ribbons
                 - Solo Warrior: 300 points
-                - Witherer: 30 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding' ribbons
+                - Witherer: 60 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding' ribbons
                 """;
         assertEquals(expectedString, Achievement.getAllAchievementsListedAsString());
     }

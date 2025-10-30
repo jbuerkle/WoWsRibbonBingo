@@ -64,16 +64,16 @@ class AchievementResultTest {
         ribbonResultList.add(new RibbonResult(Ribbon.MAIN_GUN_HIT, 300));
         ribbonResultList.add(new RibbonResult(Ribbon.TORPEDO_HIT, 10));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(30, term.getValue());
-        assertEquals("Witherer: 30 points", term.getAsString());
+        assertEquals(60, term.getValue());
+        assertEquals("Witherer: 60 points", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneWithererAchievementWithFifteenSetOnFireRibbons() {
         ribbonResultList.add(new RibbonResult(Ribbon.SET_ON_FIRE, 15));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(120, term.getValue());
-        assertEquals("Witherer: 30 points + (Set on fire: 15 * 20 points) * 0.3", term.getAsString());
+        assertEquals(150, term.getValue());
+        assertEquals("Witherer: 60 points + (Set on fire: 15 * 20 points) * 0.3", term.getAsString());
     }
 
     @Test
@@ -81,9 +81,9 @@ class AchievementResultTest {
         ribbonResultList.add(new RibbonResult(Ribbon.SET_ON_FIRE, 15));
         ribbonResultList.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 5));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(180, term.getValue());
+        assertEquals(210, term.getValue());
         assertEquals(
-                "Witherer: 30 points + (Set on fire: 15 * 20 points) * 0.3 + (Caused flooding: 5 * 40 points) * 0.3",
+                "Witherer: 60 points + (Set on fire: 15 * 20 points) * 0.3 + (Caused flooding: 5 * 40 points) * 0.3",
                 term.getAsString());
     }
 
@@ -91,24 +91,24 @@ class AchievementResultTest {
     void shouldReturnCorrectValueAndDisplayTextForOneWithererAchievementWithThirtySetOnFireRibbons() {
         ribbonResultList.add(new RibbonResult(Ribbon.SET_ON_FIRE, 30));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.LARGE_CALIBER_GUNS);
-        assertEquals(210, term.getValue());
-        assertEquals("Witherer: 30 points + (Set on fire: 30 * 20 points) * 0.3", term.getAsString());
+        assertEquals(240, term.getValue());
+        assertEquals("Witherer: 60 points + (Set on fire: 30 * 20 points) * 0.3", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneWithererAchievementWithTenCausedFloodingRibbons() {
         ribbonResultList.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 10));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.SMALL_CALIBER_GUNS);
-        assertEquals(150, term.getValue());
-        assertEquals("Witherer: 30 points + (Caused flooding: 10 * 40 points) * 0.3", term.getAsString());
+        assertEquals(180, term.getValue());
+        assertEquals("Witherer: 60 points + (Caused flooding: 10 * 40 points) * 0.3", term.getAsString());
     }
 
     @Test
     void shouldReturnCorrectValueAndDisplayTextForOneWithererAchievementWithTwentyCausedFloodingRibbons() {
         ribbonResultList.add(new RibbonResult(Ribbon.CAUSED_FLOODING, 20));
         Term term = oneWithererAchievement.getAsTerm(ribbonResultList, MainArmamentType.SMALL_CALIBER_GUNS);
-        assertEquals(270, term.getValue());
-        assertEquals("Witherer: 30 points + (Caused flooding: 20 * 40 points) * 0.3", term.getAsString());
+        assertEquals(300, term.getValue());
+        assertEquals("Witherer: 60 points + (Caused flooding: 20 * 40 points) * 0.3", term.getAsString());
     }
 
     @Test

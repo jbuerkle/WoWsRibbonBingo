@@ -110,7 +110,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 - High Caliber: 150 points
 - Kraken Unleashed: 30 points + 20% bonus points for all 'Destroyed' ribbons
 - Solo Warrior: 300 points
-- Witherer: 30 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding'
+- Witherer: 60 points + 30% bonus points for all 'Set on fire' ribbons + 30% bonus points for all 'Caused flooding'
   ribbons
 
 Note: Bonus points for the same ribbon stack additively, **not** multiplicatively.
