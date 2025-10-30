@@ -67,7 +67,7 @@ from [Oracle's official website.](https://www.oracle.com/java/technologies/downl
 ## Point values per ribbon
 
 - Destroyed: 120 points
-- Assisted in destruction: 40 points
+- Assisted in destruction: 60 points
 - Main gun hit: 1 point (2 points for ships with gun caliber of 203mm up to 304mm as main armament, 3 points for ships
   with gun caliber of 305mm up to 405mm as main armament, 4 points for ships with gun caliber of 406mm or above as main
   armament)

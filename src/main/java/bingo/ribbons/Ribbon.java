@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 public enum Ribbon implements Serializable {
     DESTROYED("Destroyed", 120),
-    ASSISTED_IN_DESTRUCTION("Assisted in destruction", 40),
+    ASSISTED_IN_DESTRUCTION("Assisted in destruction", 60),
     MAIN_GUN_HIT("Main gun hit", 1),
     SECONDARY_HIT("Secondary hit", 1),
     BOMB_HIT("Bomb hit", 3),
