@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WoWsRibbonBingo.jar" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/WoWsRibbonBingo_jar/WoWsRibbonBingo.jar" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <module name="wows-ribbon-bingo" />
+    <method v="2" />
+  </configuration>
+</component>
