@@ -4,11 +4,86 @@ A tool for calculating points in a Twitch streamer challenge for World of Warshi
 
 [![Java CI with Maven](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml/badge.svg?branch=main&event=push)](https://github.com/jbuerkle/WoWsRibbonBingo/actions/workflows/maven.yml)
 
-In case you want to run the tool for yourself, please check
-the [release page](https://github.com/jbuerkle/WoWsRibbonBingo/releases), where you will find a downloadable `.zip`
-file. It contains a fully-tested build, packaged as a `.jar` file with all necessary dependencies. Java 23 is required
-to run the application, which can be downloaded for free
-from [Oracle's official website.](https://www.oracle.com/java/technologies/downloads/)
+## Frequently Asked Questions (FAQ)
+
+1. **Q: What is this challenge about?**
+
+   A: You can think of this challenge as similar to the in-game "Naval Battles" for ribbons, except here both ribbons
+   and achievements count. On top of that, each ribbon and achievement has a point value, so that those which are harder
+   to obtain will give you more points. There are also extra rules to make the challenge less reliant on random factors.
+
+2. **Q: What is in it for the streamer?**
+
+   A: There are rewards for both the streamer and the streamer's community, in the form of gift subs. In essence, this
+   means there is money to be won.
+
+3. **Q: What is in it for the challenge host?**
+
+   A: Mostly entertainment. The challenge host also gets to support streamers they enjoy watching in a unique way.
+
+4. **Q: How do I join?**
+
+   A: It goes by the Hollywood principle: Do not ask to be invited, the challenge host will invite you.
+
+5. **Q: I have been invited. What do I need to do now?**
+
+   A: Read this FAQ, and the rules below. If you want to participate, let the challenge host know on what day and at
+   what time you want to participate, including your local time zone. The challenge host will try to join your stream at
+   your preferred time. In case you want to participate in the solo streamer challenge, there is nothing else you have
+   to do. In case you want to participate in the duo/trio streamer challenge, you are responsible for inviting the other
+   streamers and sharing this webpage with them.
+
+6. **Q: That is so much text. Can I not just ask questions, and you answer all of them one by one?**
+
+   A: Clarifying questions are always welcome. However, please do not expect the challenge host to answer questions if
+   it is obvious that you have not read any of the rules on this page. Writing everything down in detail took a lot of
+   time. Also, if you are a participating streamer, not knowing the rules properly will put you at a disadvantage.
+
+7. **Q: Are you affiliated with Wargaming? Who is paying for this challenge?**
+
+   A: No, the challenge host is neither affiliated with Wargaming, nor is anyone else providing funds. All money is
+   coming from the challenge host's personal pocket.
+
+8. **Q: How often can I participate in this challenge?**
+
+   A: In general, you can participate an unlimited amount of times. However, if you get a decent payout, your next
+   challenge attempt is on cooldown for a **minimum** of four weeks. Depending on the amount of money you received, your
+   cooldown may be considerably longer, up to **eight weeks**. In case of a failed challenge attempt, there will not be
+   any cooldown, and you will usually be able to retry on the following day.
+
+9. **Q: Since I was invited once, can I expect to participate in the challenge at regular intervals?**
+
+   A: No, getting invited once does **not** mean you are permanently entitled to participate. Depending on the challenge
+   host's availability of time and funds, as well as personal interest in the game and stream, you may not be able to
+   participate again in the future. The challenge host can cancel planned challenge attempts for any reason.
+
+10. **Q: Do I need to download this tool to participate?**
+
+    A: No, that is completely optional. The challenge host will use it to calculate your points and share match results
+    with you on stream.
+
+## Steps to install and run the tool
+
+In case you want to run the tool yourself (for example, to get a better understanding of how the challenge works, or to
+cross-check results from your side), please follow the steps below:
+
+1. Open the [release page.](https://github.com/jbuerkle/WoWsRibbonBingo/releases)
+2. Download the `WoWsRibbonBingo_jar.zip` file from the "Assets" section of the latest release.
+3. Open the `.zip` file, then copy the folder inside to a directory you like. However, you should select a directory
+   that does not require administrative rights to modify. For example, on Windows: `C:\Users\your_username`
+4. Open [Oracle's official webpage for Java downloads.](https://www.oracle.com/java/technologies/downloads/)
+5. Click on the tab for "JDK 25" (or higher), then click on the tab for your operating system (for example, "Windows"),
+   then click on a download link (for example, "x64 Installer").
+6. Double-click on the downloaded installer and follow the steps to install Java.
+7. After finishing the installation, go to the directory where you put the `WoWsRibbonBingo_jar` folder and find the
+   `WoWsRibbonBingo.jar` file inside. If it does not automatically show up with a coffee icon, then select Java as the
+   default application to run `.jar` files. For example, on Windows: Right-click on that file, select "open with",
+   select "other app", select "Java(TM) Platform SE binary", then click on button "always".
+8. A warning about not being able to create the autosave folder shows up because the application was started through
+   the "open with" option. Click on the "OK" button, then close the application.
+9. Double-click on the `WoWsRibbonBingo.jar` file to start the application normally. The warning should **not** show up
+   this time. If it is still shown, you may have actually put the application into a folder which requires
+   administrative rights to modify. In this case, please refer to step 3.
 
 ## Rules for the solo streamer challenge (classic)
 
