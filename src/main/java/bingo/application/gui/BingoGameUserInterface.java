@@ -53,6 +53,7 @@ import java.util.stream.Stream;
 public class BingoGameUserInterface {
     private final BingoGame bingoGame;
     private final Stage primaryStage;
+    private final boolean autosaveIsEnabled;
     private final RandomShipRestrictionGenerator randomShipRestrictionGenerator;
     private final ComboBox<Player> playerComboBox;
     private final ComboBox<MainArmamentType> mainArmamentTypeComboBox;
@@ -83,9 +84,10 @@ public class BingoGameUserInterface {
     private final GridPane mainGrid;
     private int mainGridRow;
 
-    public BingoGameUserInterface(BingoGame bingoGame, Stage primaryStage) {
+    public BingoGameUserInterface(BingoGame bingoGame, Stage primaryStage, boolean autosaveIsEnabled) {
         this.bingoGame = bingoGame;
         this.primaryStage = primaryStage;
+        this.autosaveIsEnabled = autosaveIsEnabled;
         this.randomShipRestrictionGenerator = new RandomShipRestrictionGenerator();
         this.playerComboBox = new ComboBox<>();
         this.mainArmamentTypeComboBox = new ComboBox<>();
@@ -109,7 +111,7 @@ public class BingoGameUserInterface {
         this.listShipsAsTextButton = new Button("List ships in text area");
         this.setRestrictionButton = new Button("Get ship restriction for chosen number");
         this.removeRestrictionButton = new Button("Remove current ship restriction");
-        this.lastAutosaveLabel = new Label("Game not autosaved yet");
+        this.lastAutosaveLabel = new Label(getTextForAutosaveLabel());
         this.shipInputField = new TextField();
         this.numberInputField = new TextField();
         this.textArea = new TextArea();
@@ -443,7 +445,9 @@ public class BingoGameUserInterface {
             bingoGame.confirmCurrentResult();
             updateComboBoxWithAllowedMainArmamentTypes();
             performResetOnUserInterface();
-            createAutosaveFile();
+            if (autosaveIsEnabled) {
+                createAutosaveFile();
+            }
         } catch (UserInputException exception) {
             showMessageOfUserInputExceptionInTextArea(exception);
         }
@@ -481,6 +485,10 @@ public class BingoGameUserInterface {
                 .map(ChallengeModifier::getDisplayName)
                 .reduce((modifierA, modifierB) -> modifierA.concat(", ").concat(modifierB))
                 .orElse("none");
+    }
+
+    private String getTextForAutosaveLabel() {
+        return autosaveIsEnabled ? "Game not autosaved yet" : "Game will not be autosaved";
     }
 
     private void updateLastAutosaveLabel() {

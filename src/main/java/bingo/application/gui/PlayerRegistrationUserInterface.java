@@ -51,6 +51,7 @@ public class PlayerRegistrationUserInterface {
     private final Button startNewGameButton;
     private final Button loadAutosaveButton;
     private final GridPane mainGrid;
+    private boolean autosaveIsEnabled;
 
     public PlayerRegistrationUserInterface(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -64,6 +65,7 @@ public class PlayerRegistrationUserInterface {
         this.startNewGameButton = new Button("Start new game");
         this.loadAutosaveButton = new Button("Load game from autosave");
         this.mainGrid = createMainGridPane();
+        this.autosaveIsEnabled = true;
         setUpTableView();
         setUpInputFieldAndButtons();
         setUpCheckBoxesForChallengeModifiers();
@@ -168,6 +170,8 @@ public class PlayerRegistrationUserInterface {
             Files.createDirectories(Paths.get(UserInterfaceConstants.AUTOSAVE_DIRECTORY));
         } catch (IOException exception) {
             showWarning(CREATE_AUTOSAVE_FAILURE_HEADER, CREATE_AUTOSAVE_FAILURE_MESSAGE);
+            loadAutosaveButton.setDisable(true);
+            autosaveIsEnabled = false;
         }
     }
 
@@ -213,7 +217,8 @@ public class PlayerRegistrationUserInterface {
 
     private void transitionToMainScene(BingoGame bingoGame) {
         primaryStage.hide();
-        BingoGameUserInterface bingoGameUserInterface = new BingoGameUserInterface(bingoGame, primaryStage);
+        BingoGameUserInterface bingoGameUserInterface =
+                new BingoGameUserInterface(bingoGame, primaryStage, autosaveIsEnabled);
         bingoGameUserInterface.setScene();
         primaryStage.show();
     }
