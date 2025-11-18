@@ -223,7 +223,7 @@ Note:
 - The level 0 reward is unlocked just by participating in the challenge. You will receive it in case you do not unlock
   any higher reward.
 - The point requirements listed here apply to the solo streamer challenge. In the duo/trio streamer challenge, the point
-  requirements for each level increase by 40% for every additional player (duo +40%, trio +80%).
+  requirements for each level increase by 60% for two players, and by 100% for three players.
 - In the duo/trio streamer challenge, the reward **must** be shared between the participating streamers. Every streamer
   must receive at least a 25% share of the total reward. The only exception are small rewards (1 sub cannot be split).
 - As the reward is paid in gift subs, all participating streamers **must** have a monetized stream on Twitch.
