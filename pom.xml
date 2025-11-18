@@ -7,7 +7,7 @@
     <name>WoWsRibbonBingo</name>
     <groupId>com.github.jbuerkle</groupId>
     <artifactId>wows-ribbon-bingo</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>3.5.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
