@@ -261,7 +261,13 @@ public class BingoGame implements Serializable {
     }
 
     private double getModifierIncreaseForPlayers() {
-        return (players.size() - 1) * 0.4;
+        if (players.size() == 3) {
+            return 1;
+        } else if (players.size() == 2) {
+            return 0.6;
+        } else {
+            return 0;
+        }
     }
 
     private double getModifierIncreaseForChallengeModifiers() {

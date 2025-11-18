@@ -188,15 +188,15 @@ class BingoGameIntegrationTest {
         private static final Player PLAYER_B = new Player("Player B");
         private static final Player PLAYER_C = new Player("Player C");
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
-                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 250 points + 350 points = 600 points. Requirement of level 1: 540 points. Token counter: +1 token (successful match). Now 1 token 🪙 total.";
+                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 250 points + 350 points = 600 points. Requirement of level 1: 600 points. Token counter: +1 token (successful match). Now 1 token 🪙 total.";
         private static final String LEVEL_ONE_WITH_BINGO_RESULT =
-                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Total result: 250 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
+                "Player A's Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Total result: 250 points. Requirement of level 1: 600 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_DIVISION_ACHIEVEMENTS =
-                "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
+                "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 600 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_ZERO_TOKENS =
-                "Requirement of level 1: 540 points. Token counter: Now 0 tokens 🪙 total.";
+                "Requirement of level 1: 600 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_TWO_WITH_ONE_TOKEN =
-                "Requirement of level 2: 900 points. Token counter: Now 1 token 🪙 total.";
+                "Requirement of level 2: 1000 points. Token counter: Now 1 token 🪙 total.";
 
         private BingoGame bingoGame;
 

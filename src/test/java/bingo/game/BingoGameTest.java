@@ -540,13 +540,13 @@ class BingoGameTest {
         @Test
         void shouldInvokeBingoGameDependencyInjectorWithTwoPlayersAndIncreasedDifficulty() throws UserInputException {
             setupBingoGame(List.of(PLAYER_A, PLAYER_B), List.of(ChallengeModifier.INCREASED_DIFFICULTY));
-            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.6, 7);
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.8, 7);
         }
 
         @Test
         void shouldInvokeBingoGameDependencyInjectorWithThreePlayers() throws UserInputException {
             setupBingoGameWithPlayers(List.of(PLAYER_A, PLAYER_B, PLAYER_C));
-            verify(mockedBingoGameDependencyInjector).createBingoResultBars(1.8, 7);
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(2.0, 7);
         }
 
         @Test
@@ -554,7 +554,7 @@ class BingoGameTest {
             setupBingoGame(
                     List.of(PLAYER_A, PLAYER_B, PLAYER_C),
                     List.of(ChallengeModifier.INCREASED_DIFFICULTY, ChallengeModifier.DOUBLE_DIFFICULTY_INCREASE));
-            verify(mockedBingoGameDependencyInjector).createBingoResultBars(2.2, 7);
+            verify(mockedBingoGameDependencyInjector).createBingoResultBars(2.4, 7);
         }
     }
 
