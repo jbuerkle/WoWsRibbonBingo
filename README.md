@@ -102,14 +102,17 @@ cross-check results from your side), please follow the steps below:
     - If your result meets the point requirement, you unlock the reward for the current level. You automatically go to
       the next level (unless you unlocked the final reward).
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
-8. Exceptions to rule 7 which allow you to retry and keep your unlocked rewards:
-    - 8a: The match was less than 14 minutes long, **and** you were alive at the end of the match.
-    - 8b: The player difference at the end of the match was 5 or more players, **and:**
-        - In case of a win, you were alive at the end of the match.
-        - In case of a loss (or a draw), you were one of the last 7 players alive on your team.
+8. Exceptions to rule 7 which allow you to retry and keep your unlocked rewards ("near the end of the match" means ~90
+   seconds in these rules):
+    - 8a: The match was less than 14 minutes long, **and** you were alive near the end of the match.
+    - 8b: The player difference near the end of the match was 5 or more players, **and:**
+        - In case of a win, you were alive near the end of the match.
+        - In case of a loss (or a draw), you were **not** one of the first 5 players to die on your team.
     - 8c: You had an unfair disadvantage (examples: obvious stream sniping, AFK player or griefer on your team). This is
       ultimately at the discretion of the challenge's host.
     - 8d: You have an extra life.
+    - 8e: You made a major contribution in the second half of the match, which caused rule 8a or 8b to become inactive,
+      when it would otherwise **clearly** have been active. In this case, the rule will still apply.
 9. Rules for extra lives:
     - 9a: You gain 1 token for every successful match as per rule 7.
     - 9b: You gain 1 token for every match which applies to rule 8a or 8b. This rule stacks with rule 9a.
