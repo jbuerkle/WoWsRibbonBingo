@@ -131,16 +131,16 @@ class AchievementResultTest {
     void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithAircraftAndFiveSpottedRibbons() {
         ribbonResultList.add(new RibbonResult(Ribbon.SPOTTED, 5));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultList, MainArmamentType.AIRCRAFT);
-        assertEquals(90, term.getValue());
-        assertEquals("Combat Scout: 60 points + (Spotted: 5 * 10 points) * 0.6", term.getAsString());
+        assertEquals(105, term.getValue());
+        assertEquals("Combat Scout: 60 points + (Spotted: 5 * 15 points) * 0.6", term.getAsString());
     }
 
     @Test
-    void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithAircraftAndFifteenSpottedRibbons() {
-        ribbonResultList.add(new RibbonResult(Ribbon.SPOTTED, 15));
+    void shouldReturnCorrectValueAndDisplayTextForOneCombatScoutAchievementWithAircraftAndTenSpottedRibbons() {
+        ribbonResultList.add(new RibbonResult(Ribbon.SPOTTED, 10));
         Term term = oneCombatScoutAchievement.getAsTerm(ribbonResultList, MainArmamentType.AIRCRAFT);
         assertEquals(150, term.getValue());
-        assertEquals("Combat Scout: 60 points + (Spotted: 15 * 10 points) * 0.6", term.getAsString());
+        assertEquals("Combat Scout: 60 points + (Spotted: 10 * 15 points) * 0.6", term.getAsString());
     }
 
     @Test

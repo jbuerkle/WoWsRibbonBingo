@@ -100,7 +100,7 @@ public enum Ribbon implements Serializable {
         pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.LARGE_CALIBER_GUNS, 60));
         pointValueOverrides.get(CITADEL_HIT).add(new PointValueOverride(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS, 80));
         pointValueOverrides.get(TORPEDO_HIT).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 20));
-        pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 10));
+        pointValueOverrides.get(SPOTTED).add(new PointValueOverride(MainArmamentType.AIRCRAFT, 15));
         return pointValueOverrides;
     }
 }

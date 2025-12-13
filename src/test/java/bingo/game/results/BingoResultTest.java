@@ -195,7 +195,7 @@ class BingoResultTest {
         result.addRibbonResult(Ribbon.BOMB_HIT, 40);
         result.addRibbonResult(Ribbon.SET_ON_FIRE, 11);
         assertEquals(
-                "Ribbon Bingo result: Torpedo hit: 20 * 20 points + Set on fire: 11 * 20 points + Bomb hit: 40 * 3 points + Spotted: 10 * 10 points = 840 points",
+                "Ribbon Bingo result: Torpedo hit: 20 * 20 points + Set on fire: 11 * 20 points + Spotted: 10 * 15 points + Bomb hit: 40 * 3 points = 890 points",
                 result.toString());
     }
 }

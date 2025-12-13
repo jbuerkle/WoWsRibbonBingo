@@ -158,7 +158,7 @@ cross-check results from your side), please follow the steps below:
 - Torpedo hit: 40 points (20 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
 - Sonar ping: 5 points
-- Spotted: 30 points (10 points for ships with aircraft as main armament)
+- Spotted: 30 points (15 points for ships with aircraft as main armament)
 - Incapacitation: 10 points
 - Set on fire: 20 points
 - Caused flooding: 40 points

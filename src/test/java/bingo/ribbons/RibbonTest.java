@@ -52,7 +52,7 @@ class RibbonTest {
         assertEquals(1, Ribbon.MAIN_GUN_HIT.getPointValue(MainArmamentType.AIRCRAFT));
         assertEquals(20, Ribbon.CITADEL_HIT.getPointValue(MainArmamentType.AIRCRAFT));
         assertEquals(20, Ribbon.TORPEDO_HIT.getPointValue(MainArmamentType.AIRCRAFT));
-        assertEquals(10, Ribbon.SPOTTED.getPointValue(MainArmamentType.AIRCRAFT));
+        assertEquals(15, Ribbon.SPOTTED.getPointValue(MainArmamentType.AIRCRAFT));
     }
 
     @Test
@@ -76,7 +76,7 @@ class RibbonTest {
                 - Torpedo hit: 40 points (20 points for ships with aircraft as main armament)
                 - Depth charge hit: 10 points
                 - Sonar ping: 5 points
-                - Spotted: 30 points (10 points for ships with aircraft as main armament)
+                - Spotted: 30 points (15 points for ships with aircraft as main armament)
                 - Incapacitation: 10 points
                 - Set on fire: 20 points
                 - Caused flooding: 40 points
