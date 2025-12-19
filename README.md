@@ -286,16 +286,16 @@ chances of you being allowed to play that ship are exactly 50/50, regardless of 
 
 | Rank | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
 |------|-----------------|--------------------------|---------------------------|-------------:|
-| 1.🥇 | W0rldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
-| 2.🥈 | W0rldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
-| 3.🥉 | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
-| 4.   | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 5.   | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 6.   | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 7.   | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
-| 8.   | OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 9.   | Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
-| 10.  | Hyf1re          | 03.07.2025               | ArmoredGuppy              |  128 subs 🎁 |
+| 1.🥇 | OverLordBou     | 18.12.2025               | -                         |  280 subs 🎁 |
+| 2.🥈 | W0rldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
+| 3.🥉 | W0rldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
+| 4.   | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
+| 5.   | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 6.   | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 7.   | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 8.   | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
+| 9.   | OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 10.  | Hyf1re          | 08.05.2025               | ArmoredGuppy              |  128 subs 🎁 |
 
 ### Duo/trio streamer challenge
 
