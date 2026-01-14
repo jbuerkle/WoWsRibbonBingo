@@ -287,15 +287,15 @@ chances of you being allowed to play that ship are exactly 50/50, regardless of 
 | Rank | Twitch streamer | Date played (dd.mm.yyyy) | Supporters                | Total reward |
 |------|-----------------|--------------------------|---------------------------|-------------:|
 | 1.🥇 | OverLordBou     | 18.12.2025               | -                         |  280 subs 🎁 |
-| 2.🥈 | W0rldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
-| 3.🥉 | W0rldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
-| 4.   | Daniel_Russev   | 21.12.2025               | Seidlhannes               |  160 subs 🎁 |
-| 5.   | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
-| 6.   | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 7.   | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 8.   | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
-| 9.   | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
-| 10.  | OverLordBou     | 21.08.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 2.🥈 | W0rldSp0wn      | 14.01.2026               | -                         |  268 subs 🎁 |
+| 3.🥉 | W0rldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
+| 4.   | W0rldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
+| 5.   | Daniel_Russev   | 21.12.2025               | Seidlhannes               |  160 subs 🎁 |
+| 6.   | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
+| 7.   | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 8.   | OverLordBou     | 16.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 9.   | OverLordBou     | 26.06.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
+| 10.  | Daniel_Russev   | 04.08.2025               | Senpai_Silent             |  134 subs 🎁 |
 
 ### Duo/trio streamer challenge
 
