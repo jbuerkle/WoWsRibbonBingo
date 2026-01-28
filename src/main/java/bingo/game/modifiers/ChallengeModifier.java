@@ -1,9 +1,9 @@
 package bingo.game.modifiers;
 
-import bingo.math.terms.Term;
-import bingo.math.terms.impl.LabeledTerm;
-import bingo.math.terms.impl.Literal;
-import bingo.text.TextUtility;
+import bingo.game.math.terms.Term;
+import bingo.game.math.terms.impl.LabeledTerm;
+import bingo.game.math.terms.impl.Literal;
+import bingo.game.text.TextUtility;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: bingo.application.Launcher
+Main-Class: bingo.game.application.Launcher
 Class-Path: dependencies/javafx-base-25.0.1.jar dependencies/javafx-base
  -25.0.1-win.jar dependencies/javafx-controls-25.0.1.jar dependencies/ja
  vafx-controls-25.0.1-win.jar dependencies/javafx-fxml-25.0.1.jar depend

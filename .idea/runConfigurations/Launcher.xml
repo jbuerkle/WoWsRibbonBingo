@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="bingo.application.Launcher" />
+  <configuration default="false" name="Launcher" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="bingo.game.application.Launcher" />
     <module name="wows-ribbon-bingo" />
     <option name="VM_PARAMETERS" value="--enable-native-access=javafx.graphics" />
     <extension name="coverage">

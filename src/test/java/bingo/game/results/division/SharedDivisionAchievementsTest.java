@@ -1,6 +1,6 @@
 package bingo.game.results.division;
 
-import bingo.achievements.division.DivisionAchievement;
+import bingo.game.achievements.division.DivisionAchievement;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

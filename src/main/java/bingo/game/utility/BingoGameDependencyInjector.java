@@ -2,9 +2,9 @@ package bingo.game.utility;
 
 import bingo.game.BingoGameStateMachine;
 import bingo.game.results.BingoResultBars;
-import bingo.tokens.TokenCounter;
-import bingo.tokens.impl.NonFunctionalTokenCounter;
-import bingo.tokens.impl.TokenCounterImpl;
+import bingo.game.tokens.TokenCounter;
+import bingo.game.tokens.impl.NonFunctionalTokenCounter;
+import bingo.game.tokens.impl.TokenCounterImpl;
 
 public class BingoGameDependencyInjector {
 

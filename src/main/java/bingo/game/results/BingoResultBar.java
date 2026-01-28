@@ -1,6 +1,6 @@
 package bingo.game.results;
 
-import bingo.text.TextUtility;
+import bingo.game.text.TextUtility;
 
 import java.io.Serial;
 import java.io.Serializable;

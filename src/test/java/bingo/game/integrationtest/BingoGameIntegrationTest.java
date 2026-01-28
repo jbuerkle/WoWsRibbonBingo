@@ -1,18 +1,18 @@
 package bingo.game.integrationtest;
 
-import bingo.achievements.Achievement;
-import bingo.achievements.division.DivisionAchievement;
 import bingo.game.BingoGame;
+import bingo.game.achievements.Achievement;
+import bingo.game.achievements.division.DivisionAchievement;
 import bingo.game.input.UserInputException;
 import bingo.game.modifiers.ChallengeModifier;
+import bingo.game.players.Player;
+import bingo.game.restrictions.ShipRestriction;
+import bingo.game.restrictions.impl.BannedMainArmamentType;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
-import bingo.players.Player;
-import bingo.restrictions.ShipRestriction;
-import bingo.restrictions.impl.BannedMainArmamentType;
-import bingo.ribbons.Ribbon;
-import bingo.rules.RetryRule;
-import bingo.ships.MainArmamentType;
+import bingo.game.ribbons.Ribbon;
+import bingo.game.rules.RetryRule;
+import bingo.game.ships.MainArmamentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

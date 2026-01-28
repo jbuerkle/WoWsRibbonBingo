@@ -1,8 +1,8 @@
 package bingo.game.results;
 
-import bingo.achievements.Achievement;
-import bingo.ribbons.Ribbon;
-import bingo.ships.MainArmamentType;
+import bingo.game.achievements.Achievement;
+import bingo.game.ribbons.Ribbon;
+import bingo.game.ships.MainArmamentType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
