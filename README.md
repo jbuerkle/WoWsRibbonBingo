@@ -100,25 +100,33 @@ cross-check results from your side), please follow the steps below:
    to announce this **before starting the match**.
 7. After every match played, your point result is calculated and compared to the result bar of the current level:
     - If your result meets the point requirement, you unlock the reward for the current level. You automatically go to
-      the next level (unless you unlocked the final reward).
-    - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends.
-8. Exceptions to rule 7 which allow you to retry and keep your unlocked rewards ("near the end of the match" means ~90
-   seconds in these rules):
-    - 8a: The match was less than 14 minutes long, **and** you were alive near the end of the match.
-    - 8b: The player difference near the end of the match was 5 or more players, **and:**
-        - In case of a win, you were alive near the end of the match.
-        - In case of a loss (or a draw), you were **not** one of the first 5 players to die on your team.
-    - 8c: You had an unfair disadvantage (examples: obvious stream sniping, AFK player or griefer on your team). This is
-      ultimately at the discretion of the challenge's host.
-    - 8d: You have an extra life.
-    - 8e: You made a major contribution in the second half of the match, which caused rule 8a or 8b to become inactive,
-      when it would otherwise **clearly** have been active. In this case, the rule will still apply.
+      the next level (unless you unlocked the final reward). This counts as a successful match.
+    - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends. This
+      counts as an unsuccessful match.
+8. You keep your unlocked rewards and get to retry the level if 6 or more conditions from the following list apply in a
+   match you played:
+    - 8a: +1 if the match was less than 14 minutes long (*)
+    - 8b: +1 if any team reaches 0 points or 1000 points (*)
+    - 8c: +1 if the team difference at the end of the match was 4 or more ships (*)
+    - 8d: +1 if the team difference at the end of the match was 6 or more ships (*)
+    - 8e: +1 if your ship was **not** one of the first 4 to sink on your team
+    - 8f: +1 if your ship was **not** one of the first 6 to sink on your team
+    - 8g: +1 if your ship was afloat near the end of the match (last 90 seconds are irrelevant)
+    - 8h: +1 if you are among the top 6 base XP earners on your team
+    - 8i: +1 if you are among the top 3 base XP earners on your team
+    - 8j: +1 if you are the top base XP earner on your team
+    - 8k: +1 for every four ships missing from your match (10v10, 8v8, 6v6, etc.)
+    - 8l: +1 for every AFK player on your team
+    - 8m: +1 for every griefer on your team
+    - 8n: +2 for obvious stream sniping by enemy players (ultimately at the discretion of the challenge host)
+    - 8o: If your actions directly prevented any condition marked with a star (*) from applying, because you tried to
+      keep your team from losing, then the condition will still apply.
 9. Rules for extra lives:
     - 9a: You gain 1 token for every successful match as per rule 7.
-    - 9b: You gain 1 token for every match which applies to rule 8a or 8b. This rule stacks with rule 9a.
+    - 9b: You gain 1 token for every match in which you are allowed to retry as per rule 8.
     - 9c: 6 tokens are automatically converted to 1 extra life.
     - 9d: Whenever an unsuccessful match would otherwise end the challenge for you, in case you have an extra life, it
-      is automatically consumed, and you keep any unlocked rewards (rule 8d).
+      is automatically consumed, you keep your unlocked rewards and get to retry the level.
     - 9e: You do not gain any tokens for completing the final level of the challenge.
     - 9f: Unused extra lives are converted to 6 subs each at the end of the challenge. Unused tokens are not converted.
 10. The challenge is "double or nothing" style. Every successful match doubles your current reward, but as long as you
