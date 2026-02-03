@@ -500,7 +500,7 @@ public class BingoGame implements Serializable {
         if (retryingIsAllowedForAnyReason()) {
             stringBuilder.append("Retrying is allowed because ");
             if (retryingIsAllowed) {
-                stringBuilder.append("6 or more retry conditions apply (rule 8)");
+                stringBuilder.append("5 or more retry conditions apply (rule 8)");
             } else if (tokenCounter.hasExtraLife()) {
                 stringBuilder.append("you have an extra life (rule 9)");
             }

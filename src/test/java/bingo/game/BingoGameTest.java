@@ -55,9 +55,9 @@ class BingoGameTest {
     private static final String LEVEL_ONE_GAME_OVER_WITH_NO_GIVING_UP_AND_NO_SAFETY_NET =
             ". Requirement of level 1: 300 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No giving up: 0.25 + No safety net: 0.75) = 2 subs 🎁";
     private static final String LEVEL_ONE_RETRYING_ALLOWED_WITHOUT_TOKEN_COUNTER =
-            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 6 or more retry conditions apply (rule 8) 🔄";
+            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 5 or more retry conditions apply (rule 8) 🔄";
     private static final String LEVEL_ONE_RETRYING_ALLOWED =
-            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 6 or more retry conditions apply (rule 8) 🔄 Token counter: Dummy token text.";
+            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 5 or more retry conditions apply (rule 8) 🔄 Token counter: Dummy token text.";
     private static final String LEVEL_ONE_EXTRA_LIFE =
             ". Requirement of level 1: 300 points ❌ Retrying is allowed because you have an extra life (rule 9) 🔄 Token counter: Dummy token text.";
     private static final String LEVEL_ONE_VOLUNTARY_END =

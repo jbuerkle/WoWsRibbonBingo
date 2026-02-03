@@ -103,7 +103,7 @@ cross-check results from your side), please follow the steps below:
       the next level (unless you unlocked the final reward). This counts as a successful match.
     - If your result does not meet the point requirement, you lose any unlocked rewards, and the challenge ends. This
       counts as an unsuccessful match.
-8. You keep your unlocked rewards and get to retry the level if 6 or more conditions from the following list apply in a
+8. You keep your unlocked rewards and get to retry the level if 5 or more conditions from the following list apply in a
    match you played:
     - 8a: +1 if the match was less than 14 minutes long (*)
     - 8b: +1 if any team reaches 0 points or 1000 points (*)
