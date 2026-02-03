@@ -7,7 +7,6 @@ import bingo.game.restrictions.ShipRestriction;
 import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBars;
 import bingo.game.results.division.SharedDivisionAchievements;
-import bingo.game.rules.RetryRule;
 import bingo.game.ships.MainArmamentType;
 import bingo.game.ships.Ship;
 import bingo.game.tokens.TokenCounter;
@@ -32,7 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BingoGameTest {
@@ -44,17 +51,15 @@ class BingoGameTest {
     private static final String LEVEL_SEVEN_CONGRATULATIONS_WITH_ALL_CHALLENGE_MODIFIERS =
             ". Requirement of level 7: 2100 points ✅ Unlocked reward: Dummy reward text: 8 sub(s) 🎁 This is the highest reward you can get. Congratulations! 🎊 Total reward: 8 subs * (challenge modifiers: 1 + Random ship restrictions: 0.5 + Increased difficulty: 0.25 + No help: 0.25 + No giving up: 0.25 + No safety net: 0.75) = 24 subs 🎁";
     private static final String LEVEL_ONE_GAME_OVER =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
+            ". Requirement of level 1: 300 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
     private static final String LEVEL_ONE_GAME_OVER_WITH_NO_GIVING_UP_AND_NO_SAFETY_NET =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No giving up: 0.25 + No safety net: 0.75) = 2 subs 🎁";
-    private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING_WITHOUT_TOKEN_COUNTER =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: Imbalanced matchmaking (rule 8a or 8b) 🔄";
-    private static final String LEVEL_ONE_IMBALANCED_MATCHMAKING =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: Imbalanced matchmaking (rule 8a or 8b) 🔄 Token counter: Dummy token text.";
-    private static final String LEVEL_ONE_UNFAIR_DISADVANTAGE =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: Unfair disadvantage (rule 8c) 🔄 Token counter: Dummy token text.";
+            ". Requirement of level 1: 300 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No giving up: 0.25 + No safety net: 0.75) = 2 subs 🎁";
+    private static final String LEVEL_ONE_RETRYING_ALLOWED_WITHOUT_TOKEN_COUNTER =
+            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 6 or more retry conditions apply (rule 8) 🔄";
+    private static final String LEVEL_ONE_RETRYING_ALLOWED =
+            ". Requirement of level 1: 300 points ❌ Retrying is allowed because 6 or more retry conditions apply (rule 8) 🔄 Token counter: Dummy token text.";
     private static final String LEVEL_ONE_EXTRA_LIFE =
-            ". Requirement of level 1: 300 points ❌ Active retry rules: Extra life (rule 8d) 🔄 Token counter: Dummy token text.";
+            ". Requirement of level 1: 300 points ❌ Retrying is allowed because you have an extra life (rule 9) 🔄 Token counter: Dummy token text.";
     private static final String LEVEL_ONE_VOLUNTARY_END =
             "Challenge ended voluntarily on level 1. Your reward from the previous level: Dummy reward text: 1 sub(s) 🎁";
     private static final String LEVEL_ONE_VOLUNTARY_END_WITH_EXTRA_LIFE =
@@ -89,7 +94,7 @@ class BingoGameTest {
             "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points = 60 points. " +
                     MULTIPLAYER_RESTRICTION_ABC;
     private static final String MULTIPLAYER_RESULT_ABC =
-            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 300 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
+            "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 300 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
     private static final String MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS =
             "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Shared division achievements: Dummy division text. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 300 points ✅ Unlocked reward: Dummy reward text: 2 sub(s) 🎁 Token counter: Dummy token text. ➡️ Requirement of level 2: 600 points";
     private static final String DUMMY_SHIP_RESTRICTION_TEXT = "Dummy ship restriction text";
@@ -176,7 +181,7 @@ class BingoGameTest {
         void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWhenSetIsAllowed() throws UserInputException {
             mockBingoResultBarsGetPointRequirement();
             bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
-            verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
+            verify(mockedTokenCounter).calculateMatchResult(false, true, false);
             verify(mockedBingoGameStateMachine).processSubmitResultAction(false, false);
         }
 
@@ -186,7 +191,7 @@ class BingoGameTest {
             mockBingoGameActionIsNotAllowed(BingoGameAction.SUBMIT_RESULT);
             assertMockedUserInputExceptionIsThrown(() -> bingoGame.submitSharedDivisionAchievements(
                     mockedDivisionAchievements));
-            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyList());
+            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyBoolean());
             verify(mockedBingoGameStateMachine, never()).processSubmitResultAction(anyBoolean(), anyBoolean());
         }
 
@@ -214,49 +219,51 @@ class BingoGameTest {
     }
 
     @Nested
-    class SetAndGetActiveRetryRules {
-
-        @Test
-        void setShouldOverwriteTheListWhichWasPreviouslySet() throws UserInputException {
-            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE));
-            bingoGame.setActiveRetryRules(Collections.emptyList());
-            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
-        }
+    class SetAndGetRetryingIsAllowed {
 
         @Test
         void setShouldUpdateTokenCounterWhenSetIsAllowed() throws UserInputException {
             mockBingoResultBarsGetPointRequirement();
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            bingoGame.setActiveRetryRules(activeRetryRules);
-            verify(mockedTokenCounter).calculateMatchResult(false, true, activeRetryRules);
+            bingoGame.setRetryingIsAllowed(true);
+            verify(mockedTokenCounter).calculateMatchResult(false, true, true);
         }
 
         @Test
         void setShouldNotUpdateTokenCounterWhenSetIsNotAllowed() throws UserInputException {
             mockBingoGameActionIsNotAllowed(BingoGameAction.OTHER_ACTION);
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            assertMockedUserInputExceptionIsThrown(() -> bingoGame.setActiveRetryRules(activeRetryRules));
-            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyList());
+            assertMockedUserInputExceptionIsThrown(() -> bingoGame.setRetryingIsAllowed(true));
+            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyBoolean());
         }
 
         @Test
-        void getShouldReturnEmptyListWhenNoActiveRetryRulesAreSet() {
-            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+        void getShouldReturnFalseWhenNothingWasSet() {
+            assertFalse(bingoGame.retryingIsAllowed());
         }
 
         @Test
-        void getShouldReturnEmptyListWhenSetIsNotAllowed() throws UserInputException {
+        void getShouldReturnFalseWhenSetIsNotAllowed() throws UserInputException {
             mockBingoGameActionIsNotAllowed(BingoGameAction.OTHER_ACTION);
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            assertMockedUserInputExceptionIsThrown(() -> bingoGame.setActiveRetryRules(activeRetryRules));
-            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+            assertMockedUserInputExceptionIsThrown(() -> bingoGame.setRetryingIsAllowed(true));
+            assertFalse(bingoGame.retryingIsAllowed());
         }
 
         @Test
-        void getShouldReturnTheActiveRetryRulesWhichWereSet() throws UserInputException {
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            bingoGame.setActiveRetryRules(activeRetryRules);
-            assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
+        void getShouldReturnFalseWhenSet() throws UserInputException {
+            bingoGame.setRetryingIsAllowed(false);
+            assertFalse(bingoGame.retryingIsAllowed());
+        }
+
+        @Test
+        void getShouldReturnTrueWhenSet() throws UserInputException {
+            bingoGame.setRetryingIsAllowed(true);
+            assertTrue(bingoGame.retryingIsAllowed());
+        }
+
+        @Test
+        void getShouldReturnTheValueWhichWasSetLast() throws UserInputException {
+            bingoGame.setRetryingIsAllowed(true);
+            bingoGame.setRetryingIsAllowed(false);
+            assertFalse(bingoGame.retryingIsAllowed());
         }
     }
 
@@ -624,35 +631,21 @@ class BingoGameTest {
             mockBingoResultToString();
             mockInsufficientBingoResult();
             mockBingoResultBarsGetPointRequirement();
-            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+            bingoGame.setRetryingIsAllowed(true);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            assertEquals(
-                    DUMMY_RESULT_TEXT + LEVEL_ONE_IMBALANCED_MATCHMAKING_WITHOUT_TOKEN_COUNTER,
-                    bingoGame.toString());
+            assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_RETRYING_ALLOWED_WITHOUT_TOKEN_COUNTER, bingoGame.toString());
         }
 
         @Test
-        void shouldReturnRetryAllowedDueToImbalancedMatchmaking() throws UserInputException {
+        void shouldReturnRetryAllowedBecauseOfConditionsMet() throws UserInputException {
             mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
             mockBingoResultToString();
             mockTokenCounterToString();
             mockInsufficientBingoResult();
             mockBingoResultBarsGetPointRequirement();
-            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+            bingoGame.setRetryingIsAllowed(true);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_IMBALANCED_MATCHMAKING, bingoGame.toString());
-        }
-
-        @Test
-        void shouldReturnRetryAllowedDueToAnUnfairDisadvantage() throws UserInputException {
-            mockCurrentBingoGameStateIs(BingoGameState.UNCONFIRMED_UNSUCCESSFUL_MATCH);
-            mockBingoResultToString();
-            mockTokenCounterToString();
-            mockInsufficientBingoResult();
-            mockBingoResultBarsGetPointRequirement();
-            bingoGame.setActiveRetryRules(List.of(RetryRule.UNFAIR_DISADVANTAGE));
-            bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_UNFAIR_DISADVANTAGE, bingoGame.toString());
+            assertEquals(DUMMY_RESULT_TEXT + LEVEL_ONE_RETRYING_ALLOWED, bingoGame.toString());
         }
 
         @Test
@@ -729,8 +722,8 @@ class BingoGameTest {
             assertEquals(
                     DUMMY_RESULT_TEXT + LEVEL_SEVEN_CONGRATULATIONS + END_OF_CHALLENGE_CONFIRMED,
                     bingoGame.toString());
-            verify(mockedTokenCounter, times(MAX_LEVEL - 1)).calculateMatchResult(true, true, Collections.emptyList());
-            verify(mockedTokenCounter, times(1)).calculateMatchResult(true, false, Collections.emptyList());
+            verify(mockedTokenCounter, times(MAX_LEVEL - 1)).calculateMatchResult(true, true, false);
+            verify(mockedTokenCounter, times(1)).calculateMatchResult(true, false, false);
             verify(mockedTokenCounter, times(MAX_LEVEL - 1)).confirmMatchResult();
         }
 
@@ -899,7 +892,7 @@ class BingoGameTest {
             mockBingoResultBarsGetPointRequirement();
             mockInsufficientBingoResult();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            verify(mockedTokenCounter).calculateMatchResult(false, true, Collections.emptyList());
+            verify(mockedTokenCounter).calculateMatchResult(false, true, false);
             verify(mockedBingoGameStateMachine).processSubmitResultAction(true, false);
         }
 
@@ -909,19 +902,17 @@ class BingoGameTest {
             mockBingoResultBarsGetPointRequirement();
             mockSufficientBingoResult();
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            verify(mockedTokenCounter).calculateMatchResult(true, true, Collections.emptyList());
+            verify(mockedTokenCounter).calculateMatchResult(true, true, false);
             verify(mockedBingoGameStateMachine).processSubmitResultAction(true, true);
         }
 
         @Test
-        void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithActiveRetryRules()
-                throws UserInputException {
+        void submitShouldUpdateTokenCounterAndProcessSubmitResultActionWithRetryingAllowed() throws UserInputException {
             mockBingoResultBarsGetPointRequirement();
             mockInsufficientBingoResult();
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            bingoGame.setActiveRetryRules(activeRetryRules);
+            bingoGame.setRetryingIsAllowed(true);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
-            verify(mockedTokenCounter, times(2)).calculateMatchResult(false, true, activeRetryRules);
+            verify(mockedTokenCounter, times(2)).calculateMatchResult(false, true, true);
             verify(mockedBingoGameStateMachine).processSubmitResultAction(true, false);
         }
 
@@ -933,7 +924,7 @@ class BingoGameTest {
             bingoGame.submitBingoResultForPlayer(PLAYER_A, mockedBingoResult);
             bingoGame.submitBingoResultForPlayer(PLAYER_B, mockedBingoResult);
             bingoGame.submitBingoResultForPlayer(PLAYER_C, mockedBingoResult);
-            verify(mockedTokenCounter, times(3)).calculateMatchResult(true, true, Collections.emptyList());
+            verify(mockedTokenCounter, times(3)).calculateMatchResult(true, true, false);
             verify(mockedBingoGameStateMachine, times(2)).processSubmitResultAction(false, true);
             verify(mockedBingoGameStateMachine, times(1)).processSubmitResultAction(true, true);
         }
@@ -945,7 +936,7 @@ class BingoGameTest {
             assertMockedUserInputExceptionIsThrown(() -> bingoGame.submitBingoResultForPlayer(
                     SINGLE_PLAYER,
                     mockedBingoResult));
-            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyList());
+            verify(mockedTokenCounter, never()).calculateMatchResult(anyBoolean(), anyBoolean(), anyBoolean());
             verify(mockedBingoGameStateMachine, never()).processSubmitResultAction(anyBoolean(), anyBoolean());
         }
 
@@ -1016,14 +1007,13 @@ class BingoGameTest {
         @Test
         void shouldUpdateTokenCounterAndProcessConfirmResultActionWithChallengeEndedVoluntarilyAsNewState()
                 throws UserInputException {
-            List<RetryRule> activeRetryRules = Collections.emptyList();
-            setupMatchResultsBeforeConfirmation(activeRetryRules);
+            setupMatchResultsBeforeConfirmation(false);
             mockCurrentBingoGameStateIs(BingoGameState.CHALLENGE_ENDED_VOLUNTARILY);
             bingoGame.confirmCurrentResult();
             verify(mockedTokenCounter).confirmMatchResult();
             verify(mockedBingoGameStateMachine).getCurrentState();
             verify(mockedBingoGameStateMachine).processConfirmResultAction(true, false);
-            assertPreviouslySubmittedMatchResultsAreNotRemoved(activeRetryRules);
+            assertPreviouslySubmittedMatchResultsAreNotRemoved(false);
             assertPreviouslySetShipRestrictionIsNotRemoved();
             assertEquals(1, bingoGame.getCurrentLevel());
         }
@@ -1031,8 +1021,7 @@ class BingoGameTest {
         @Test
         void shouldUpdateTokenCounterAndProcessConfirmResultActionWithLevelInitializedAsNewState()
                 throws UserInputException {
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            setupMatchResultsBeforeConfirmation(activeRetryRules);
+            setupMatchResultsBeforeConfirmation(true);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             mockBingoResultBarsGetPointRequirement();
             mockInsufficientBingoResult();
@@ -1048,8 +1037,7 @@ class BingoGameTest {
         @Test
         void shouldUpdateTokenCounterAndProcessConfirmResultActionWithPrerequisiteSetupDoneAsNewState()
                 throws UserInputException {
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            setupMatchResultsBeforeConfirmation(activeRetryRules);
+            setupMatchResultsBeforeConfirmation(true);
             mockCurrentBingoGameStateIs(BingoGameState.PREREQUISITE_SETUP_DONE);
             mockBingoResultBarsGetPointRequirement();
             mockInsufficientBingoResult();
@@ -1065,8 +1053,7 @@ class BingoGameTest {
         @Test
         void shouldUpdateTokenCounterAndProcessConfirmResultActionWithInitialStateAndSuccessfulMatch()
                 throws UserInputException {
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            setupMatchResultsBeforeConfirmation(activeRetryRules);
+            setupMatchResultsBeforeConfirmation(true);
             mockCurrentBingoGameStateIs(BingoGameState.LEVEL_INITIALIZED);
             mockBingoResultBarsGetPointRequirement();
             mockSufficientBingoResult();
@@ -1082,20 +1069,19 @@ class BingoGameTest {
         @Test
         void shouldNotUpdateTokenCounterOrProcessConfirmResultActionWhenConfirmingIsNotAllowed()
                 throws UserInputException {
-            List<RetryRule> activeRetryRules = List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE);
-            setupMatchResultsBeforeConfirmation(activeRetryRules);
+            setupMatchResultsBeforeConfirmation(true);
             mockBingoGameActionIsNotAllowed(BingoGameAction.CONFIRM_RESULT);
             assertMockedUserInputExceptionIsThrown(() -> bingoGame.confirmCurrentResult());
             verify(mockedTokenCounter, never()).confirmMatchResult();
             verify(mockedBingoGameStateMachine, never()).getCurrentState();
             verify(mockedBingoGameStateMachine, never()).processConfirmResultAction(anyBoolean(), anyBoolean());
-            assertPreviouslySubmittedMatchResultsAreNotRemoved(activeRetryRules);
+            assertPreviouslySubmittedMatchResultsAreNotRemoved(true);
             assertPreviouslySetShipRestrictionIsNotRemoved();
             assertEquals(1, bingoGame.getCurrentLevel());
         }
 
-        private void setupMatchResultsBeforeConfirmation(List<RetryRule> activeRetryRules) throws UserInputException {
-            bingoGame.setActiveRetryRules(activeRetryRules);
+        private void setupMatchResultsBeforeConfirmation(boolean retryingIsAllowed) throws UserInputException {
+            bingoGame.setRetryingIsAllowed(retryingIsAllowed);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
             bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, mockedShipRestriction);
@@ -1104,14 +1090,14 @@ class BingoGameTest {
         private void assertPreviouslySubmittedMatchResultsAreRemoved() throws UserInputException {
             assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
             assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
-            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+            assertFalse(bingoGame.retryingIsAllowed());
         }
 
-        private void assertPreviouslySubmittedMatchResultsAreNotRemoved(List<RetryRule> activeRetryRules)
+        private void assertPreviouslySubmittedMatchResultsAreNotRemoved(boolean retryingIsAllowed)
                 throws UserInputException {
             assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isPresent());
             assertTrue(bingoGame.getSharedDivisionAchievements().isPresent());
-            assertEquals(activeRetryRules, bingoGame.getActiveRetryRules());
+            assertEquals(retryingIsAllowed, bingoGame.retryingIsAllowed());
         }
 
         private void assertPreviouslySetShipRestrictionIsRemoved() throws UserInputException {
@@ -1149,7 +1135,7 @@ class BingoGameTest {
         }
 
         private void setupMatchResultsBeforeReset() throws UserInputException {
-            bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING, RetryRule.UNFAIR_DISADVANTAGE));
+            bingoGame.setRetryingIsAllowed(true);
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, mockedBingoResult);
             bingoGame.submitSharedDivisionAchievements(mockedDivisionAchievements);
         }
@@ -1157,7 +1143,7 @@ class BingoGameTest {
         private void assertPreviouslySubmittedMatchResultsAreRemoved() throws UserInputException {
             assertTrue(bingoGame.getBingoResultForPlayer(SINGLE_PLAYER).isEmpty());
             assertTrue(bingoGame.getSharedDivisionAchievements().isEmpty());
-            assertTrue(bingoGame.getActiveRetryRules().isEmpty());
+            assertFalse(bingoGame.retryingIsAllowed());
         }
     }
 

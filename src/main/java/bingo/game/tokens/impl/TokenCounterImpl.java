@@ -1,10 +1,8 @@
 package bingo.game.tokens.impl;
 
-import bingo.game.rules.RetryRule;
 import bingo.game.tokens.TokenCounter;
 
 import java.io.Serial;
-import java.util.List;
 
 public class TokenCounterImpl implements TokenCounter {
     @Serial
@@ -17,7 +15,7 @@ public class TokenCounterImpl implements TokenCounter {
     private int currentTokens;
     private int extraLivesLostForUnsuccessfulMatch;
     private int tokensGainedForSuccessfulMatch;
-    private int tokensGainedForImbalancedMatch;
+    private int tokensGainedForRetry;
     private int tokensAfterMatch;
 
     public TokenCounterImpl() {
@@ -26,26 +24,20 @@ public class TokenCounterImpl implements TokenCounter {
     }
 
     @Override
-    public void calculateMatchResult(
-            boolean isSuccessfulMatch, boolean hasNextLevel,
-            List<RetryRule> activeRetryRules) {
+    public void calculateMatchResult(boolean isSuccessfulMatch, boolean hasNextLevel, boolean retryingIsAllowed) {
         resetMatchTokenCounters();
         if (isSuccessfulMatch) {
             if (hasNextLevel) {
                 tokensGainedForSuccessfulMatch = 1;
             }
-        } else if (retryingIsNotAllowed(activeRetryRules) && hasExtraLife()) {
+        } else if (!retryingIsAllowed && hasExtraLife()) {
             extraLivesLostForUnsuccessfulMatch = 1;
         }
-        if (activeRetryRules.contains(RetryRule.IMBALANCED_MATCHMAKING) && (hasNextLevel || !isSuccessfulMatch)) {
-            tokensGainedForImbalancedMatch = 1;
+        if (retryingIsAllowed && (hasNextLevel || !isSuccessfulMatch)) {
+            tokensGainedForRetry = 1;
         }
-        tokensAfterMatch = currentTokens + tokensGainedForSuccessfulMatch + tokensGainedForImbalancedMatch -
+        tokensAfterMatch = currentTokens + tokensGainedForSuccessfulMatch + tokensGainedForRetry -
                 extraLivesLostForUnsuccessfulMatch * TOKENS_NEEDED_FOR_EXTRA_LIFE;
-    }
-
-    private boolean retryingIsNotAllowed(List<RetryRule> activeRetryRules) {
-        return activeRetryRules.isEmpty();
     }
 
     @Override
@@ -63,14 +55,14 @@ public class TokenCounterImpl implements TokenCounter {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Token counter: ");
-        if (tokensGainedForSuccessfulMatch > 0 && tokensGainedForImbalancedMatch > 0) {
+        if (tokensGainedForSuccessfulMatch > 0 && tokensGainedForRetry > 0) {
             stringBuilder.append(tokensGainedForSuccessfulMatchAsString())
                     .append(", ")
-                    .append(tokensGainedForImbalancedMatchAsString());
+                    .append(tokensGainedForRetryAsString());
         } else if (tokensGainedForSuccessfulMatch > 0) {
             stringBuilder.append(tokensGainedForSuccessfulMatchAsString()).append(SENTENCE_END);
-        } else if (tokensGainedForImbalancedMatch > 0) {
-            stringBuilder.append(tokensGainedForImbalancedMatchAsString());
+        } else if (tokensGainedForRetry > 0) {
+            stringBuilder.append(tokensGainedForRetryAsString());
         } else if (extraLivesLostForUnsuccessfulMatch > 0) {
             stringBuilder.append(extraLivesLostForUnsuccessfulMatchAsString());
         }
@@ -82,9 +74,9 @@ public class TokenCounterImpl implements TokenCounter {
         return PLUS.concat(getTokensAsString(tokensGainedForSuccessfulMatch)).concat(" (successful match)");
     }
 
-    private String tokensGainedForImbalancedMatchAsString() {
-        return PLUS.concat(getTokensAsString(tokensGainedForImbalancedMatch))
-                .concat(" (imbalanced matchmaking)")
+    private String tokensGainedForRetryAsString() {
+        return PLUS.concat(getTokensAsString(tokensGainedForRetry))
+                .concat(" (retrying is allowed)")
                 .concat(SENTENCE_END);
     }
 
@@ -141,7 +133,7 @@ public class TokenCounterImpl implements TokenCounter {
     private void resetMatchTokenCounters() {
         extraLivesLostForUnsuccessfulMatch = 0;
         tokensGainedForSuccessfulMatch = 0;
-        tokensGainedForImbalancedMatch = 0;
+        tokensGainedForRetry = 0;
         tokensAfterMatch = currentTokens;
     }
 }

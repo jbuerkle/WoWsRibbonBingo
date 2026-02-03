@@ -15,7 +15,6 @@ import bingo.game.restrictions.ShipRestriction;
 import bingo.game.results.BingoResult;
 import bingo.game.results.BingoResultBars;
 import bingo.game.results.division.SharedDivisionAchievements;
-import bingo.game.rules.RetryRule;
 import bingo.game.ships.MainArmamentType;
 import bingo.game.ships.Ship;
 import bingo.game.tokens.TokenCounter;
@@ -40,7 +39,6 @@ public class BingoGame implements Serializable {
 
     private final List<Ship> shipsUsed;
     private final List<Player> players;
-    private final List<RetryRule> activeRetryRules;
     private final List<ChallengeModifier> challengeModifiers;
     private final Map<Player, ShipRestriction> shipRestrictionByPlayer;
     private final Map<Player, BingoResult> bingoResultByPlayer;
@@ -48,6 +46,7 @@ public class BingoGame implements Serializable {
     private final BingoResultBars bingoResultBars;
     private final TokenCounter tokenCounter;
     private SharedDivisionAchievements sharedDivisionAchievements;
+    private boolean retryingIsAllowed;
     private int currentLevel;
 
     BingoGame(
@@ -58,7 +57,6 @@ public class BingoGame implements Serializable {
         }
         this.shipsUsed = new LinkedList<>();
         this.players = new LinkedList<>(players);
-        this.activeRetryRules = new LinkedList<>();
         this.challengeModifiers = filterDisallowedModifiers(challengeModifiers, players.size());
         this.shipRestrictionByPlayer = new HashMap<>();
         this.bingoResultByPlayer = new HashMap<>();
@@ -69,6 +67,7 @@ public class BingoGame implements Serializable {
         this.bingoResultBars =
                 bingoGameDependencyInjector.createBingoResultBars(getPointRequirementModifier(), MAX_LEVEL);
         this.tokenCounter = bingoGameDependencyInjector.createTokenCounter(extraLivesAreEnabled());
+        this.retryingIsAllowed = false;
         this.currentLevel = START_LEVEL;
     }
 
@@ -100,8 +99,8 @@ public class BingoGame implements Serializable {
 
     private void removeSubmittedMatchResults() {
         removeAllBingoResults();
-        removeActiveRetryRules();
         removeSharedDivisionAchievements();
+        retryingIsAllowed = false;
     }
 
     private boolean anyResultIsSubmitted() {
@@ -129,7 +128,7 @@ public class BingoGame implements Serializable {
     }
 
     private void updateTokenCounterWithCurrentResults() {
-        tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), activeRetryRules);
+        tokenCounter.calculateMatchResult(requirementOfCurrentResultBarIsMet(), hasNextLevel(), retryingIsAllowed);
     }
 
     private void submitResultActionToBingoGameStateMachine() throws UserInputException {
@@ -177,7 +176,7 @@ public class BingoGame implements Serializable {
 
     public void confirmCurrentResult() throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.CONFIRM_RESULT);
-        bingoGameStateMachine.processConfirmResultAction(hasNextLevel(), retryingIsAllowed());
+        bingoGameStateMachine.processConfirmResultAction(hasNextLevel(), retryingIsAllowedForAnyReason());
         BingoGameState newState = bingoGameStateMachine.getCurrentState();
         if (bingoGameIsInInitialState(newState)) {
             if (requirementOfCurrentResultBarIsMet()) {
@@ -194,8 +193,8 @@ public class BingoGame implements Serializable {
         bingoGameStateMachine.processEndChallengeVoluntarilyAction();
     }
 
-    private boolean retryingIsAllowed() {
-        return !activeRetryRules.isEmpty() || tokenCounter.hasExtraLife();
+    private boolean retryingIsAllowedForAnyReason() {
+        return retryingIsAllowed || tokenCounter.hasExtraLife();
     }
 
     private boolean requirementOfCurrentResultBarIsMet() {
@@ -293,19 +292,14 @@ public class BingoGame implements Serializable {
         return currentLevel < MAX_LEVEL;
     }
 
-    public void setActiveRetryRules(List<RetryRule> activeRetryRules) throws UserInputException {
+    public void setRetryingIsAllowed(boolean retryingIsAllowed) throws UserInputException {
         ensureActionIsAllowed(BingoGameAction.OTHER_ACTION);
-        removeActiveRetryRules();
-        this.activeRetryRules.addAll(activeRetryRules);
+        this.retryingIsAllowed = retryingIsAllowed;
         updateTokenCounterWithCurrentResults();
     }
 
-    public List<RetryRule> getActiveRetryRules() {
-        return new LinkedList<>(activeRetryRules);
-    }
-
-    private void removeActiveRetryRules() {
-        activeRetryRules.clear();
+    public boolean retryingIsAllowed() {
+        return retryingIsAllowed;
     }
 
     private boolean shipRestrictionIsSetForPlayer(Player player) {
@@ -502,20 +496,19 @@ public class BingoGame implements Serializable {
     }
 
     private void appendTextForUnsuccessfulMatch(StringBuilder stringBuilder) {
-        stringBuilder.append(" ❌ Active retry rules: ");
-        if (retryingIsAllowed()) {
-            if (activeRetryRules.contains(RetryRule.IMBALANCED_MATCHMAKING)) {
-                stringBuilder.append(RetryRule.IMBALANCED_MATCHMAKING.getDisplayText());
-            } else if (activeRetryRules.contains(RetryRule.UNFAIR_DISADVANTAGE)) {
-                stringBuilder.append(RetryRule.UNFAIR_DISADVANTAGE.getDisplayText());
+        stringBuilder.append(" ❌ ");
+        if (retryingIsAllowedForAnyReason()) {
+            stringBuilder.append("Retrying is allowed because ");
+            if (retryingIsAllowed) {
+                stringBuilder.append("6 or more retry conditions apply (rule 8)");
             } else if (tokenCounter.hasExtraLife()) {
-                stringBuilder.append("Extra life (rule 8d)");
+                stringBuilder.append("you have an extra life (rule 9)");
             }
             stringBuilder.append(" 🔄");
             appendTextForTokenCounterWithPrefix(WHITESPACE, stringBuilder);
         } else {
             stringBuilder.append(
-                    "None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
+                    "Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: ");
             stringBuilder.append(bingoResultBars.getNumberOfSubsAsStringForLevel(0));
             appendTextForTotalReward(bingoResultBars.getNumberOfSubsAsRewardForLevel(0), stringBuilder);
         }

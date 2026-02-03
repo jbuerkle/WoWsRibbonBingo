@@ -3,8 +3,6 @@ package bingo.game.tokens.impl;
 import bingo.game.tokens.TokenCounter;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,7 +12,7 @@ class NonFunctionalTokenCounterTest {
 
     @Test
     void calculateMatchResultShouldNotDoAnything() {
-        assertDoesNotThrow(() -> tokenCounter.calculateMatchResult(true, true, Collections.emptyList()));
+        assertDoesNotThrow(() -> tokenCounter.calculateMatchResult(true, true, true));
     }
 
     @Test

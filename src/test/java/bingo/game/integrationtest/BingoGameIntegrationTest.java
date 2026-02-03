@@ -11,7 +11,6 @@ import bingo.game.restrictions.impl.BannedMainArmamentType;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.game.ribbons.Ribbon;
-import bingo.game.rules.RetryRule;
 import bingo.game.ships.MainArmamentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -33,9 +32,9 @@ class BingoGameIntegrationTest {
         private static final String END_OF_CHALLENGE_CONFIRMED =
                 "\n\nEnd of challenge confirmed. Changes are no longer allowed.";
         private static final String LEVEL_THREE_UNSUCCESSFUL_END =
-                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 3: 700 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁";
+                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 3: 700 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁";
         private static final String LEVEL_FOUR_UNSUCCESSFUL_END =
-                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 4: 900 points ❌ Active retry rules: None ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No safety net: 0.75) = 2 subs 🎁";
+                "Ribbon Bingo result: Main gun hit: 50 * 3 points + Set on fire: 5 * 20 points = 250 points. Requirement of level 4: 900 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: 1 sub 🎁 Total reward: 1 sub * (challenge modifiers: 1 + No safety net: 0.75) = 2 subs 🎁";
         private static final String LEVEL_FIVE_VOLUNTARY_END =
                 "Challenge ended voluntarily on level 5. Your reward from the previous level: 16 subs 🎁";
         private static final String LEVEL_SEVEN_SUCCESSFUL_END =
@@ -123,7 +122,7 @@ class BingoGameIntegrationTest {
         void shouldAddAnExtraLifeThenConsumeItToContinueAfterAnUnsuccessfulMatch() throws UserInputException {
             for (int level = START_LEVEL; level < 4; level++) {
                 submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
-                bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+                bingoGame.setRetryingIsAllowed(true);
                 bingoGame.confirmCurrentResult();
             }
             submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
@@ -136,21 +135,12 @@ class BingoGameIntegrationTest {
             bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.NO_SAFETY_NET));
             for (int level = START_LEVEL; level < 4; level++) {
                 submitBingoResult(getBingoResultWithMoreThanOneThousandPoints());
-                bingoGame.setActiveRetryRules(List.of(RetryRule.IMBALANCED_MATCHMAKING));
+                bingoGame.setRetryingIsAllowed(true);
                 bingoGame.confirmCurrentResult();
             }
             submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
             bingoGame.confirmCurrentResult();
             assertEquals(LEVEL_FOUR_UNSUCCESSFUL_END + END_OF_CHALLENGE_CONFIRMED, bingoGame.toString());
-        }
-
-        @Test
-        void shouldAllowRetryButNotAwardAnyTokens() throws UserInputException {
-            String initialBingoGameText = bingoGame.toString();
-            submitBingoResult(getBingoResultWithLessThanThreeHundredPoints());
-            bingoGame.setActiveRetryRules(List.of(RetryRule.UNFAIR_DISADVANTAGE));
-            bingoGame.confirmCurrentResult();
-            assertEquals(initialBingoGameText, bingoGame.toString());
         }
 
         @Test

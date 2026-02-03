@@ -1,19 +1,15 @@
 package bingo.game.tokens.impl;
 
-import bingo.game.rules.RetryRule;
 import bingo.game.tokens.TokenCounter;
 
 import java.io.Serial;
-import java.util.List;
 
 public class NonFunctionalTokenCounter implements TokenCounter {
     @Serial
     private static final long serialVersionUID = -8370148681960492335L;
 
     @Override
-    public void calculateMatchResult(
-            boolean isSuccessfulMatch, boolean hasNextLevel,
-            List<RetryRule> activeRetryRules) {
+    public void calculateMatchResult(boolean isSuccessfulMatch, boolean hasNextLevel, boolean retryingIsAllowed) {
 
     }
 

@@ -16,7 +16,6 @@ import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.game.ribbons.Ribbon;
 import bingo.game.ribbons.RibbonResult;
-import bingo.game.rules.RetryRule;
 import bingo.game.ships.MainArmamentType;
 import bingo.game.ships.Ship;
 import bingo.game.utility.BingoGameOutputSplitter;
@@ -63,9 +62,9 @@ public class BingoGameUserInterface {
     private final Map<Ribbon, TextField> textFieldsByRibbon;
     private final Map<Achievement, TextField> textFieldsByAchievement;
     private final Map<DivisionAchievement, TextField> textFieldsByDivisionAchievement;
-    private final Map<RetryRule, CheckBox> checkBoxesByRetryRule;
     private final TableView<Ship> tableView;
     private final TableColumn<Ship, String> shipNameColumn;
+    private final CheckBox retryingIsAllowedCheckBox;
     private final Button submitButton;
     private final Button confirmButton;
     private final Button endChallengeButton;
@@ -97,9 +96,9 @@ public class BingoGameUserInterface {
         this.textFieldsByRibbon = new HashMap<>();
         this.textFieldsByAchievement = new HashMap<>();
         this.textFieldsByDivisionAchievement = new HashMap<>();
-        this.checkBoxesByRetryRule = new HashMap<>();
         this.tableView = new TableView<>();
         this.shipNameColumn = new TableColumn<>("Ships used");
+        this.retryingIsAllowedCheckBox = new CheckBox("Retrying is allowed");
         this.submitButton = new Button("Submit result");
         this.confirmButton = new Button("Confirm result");
         this.endChallengeButton = new Button("End challenge");
@@ -119,7 +118,7 @@ public class BingoGameUserInterface {
         this.mainGrid.setPadding(new Insets(5));
         this.mainGridRow = 0;
         setUpGridWithEightInputFieldsPerRow();
-        setUpGridWithComboBoxesAndCheckBoxes();
+        setUpGridWithComboBoxesAndRetryingIsAllowedCheckBox();
         setUpGridWithButtons();
         setUpGridWithLargeTextAreaAndTableView();
         performResetOnUserInterface();
@@ -185,7 +184,7 @@ public class BingoGameUserInterface {
         return gridPane;
     }
 
-    private void setUpGridWithComboBoxesAndCheckBoxes() {
+    private void setUpGridWithComboBoxesAndRetryingIsAllowedCheckBox() {
         Label playerLabel = new Label("Player");
         Label mainArmamentTypeLabel = new Label("Main armament of ship used");
         Label challengeModifierLabel = new Label("Challenge modifiers: " + getChallengeModifiersAsString());
@@ -196,8 +195,8 @@ public class BingoGameUserInterface {
         gridPane.add(playerComboBox, 0, 1);
         gridPane.add(mainArmamentTypeLabel, 1, 0);
         gridPane.add(mainArmamentTypeComboBox, 1, 1);
-        int column = setUpCheckBoxesForRetryRules(gridPane);
-        gridPane.add(challengeModifierLabel, column, 1);
+        gridPane.add(retryingIsAllowedCheckBox, 2, 1);
+        gridPane.add(challengeModifierLabel, 3, 1);
         goToNextMainGridRow();
     }
 
@@ -326,17 +325,6 @@ public class BingoGameUserInterface {
         return !bingoGame.actionIsAllowed(action);
     }
 
-    private int setUpCheckBoxesForRetryRules(GridPane gridPane) {
-        int column = 2;
-        for (RetryRule retryRule : RetryRule.values()) {
-            CheckBox checkBox = new CheckBox(retryRule.getDisplayText());
-            checkBoxesByRetryRule.put(retryRule, checkBox);
-            gridPane.add(checkBox, column, 1);
-            column++;
-        }
-        return column;
-    }
-
     private GridPane createGridPaneForTableInputFieldAndButtons() {
         Label shipInputFieldLabel = new Label("Name of ship used");
         userInterfaceUtility.setEventHandlers(addShipButton, this::addShip);
@@ -405,7 +393,7 @@ public class BingoGameUserInterface {
             }
             bingoGame.submitBingoResultForPlayer(getSelectedPlayer(), bingoResult);
             bingoGame.submitSharedDivisionAchievements(divisionAchievements);
-            setActiveRetryRules();
+            setRetryingIsAllowed();
             setTextInTextArea();
             updateButtonVisibility();
         } catch (UserInputException exception) {
@@ -413,14 +401,9 @@ public class BingoGameUserInterface {
         }
     }
 
-    private void setActiveRetryRules() {
+    private void setRetryingIsAllowed() {
         try {
-            List<RetryRule> activeRetryRules = checkBoxesByRetryRule.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().isSelected())
-                    .map(Map.Entry::getKey)
-                    .toList();
-            bingoGame.setActiveRetryRules(activeRetryRules);
+            bingoGame.setRetryingIsAllowed(retryingIsAllowedCheckBox.isSelected());
         } catch (UserInputException exception) {
             showMessageOfUserInputExceptionInTextArea(exception);
         }
@@ -513,14 +496,14 @@ public class BingoGameUserInterface {
 
     private void performResetOnUserInterface() {
         selectFirstPlayerInComboBox();
-        resetCheckBoxes();
+        resetRetryingIsAllowedCheckBox();
         clearAllInputFields();
         setTextInTextArea();
         updateButtonVisibility();
     }
 
-    private void resetCheckBoxes() {
-        checkBoxesByRetryRule.values().forEach(checkBox -> checkBox.setSelected(false));
+    private void resetRetryingIsAllowedCheckBox() {
+        retryingIsAllowedCheckBox.setSelected(false);
     }
 
     private void clearAllInputFields(InputEvent ignoredEvent) {
