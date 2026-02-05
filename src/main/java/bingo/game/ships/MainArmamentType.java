@@ -4,10 +4,10 @@ import java.io.Serial;
 import java.io.Serializable;
 
 public enum MainArmamentType implements Serializable {
-    SMALL_CALIBER_GUNS("Gun caliber of 202mm or below"),
-    MEDIUM_CALIBER_GUNS("Gun caliber of 203mm up to 304mm"),
-    LARGE_CALIBER_GUNS("Gun caliber of 305mm up to 405mm"),
-    EXTRA_LARGE_CALIBER_GUNS("Gun caliber of 406mm or above"),
+    SMALL_CALIBER_GUNS("1–202mm guns"),
+    MEDIUM_CALIBER_GUNS("203–304mm guns"),
+    LARGE_CALIBER_GUNS("305–405mm guns"),
+    EXTRA_LARGE_CALIBER_GUNS("406mm+ guns"),
     TORPEDOES("Torpedoes"),
     AIRCRAFT("Aircraft");
 

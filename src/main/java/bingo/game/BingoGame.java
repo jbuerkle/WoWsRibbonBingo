@@ -468,7 +468,9 @@ public class BingoGame implements Serializable {
         return shipRestriction -> {
             stringBuilder.append(SENTENCE_END);
             if (moreThanOnePlayerIsRegistered()) {
-                stringBuilder.append(player.name()).append("'s ship restriction: ");
+                stringBuilder.append(player.name()).append(WHITESPACE);
+            } else {
+                stringBuilder.append("You ");
             }
             stringBuilder.append(shipRestriction.getDisplayText());
         };

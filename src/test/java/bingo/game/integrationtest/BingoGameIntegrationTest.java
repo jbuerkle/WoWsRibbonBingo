@@ -8,6 +8,7 @@ import bingo.game.modifiers.ChallengeModifier;
 import bingo.game.players.Player;
 import bingo.game.restrictions.ShipRestriction;
 import bingo.game.restrictions.impl.BannedMainArmamentType;
+import bingo.game.restrictions.impl.ForcedMainArmamentType;
 import bingo.game.results.BingoResult;
 import bingo.game.results.division.SharedDivisionAchievements;
 import bingo.game.ribbons.Ribbon;
@@ -45,6 +46,8 @@ class BingoGameIntegrationTest {
                 "Requirement of level 4: 900 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_ZERO_TOKENS =
                 "Requirement of level 1: 300 points. Token counter: Now 0 tokens 🪙 total.";
+        private static final String LEVEL_ONE_WITH_SHIP_RESTRICTION =
+                "Requirement of level 1: 300 points. You must use ships with 406mm+ guns as main armament. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH =
                 "Ribbon Bingo result: Main gun hit: 400 points + Set on fire: 15 * 20 points + Destroyed: 2 * 120 points + Arsonist: 2 * (30 points + (Set on fire: 15 * 20 points) * 0.1) = 1060 points. Requirement of level 1: 300 points ✅ Unlocked reward: 2 subs 🎁 Token counter: +1 token (successful match). Now 1 token 🪙 total. ➡️ Requirement of level 2: 500 points";
         private static final String LEVEL_ONE_SUCCESSFUL_MATCH_WITHOUT_TOKEN_COUNTER =
@@ -167,6 +170,14 @@ class BingoGameIntegrationTest {
             assertEquals(LEVEL_TWO_WITHOUT_TOKEN_COUNTER, bingoGame.toString());
         }
 
+        @Test
+        void shouldShowCorrectTextForShipRestrictions() throws UserInputException {
+            bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+            ShipRestriction shipRestriction = new ForcedMainArmamentType(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS);
+            bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, shipRestriction);
+            assertEquals(LEVEL_ONE_WITH_SHIP_RESTRICTION, bingoGame.toString());
+        }
+
         private void submitBingoResult(BingoResult bingoResult) throws UserInputException {
             bingoGame.submitBingoResultForPlayer(SINGLE_PLAYER, bingoResult);
         }
@@ -185,6 +196,8 @@ class BingoGameIntegrationTest {
                 "Shared division achievements: General Offensive: 2 * 100 points + Brothers-in-Arms: 150 points = 350 points. Total result: 350 points. Requirement of level 1: 600 points. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_ONE_WITH_ZERO_TOKENS =
                 "Requirement of level 1: 600 points. Token counter: Now 0 tokens 🪙 total.";
+        private static final String LEVEL_ONE_WITH_SHIP_RESTRICTIONS =
+                "Requirement of level 1: 600 points. Player A must use ships with 1–202mm guns as main armament. Player B cannot use ships with 203–304mm guns as main armament. Player C cannot use ships with 305–405mm guns as main armament. Token counter: Now 0 tokens 🪙 total.";
         private static final String LEVEL_TWO_WITH_ONE_TOKEN =
                 "Requirement of level 2: 1000 points. Token counter: Now 1 token 🪙 total.";
 
@@ -201,6 +214,20 @@ class BingoGameIntegrationTest {
             bingoGame.submitBingoResultForPlayer(PLAYER_A, getBingoResultWithLessThanThreeHundredPoints());
             bingoGame.submitSharedDivisionAchievements(getDivisionAchievements());
             assertEquals(LEVEL_ONE_SUCCESSFUL_MATCH, bingoGame.toString());
+        }
+
+        @Test
+        void shouldShowCorrectTextForMultipleShipRestrictions() throws UserInputException {
+            bingoGame = new BingoGame(
+                    List.of(PLAYER_A, PLAYER_B, PLAYER_C),
+                    List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
+            ShipRestriction shipRestrictionA = new ForcedMainArmamentType(MainArmamentType.SMALL_CALIBER_GUNS);
+            ShipRestriction shipRestrictionB = new BannedMainArmamentType(MainArmamentType.MEDIUM_CALIBER_GUNS);
+            ShipRestriction shipRestrictionC = new BannedMainArmamentType(MainArmamentType.LARGE_CALIBER_GUNS);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_A, shipRestrictionA);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_B, shipRestrictionB);
+            bingoGame.setShipRestrictionForPlayer(PLAYER_C, shipRestrictionC);
+            assertEquals(LEVEL_ONE_WITH_SHIP_RESTRICTIONS, bingoGame.toString());
         }
 
         @Test

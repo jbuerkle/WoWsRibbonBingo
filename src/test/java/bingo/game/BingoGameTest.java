@@ -70,7 +70,7 @@ class BingoGameTest {
     private static final String LEVEL_ONE_REQUIREMENT =
             "Requirement of level 1: 300 points. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_REQUIREMENT_WITH_SHIP_RESTRICTION =
-            "Requirement of level 1: 300 points. Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. You must dummy ship restriction text. Token counter: Dummy token text.";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO_WITHOUT_TOKEN_COUNTER =
             ". Requirement of level 1: 300 points ✅ Unlocked reward: Dummy reward text: 2 sub(s) 🎁 ➡️ Requirement of level 2: 600 points";
     private static final String LEVEL_ONE_TRANSITION_TO_TWO =
@@ -82,11 +82,11 @@ class BingoGameTest {
     private static final String LEVEL_TWO_TRANSITION_TO_THREE =
             ". Requirement of level 2: 600 points ✅ Unlocked reward: Dummy reward text: 3 sub(s) 🎁 Token counter: Dummy token text. ➡️ Requirement of level 3: 900 points";
     private static final String MULTIPLAYER_RESTRICTION_B =
-            "Requirement of level 1: 300 points. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player B must dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESTRICTION_AB =
-            "Requirement of level 1: 300 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player A must dummy ship restriction text. Player B must dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESTRICTION_ABC =
-            "Requirement of level 1: 300 points. Player A's ship restriction: Dummy ship restriction text. Player B's ship restriction: Dummy ship restriction text. Player C's ship restriction: Dummy ship restriction text. Token counter: Dummy token text.";
+            "Requirement of level 1: 300 points. Player A must dummy ship restriction text. Player B must dummy ship restriction text. Player C must dummy ship restriction text. Token counter: Dummy token text.";
     private static final String MULTIPLAYER_RESULT_B =
             "Player B's Ribbon Bingo result: Dummy result text. Total result: 30 points. " +
                     MULTIPLAYER_RESTRICTION_ABC;
@@ -97,7 +97,7 @@ class BingoGameTest {
             "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Total result: 30 points + 30 points + 30 points = 90 points. Requirement of level 1: 300 points ❌ Retrying is not allowed ❌ The challenge is over and you lose any unlocked rewards. Your reward for participating: Dummy reward text: 1 sub(s) 🎁";
     private static final String MULTIPLAYER_RESULT_WITH_DIVISION_ACHIEVEMENTS =
             "Player A's Ribbon Bingo result: Dummy result text. Player B's Ribbon Bingo result: Dummy result text. Player C's Ribbon Bingo result: Dummy result text. Shared division achievements: Dummy division text. Total result: 30 points + 30 points + 30 points + 600 points = 690 points. Requirement of level 1: 300 points ✅ Unlocked reward: Dummy reward text: 2 sub(s) 🎁 Token counter: Dummy token text. ➡️ Requirement of level 2: 600 points";
-    private static final String DUMMY_SHIP_RESTRICTION_TEXT = "Dummy ship restriction text";
+    private static final String DUMMY_SHIP_RESTRICTION_TEXT = "must dummy ship restriction text";
     private static final String DUMMY_TOKEN_TEXT = "Token counter: Dummy token text.";
     private static final String DUMMY_RESULT_TEXT = "Ribbon Bingo result: Dummy result text";
     private static final String DUMMY_DIVISION_TEXT = "Shared division achievements: Dummy division text";

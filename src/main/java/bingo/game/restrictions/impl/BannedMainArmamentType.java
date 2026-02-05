@@ -12,7 +12,7 @@ public record BannedMainArmamentType(MainArmamentType mainArmamentType) implemen
     @Override
     public String getDisplayText() {
         String mainArmamentText = mainArmamentType.getDisplayText().toLowerCase();
-        return "Ships with %s as main armament are banned from use in the current level".formatted(mainArmamentText);
+        return "cannot use ships with %s as main armament".formatted(mainArmamentText);
     }
 
     @Override

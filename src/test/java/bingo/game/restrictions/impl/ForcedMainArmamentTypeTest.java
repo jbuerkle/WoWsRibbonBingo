@@ -13,9 +13,7 @@ class ForcedMainArmamentTypeTest {
 
     @Test
     void getDisplayTextShouldReturnCorrectText() {
-        assertEquals(
-                "You are forced to use a ship with aircraft as main armament in the current level",
-                shipRestriction.getDisplayText());
+        assertEquals("must use ships with aircraft as main armament", shipRestriction.getDisplayText());
     }
 
     @Test
