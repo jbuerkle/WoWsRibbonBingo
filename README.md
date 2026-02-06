@@ -154,15 +154,13 @@ cross-check results from your side), please follow the steps below:
 
 - Destroyed: 120 points
 - Assisted in destruction: 60 points
-- Main gun hit: 1 point (2 points for ships with gun caliber of 203mm up to 304mm as main armament, 3 points for ships
-  with gun caliber of 305mm up to 405mm as main armament, 4 points for ships with gun caliber of 406mm or above as main
-  armament)
+- Main gun hit: 1 point (2 points for ships with 203–304mm guns as main armament, 3 points for ships with 305–405mm guns
+  as main armament, 4 points for ships with 406mm+ guns as main armament)
 - Secondary hit: 1 point
 - Bomb hit: 3 points
 - Rocket hit: 3 points
-- Citadel hit: 20 points (40 points for ships with gun caliber of 203mm up to 304mm as main armament, 60 points for
-  ships with gun caliber of 305mm up to 405mm as main armament, 80 points for ships with gun caliber of 406mm or above
-  as main armament)
+- Citadel hit: 20 points (40 points for ships with 203–304mm guns as main armament, 60 points for ships with 305–405mm
+  guns as main armament, 80 points for ships with 406mm+ guns as main armament)
 - Torpedo hit: 40 points (20 points for ships with aircraft as main armament)
 - Depth charge hit: 10 points
 - Sonar ping: 5 points
@@ -268,15 +266,15 @@ Note:
 At the start of every level, all participating streamers pick a positive integer (including 0), which corresponds to one
 of the following restrictions:
 
-- 50% chance for ships with a certain type of main armament to be banned from use in the current level
-- 50% chance to be forced to use a ship with a certain type of main armament in the current level
+- 50% chance that you **cannot** use ships with a certain type of main armament in the current level
+- 50% chance that you **must** use ships with a certain type of main armament in the current level
 
 The types of main armaments which can occur are:
 
-- Gun calibers of 202mm or below
-- Gun calibers of 203mm up to 304mm
-- Gun calibers of 305mm up to 405mm
-- Gun calibers of 406mm or above
+- 1–202mm guns
+- 203–304mm guns
+- 305–405mm guns
+- 406mm+ guns
 
 Each of these categories has an equal chance to occur (25%). A perfectly equal distribution is **always** guaranteed on
 every level, which means the chance for any particular combination to be picked is 12.5%. The main deciding factor is
@@ -284,9 +282,9 @@ the number picked by the streamer. Note that all possible ship restrictions are 
 streamer has picked a number, which means the result of a given number will never be predictable.
 
 The other two categories of main armaments (aircraft for aircraft carriers and torpedoes for submarines) will never
-occur here. This means you will never be forced to play aircraft carriers or submarines, but neither will they ever be
-**explicitly** banned. Despite that, if you were to pick a ship you want to play before picking a number, then the
-chances of you being allowed to play that ship are exactly 50/50, regardless of the type of ship you want to play.
+occur here. On the one hand, this means you will never be forced to play aircraft carriers or submarines. On the other
+hand, if you **do** want to play aircraft carriers or submarines, then there is still the same 50% chance that you will
+be forced to play something else.
 
 ## Leaderboard
 
