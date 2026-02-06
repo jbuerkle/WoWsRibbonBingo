@@ -171,7 +171,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldShowCorrectTextForShipRestrictions() throws UserInputException {
+        void shouldShowCorrectTextForShipRestriction() throws UserInputException {
             bingoGame = new BingoGame(List.of(SINGLE_PLAYER), List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
             ShipRestriction shipRestriction = new ForcedMainArmamentType(MainArmamentType.EXTRA_LARGE_CALIBER_GUNS);
             bingoGame.setShipRestrictionForPlayer(SINGLE_PLAYER, shipRestriction);
@@ -217,7 +217,7 @@ class BingoGameIntegrationTest {
         }
 
         @Test
-        void shouldShowCorrectTextForMultipleShipRestrictions() throws UserInputException {
+        void shouldShowCorrectTextForShipRestrictions() throws UserInputException {
             bingoGame = new BingoGame(
                     List.of(PLAYER_A, PLAYER_B, PLAYER_C),
                     List.of(ChallengeModifier.RANDOM_SHIP_RESTRICTIONS));
