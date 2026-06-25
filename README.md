@@ -294,11 +294,11 @@ be forced to play something else.
 |------|-----------------|--------------------------|---------------------------|-------------:|
 | 1.🥇 | Daniel_Russev   | 08.02.2026               | -                         |  292 subs 🎁 |
 | 2.🥈 | OverLordBou     | 18.12.2025               | -                         |  280 subs 🎁 |
-| 3.🥉 | W0rldSp0wn      | 14.01.2026               | -                         |  268 subs 🎁 |
+| 3.🥉 | WorldSp0wn      | 14.01.2026               | -                         |  268 subs 🎁 |
 | 4.   | OverLordBou     | 06.02.2026               | -                         |  268 subs 🎁 |
 | 5.   | Hyf1re          | 22.01.2026               | -                         |  219 subs 🎁 |
-| 6.   | W0rldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
-| 7.   | W0rldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
+| 6.   | WorldSp0wn      | 16.12.2025               | BenzyMH, MWOMA            |  175 subs 🎁 |
+| 7.   | WorldSp0wn      | 17.11.2025               | -                         |  160 subs 🎁 |
 | 8.   | Daniel_Russev   | 21.12.2025               | Seidlhannes               |  160 subs 🎁 |
 | 9.   | OverLordBou     | 18.04.2025               | Ausomaster                |  140 subs 🎁 |
 | 10.  | OverLordBou     | 02.05.2025               | Your_SAT_Score, StarboyNA |  134 subs 🎁 |
